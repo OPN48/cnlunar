@@ -1,1 +1,3 @@
 *.xml
+*.pyc
+/.idea/
