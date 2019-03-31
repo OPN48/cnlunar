@@ -49,14 +49,13 @@ def _cnYear(_year):
         Return:
             String "戊戍[狗]" 汉字形式的年份
     """
-
     return the10HeavenlyStems[(_year - 4) % 10] + the12EarthlyBranches[(_year - 4) % 12] + '[' + chineseZodiacNameList[(_year - 4) % 12] + ']'
 
 
-def getUpperYear(_date):
+def getUpperLunarYear(year):
 
     _upper_year = ""
-    for i in str(_date.year):
+    for i in str(year):
         _upper_year += upperNum[int(i)]
     return _upper_year
 
@@ -67,27 +66,24 @@ def getUpperWeek(_date):
     return weekDay[_date.weekday()]
 
 
-def cnMonthDays(_cn_year, _cn_month):
+def getMonthLeapMonthLeapDays(_cn_year, _cn_month):
     """ 计算阴历月天数
         Arg:
             type(_cn_year) int 2018 数字年份
             type(lunarMonthNameList) int 6 数字阴历月份
         Return:
-            int 30或29,该年闰月，闰月天数
+            int 30或29,该年闰月，闰月天数【
     """
-
-    if (_cn_year < START_YEAR):
-        return 30
-
+    # 输入年小于1900年直接输出天数为30？？？？这个可能有点问题
+    # if (_cn_year < START_YEAR):
+    #     return 30
     leap_month, leap_day, month_day = 0, 0, 0  # 闰几月，该月多少天 传入月份多少天
-
-    tmp = lunarMonthData[_cn_year - START_YEAR]
-
+    tmp = lunarMonthData[_cn_year - START_YEAR] # 获取16进制数据12-1月份农历日数 0=29天 1=30天
+    # 表示获取当前月份的布尔值:指定二进制1（假定真），向左移动月数-1，与当年全年月度数据合并取出2进制位作为判断
     if tmp & (1 << (_cn_month - 1)):
         month_day = 30
     else:
         month_day = 29
-
     # 闰月
     leap_month = (tmp >> month_NUM_BIT) & 0xf
     if leap_month:
@@ -95,7 +91,6 @@ def cnMonthDays(_cn_year, _cn_month):
             leap_day = 30
         else:
             leap_day = 29
-
     return [month_day, leap_month, leap_day]
 
 
@@ -117,7 +112,7 @@ def _getNumCnDate(_date):
     if (_span_days >= 0):
         """ 新年后推算日期，差日依序减月份天数，直到不足一个月，剪的次数为月数，剩余部分为日数 """
         """ 先获取闰月 """
-        _month_days, _leap_month, _leap_day = cnMonthDays(_year, _month)
+        _month_days, _leap_month, _leap_day = getMonthLeapMonthLeapDays(_year, _month)
         while _span_days >= _month_days:
             """ 获取当前月份天数，从差日中扣除 """
             _span_days -= _month_days
@@ -131,14 +126,14 @@ def _getNumCnDate(_date):
                 """ 否则扣除闰月天数，月份加一 """
                 _span_days -= _month_days
             _month += 1
-            _month_days = cnMonthDays(_year, _month)[0]
+            _month_days = getMonthLeapMonthLeapDays(_year, _month)[0]
         _day += _span_days
         return _year, _month, _day
     else:
         """ 新年前倒推去年日期 """
         _month = 12
         _year -= 1
-        _month_days, _leap_month, _leap_day = cnMonthDays(_year, _month)
+        _month_days, _leap_month, _leap_day = getMonthLeapMonthLeapDays(_year, _month)
         while abs(_span_days) > _month_days:
             _span_days += _month_days
             _month -= 1
@@ -148,10 +143,11 @@ def _getNumCnDate(_date):
                     _month = (_leap_month << 4) | _month
                     break
                 _span_days += _month_days
-            _month_days = cnMonthDays(_year, _month)[0]
+            _month_days = getMonthLeapMonthLeapDays(_year, _month)[0]
         _day += (_month_days + _span_days)  # 从月份总数中倒扣 得到天数
         return _year, _month, _day
 def getCnDate(_date):
+    # 存在1、2月将农历腊月归于今年的输出错误
     """ 获取完整的农历日期
         Args:
             _date = datetime(year, month, day)
@@ -159,7 +155,8 @@ def getCnDate(_date):
             "农历 xx[x]年 xxxx年x月xx 星期x"
     """
     (_year, _month, _day) = _getNumCnDate(_date)
-    return "农历 %s年 %s年%s%s %s " % (_cnYear(_year), getUpperYear(_date), _cnMonth(_month), _cnDay(_day), getUpperWeek(_date))
+    print(_year, _month, _day)
+    return "农历 %s年 %s年%s%s %s " % (_cnYear(_year), getUpperLunarYear(_year), _cnMonth(_month), _cnDay(_day), getUpperWeek(_date))
 
 
 def getCnYear(_date):
@@ -226,9 +223,7 @@ def showMonth(date):
     print(getCnDate(date))  # 根据数组索引确定农历日期
     print(getCnYear(date)) # 返回干支年
     print(getCnMonth(date))  # 返回农历月
-    print(getCnDay(date))  # 返回农历日
-    print(getSolarTerms(date))  # 返回节气
-    print(getUpperYear(date))  # 返回大写年份
-    print(getUpperWeek(date))  # 返回大写星期
-
-
+    # print(getCnDay(date))  # 返回农历日
+    # print(getSolarTerms(date))  # 返回节气
+    # print(getUpperYear(date))  # 返回大写年份
+    # print(getUpperWeek(date))  # 返回大写星期

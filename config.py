@@ -4,11 +4,12 @@
 START_YEAR = 1901
 month_DAY_BIT = 12
 month_NUM_BIT = 13
-
 stc= '小寒大寒立春雨水惊蛰春分清明谷雨立夏小满芒种夏至小暑大暑立秋处暑白露秋分寒露霜降立冬小雪大雪冬至'
 solarTermsNameList=[stc[x * 2:(x + 1) * 2] for x in range(0, len(stc) // 2)]
 the10HeavenlyStems =['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸']
 the12EarthlyBranches = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥']
+the60HeavenlyEarth=[the10HeavenlyStems[(i+1)%10-1]+the12EarthlyBranches[(i+1)%12-1] for i in range(0,60)]
+
 chineseZodiacNameList = ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪']
 lunarMonthNameList = ['正月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '冬月', '腊月']
 lunarDayNameList = ['初一', '初二', '初三', '初四', '初五', '初六', '初七', '初八', '初九', '初十',
@@ -68,7 +69,7 @@ solarTermsData=[
 
 # 农历数据 每个元素的存储格式如下：
 #   16~13    12          11~0
-#  闰几月 闰月日数  1~12月份农历日数
+#  闰几月 闰月日数  12-1月份农历日数 0=29天 1=30天
 lunarMonthData = [
     0x00752, 0x00ea5, 0x0ab2a, 0x0064b, 0x00a9b, 0x09aa6, 0x0056a, 0x00b59, 0x04baa, 0x00752,  # 1901 ~ 1910
     0x0cda5, 0x00b25, 0x00a4b, 0x0ba4b, 0x002ad, 0x0056b, 0x045b5, 0x00da9, 0x0fe92, 0x00e92,  # 1911 ~ 1920

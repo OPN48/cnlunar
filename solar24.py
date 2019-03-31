@@ -2,7 +2,7 @@
 # author: cuba3
 # github: https://github.com/cuba3/pyGregorian2LunarCalendar
 
-from config import solarTermsData
+from config import solarTermsData, START_YEAR
 from tools import abListMerge
 
 # 解压缩16进制用
@@ -27,5 +27,5 @@ def zipSolarTermsList(inputList,charCountLen=2):
     return hex(data),len(tempList)
 
 def getTheYearAllSolarTermsList(year):
-    return unZipSolarTermsList(solarTermsData[year-1901])
+    return unZipSolarTermsList(solarTermsData[year-START_YEAR])
 
