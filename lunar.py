@@ -22,6 +22,8 @@ class Lunar():
         (self.year8Char, self.month8Char, self.day8Char, self.twohour8Char) = self.get_the8char()
         self.chineseZodiac=self.get_chineseZodiac()
         self.weekDayCn=self.get_weekDayCn()
+        self.todaySolarTerms=self.get_todaySolarTerms()
+        self.thisYearSolarTermsDic=dict(zip(solarTermsNameList, self.solarTermsDateList))
     #大写农历年、月、日
     def get_lunarYearCN(self):
         for i in str(self.lunarYear):
@@ -36,13 +38,14 @@ class Lunar():
         return lunarMonth
     def get_lunarCn(self):
         return self.get_lunarYearCN(), self.get_lunarMonthCN(), lunarDayNameList[(self.lunarDay - 1) % 30]
-
-
+    # 生肖
     def get_chineseZodiac(self):
         return chineseZodiacNameList[(self.lunarYear - 4) % 12]
+    # 星期
     def get_weekDayCn(self):
         return weekDay[self.date.weekday()]
-    def getMonthLeapMonthLeapDays(self,_cn_year, _cn_month):
+    # 农历月数
+    def getMonthLeapMonthLeapDays(self):
         """ 计算阴历月天数
             Arg:
                 type(_cn_year) int 2018 数字年份
@@ -54,9 +57,9 @@ class Lunar():
         # if (_cn_year < START_YEAR):
         #     return 30
         leap_month, leap_day, month_day = 0, 0, 0  # 闰几月，该月多少天 传入月份多少天
-        tmp = lunarMonthData[_cn_year - START_YEAR] # 获取16进制数据12-1月份农历日数 0=29天 1=30天
+        tmp = lunarMonthData[self.lunarYear - START_YEAR] # 获取16进制数据12-1月份农历日数 0=29天 1=30天
         # 表示获取当前月份的布尔值:指定二进制1（假定真），向左移动月数-1，与当年全年月度数据合并取出2进制位作为判断
-        if tmp & (1 << (_cn_month - 1)):
+        if tmp & (1 << (self.lunarMonth - 1)):
             month_day = 30
         else:
             month_day = 29
@@ -68,6 +71,7 @@ class Lunar():
             else:
                 leap_day = 29
         return [month_day, leap_month, leap_day]
+    # # # 基础 # # #
     def get_lunarDateNum(self):
         """ 获取数字形式的农历日期
             Args:
@@ -83,7 +87,7 @@ class Lunar():
         if (_span_days >= 0):
             """ 新年后推算日期，差日依序减月份天数，直到不足一个月，剪的次数为月数，剩余部分为日数 """
             """ 先获取闰月 """
-            _month_days, _leap_month, _leap_day = self.getMonthLeapMonthLeapDays(self.lunarYear, self.lunarMonth)
+            _month_days, _leap_month, _leap_day = self.getMonthLeapMonthLeapDays()
             while _span_days >= _month_days:
                 """ 获取当前月份天数，从差日中扣除 """
                 _span_days -= _month_days
@@ -97,7 +101,7 @@ class Lunar():
                     """ 否则扣除闰月天数，月份加一 """
                     _span_days -= _month_days
                 self.lunarMonth += 1
-                _month_days = self.getMonthLeapMonthLeapDays(self.lunarYear, self.lunarMonth)[0]
+                _month_days = self.getMonthLeapMonthLeapDays()[0]
             self.lunarDay += _span_days
             return self.lunarYear, self.lunarMonth, self.lunarDay
         else:
@@ -117,20 +121,18 @@ class Lunar():
                 _month_days = self.getMonthLeapMonthLeapDays(self.lunarYear, self.lunarMonth)[0]
             self.lunarDay += (_month_days + _span_days)  # 从月份总数中倒扣 得到天数
             return self.lunarYear, self.lunarMonth, self.lunarDay
-    def getCnDate(self):
-        return '农历 %s[%s]年 %s年%s%s %s ' % (self.year8Char, self.chineseZodiac, self.lunarYearCn, self.lunarMonthCn, self.lunarDayCn, self.weekDayCn)
-    # 24节气部分
+    # # # 24节气部分
     def getSolarTermsDateList(self):
         solarTermsList = getTheYearAllSolarTermsList(self.date.year)
-        solarTermsDateList = []
+        self.solarTermsDateList = []
         for i in range(0, len(solarTermsList)):
             day = solarTermsList[i]
             month = i // 2 + 1
-            solarTermsDateList.append((month, day))
-        return solarTermsDateList
+            self.solarTermsDateList.append((month, day))
+        return self.solarTermsDateList
     def getNextNum(self,findDate,solarTermsDateList):
         return len(list(filter(lambda y: y <= findDate, solarTermsDateList)))%24
-    def getSolarTerms(self):
+    def get_todaySolarTerms(self):
         '''
         :param date: 输入日期
         :return:是否节气
@@ -144,7 +146,7 @@ class Lunar():
         else:
             todaySolarTerm = '无'
         return todaySolarTerm
-    # 八字
+    # # # 八字部分
     def get_year8Char(self):
         str=the10HeavenlyStems[(self.lunarYear-4)%10] + the12EarthlyBranches[(self.lunarYear - 4) % 12]
         return str
@@ -173,14 +175,4 @@ class Lunar():
         return self.twohour8CharList[num]
     def get_the8char(self):
         return self.get_year8Char(),self.get_month8Char(),self.get_day8Char(),self.get_twohour8Char()
-    def showMonth(self):
-        """ 测试：
-            输出农历日历
-        """
-        print(self.date) # 打印当前输入时间
-        print(self.get_lunarDateNum())#返回农历年月日数字格式
-        print(self.getCnDate()) # 根据数组索引确定农历日期
-        print('此时八字:%s%s%s%s'%(self.year8Char, self.month8Char, self.day8Char, self.twohour8Char))  # 返回干支月
-        print('农历 %s年 %s %s' % (self.lunarYearCn,self.lunarMonthCn,self.lunarDayCn))  # 返回农历
-        print(self.getSolarTerms())  # 返回节气
-        print('下一个节气:'+self.nextSolarTerm)
+
