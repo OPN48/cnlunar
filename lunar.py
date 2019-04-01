@@ -191,22 +191,28 @@ def getCnDay(_date):
     _day = _getNumCnDate(_date)[2]
     return "%s" % _cnDay(_day)
 
-def getSolarTerms(date):
-    '''
-    :param date: 输入日期
-    :return:{'今天': '清明', '谷雨': (4, 20)}
-    '''
-    year=date.year
-    inputMonth=date.month
-    inputday=date.day
+
+def getSolarTermsDateList(year):
     solarTermsList = getTheYearAllSolarTermsList(year)
     solarTermsDateList = []
     for i in range(0, len(solarTermsList)):
         day = solarTermsList[i]
         month = i // 2 + 1
         solarTermsDateList.append((month, day))
-    findDate = (inputMonth, inputday)
-    nextNum = len(list(filter(lambda y: y <= findDate , solarTermsDateList))) % 24
+    return solarTermsDateList
+
+def getNextNum(findDate,solarTermsDateList):
+    return len(list(filter(lambda y: y <= findDate, solarTermsDateList))) % 24
+
+def getSolarTerms(date):
+    '''
+    :param date: 输入日期
+    :return:是否节气,{'谷雨': (4, 20)}
+    '''
+    year=date.year
+    solarTermsDateList = getSolarTermsDateList(year)
+    findDate = (date.month, date.day)
+    nextNum = getNextNum(findDate,solarTermsDateList)
     nextSolarTerm = solarTermsNameList[nextNum]
     if findDate in solarTermsDateList:
         todaySolarTerm = solarTermsNameList[solarTermsDateList.index(findDate)]
@@ -214,6 +220,16 @@ def getSolarTerms(date):
         todaySolarTerm = '无'
     return todaySolarTerm,{nextSolarTerm:solarTermsDateList[nextNum]}
 
+def getMonth8char(date):
+    year=date.year
+    solarTermsDateList=getSolarTermsDateList(year)
+    findDate = (date.month, date.day)
+    nextNum = getNextNum(findDate,solarTermsDateList)
+    # 2019年正月为丙寅月
+    apartNum=(nextNum-1)//2-1
+    baseNum=the60HeavenlyEarth.index('丙寅')
+    # (year-2019)*12+apartNum每年固定差12个月回到第N年立春月柱，加上当前过了几个节气除以2+(nextNum-1)//2，减去1
+    return the60HeavenlyEarth[((year-2019)*12+baseNum+apartNum)%60]
 
 def showMonth(date):
     """ 测试：
@@ -222,8 +238,9 @@ def showMonth(date):
     print(date)
     print(getCnDate(date))  # 根据数组索引确定农历日期
     print(getCnYear(date)) # 返回干支年
+    print(getMonth8char(date))# 返回干支月
+
     print(getCnMonth(date))  # 返回农历月
-    # print(getCnDay(date))  # 返回农历日
-    # print(getSolarTerms(date))  # 返回节气
-    # print(getUpperYear(date))  # 返回大写年份
-    # print(getUpperWeek(date))  # 返回大写星期
+    print(getCnDay(date))  # 返回农历日
+    print(getSolarTerms(date))  # 返回节气
+    print(getUpperWeek(date))  # 返回大写星期

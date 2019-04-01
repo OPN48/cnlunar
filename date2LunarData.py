@@ -1,9 +1,10 @@
 import datetime
 import lunar
-from config import solarTermsData
 
-now = datetime.datetime.now()
+
+now = datetime.datetime(2013,12,6)
 lunar.showMonth(now)
 
 
-print(len(solarTermsData))
+
+
