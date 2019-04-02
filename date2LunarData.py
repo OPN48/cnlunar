@@ -13,3 +13,4 @@ print(a.chineseZodiacClash,a.weekDayCn)
 # 今天是否是节气，下一个节气名称
 print(a.todaySolarTerms,a.nextSolarTerm)
 print('%i年24节气时间表%s'%(a.date.year,a.thisYearSolarTermsDic))
+print(a.get_pengTaboo())

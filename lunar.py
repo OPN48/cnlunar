@@ -25,6 +25,9 @@ class Lunar():
         self.weekDayCn=self.get_weekDayCn()
         self.todaySolarTerms=self.get_todaySolarTerms()
         self.thisYearSolarTermsDic=dict(zip(solarTermsNameList, self.solarTermsDateList))
+    def get_pengTaboo(self):
+        return pengTatooList[the10HeavenlyStems.index(self.day8Char[0])]+' '+pengTatooList[the12EarthlyBranches.index(self.day8Char[1])+10]
+
     #大写农历年、月、日
     def get_lunarYearCN(self):
         for i in str(self.lunarYear):
