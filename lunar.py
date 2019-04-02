@@ -25,9 +25,6 @@ class Lunar():
         self.weekDayCn=self.get_weekDayCn()
         self.todaySolarTerms=self.get_todaySolarTerms()
         self.thisYearSolarTermsDic=dict(zip(solarTermsNameList, self.solarTermsDateList))
-    def get_pengTaboo(self):
-        return pengTatooList[the10HeavenlyStems.index(self.day8Char[0])]+' '+pengTatooList[the12EarthlyBranches.index(self.day8Char[1])+10]
-
     #大写农历年、月、日
     def get_lunarYearCN(self):
         for i in str(self.lunarYear):
@@ -185,4 +182,14 @@ class Lunar():
         return self.twohour8CharList[num]
     def get_the8char(self):
         return self.get_year8Char(),self.get_month8Char(),self.get_day8Char(),self.get_twohour8Char()
-
+    # 彭祖百忌
+    def get_pengTaboo(self):
+        return pengTatooList[the10HeavenlyStems.index(self.day8Char[0])] + ' ' + pengTatooList[
+            the12EarthlyBranches.index(self.day8Char[1]) + 10]
+    # 星座
+    def get_starZodiac(self):
+        n = ('摩羯座', '水瓶座', '双鱼座', '白羊座', '金牛座', '双子座', '巨蟹座', '狮子座', '处女座', '天秤座', '天蝎座', '射手座')
+        d = (
+            (1, 20), (2, 19), (3, 21), (4, 21), (5, 21), (6, 22), (7, 23), (8, 23), (9, 23), (10, 23), (11, 23),
+            (12, 23))
+        return n[len(list(filter(lambda y: y <= (self.date.month, self.date.day), d))) % 12]
