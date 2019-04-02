@@ -2,10 +2,10 @@ import datetime
 import lunar
 
 
-now=datetime.datetime.now()
+now=datetime.datetime(2019,4,5)
 a=lunar.Lunar(now)
 # a.showMonth()
-
+print(a.date)
 print(a.year8Char,a.month8Char,a.day8Char,a.twohour8Char)
 print('今日时辰：%s'%a.twohour8CharList)
 print('%s %s[%s]年 %s%s' % (a.lunarYearCn, a.year8Char, a.chineseYearZodiac, a.lunarMonthCn, a.lunarDayCn))
@@ -14,3 +14,4 @@ print(a.chineseZodiacClash,a.weekDayCn,a.get_starZodiac())
 print(a.todaySolarTerms,a.nextSolarTerm)
 print('%i年24节气时间表%s'%(a.date.year,a.thisYearSolarTermsDic))
 print(a.get_pengTaboo())
+print(a.get_today12Gods())

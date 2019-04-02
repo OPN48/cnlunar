@@ -186,6 +186,11 @@ class Lunar():
     def get_pengTaboo(self):
         return pengTatooList[the10HeavenlyStems.index(self.day8Char[0])] + ' ' + pengTatooList[
             the12EarthlyBranches.index(self.day8Char[1]) + 10]
+    # 建除十二神，正月建寅，二月建卯……
+    def get_today12Gods(self):
+        thisMonthStartGodNum=(self.lunarMonth-1+2)%12
+        apartnum=the12EarthlyBranches.index(self.day8Char[1])-thisMonthStartGodNum
+        return chinese12Gods[apartnum%12]
     # 星座
     def get_starZodiac(self):
         n = ('摩羯座', '水瓶座', '双鱼座', '白羊座', '金牛座', '双子座', '巨蟹座', '狮子座', '处女座', '天秤座', '天蝎座', '射手座')
