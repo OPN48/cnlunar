@@ -20,7 +20,8 @@ class Lunar():
         (self.lunarYearCn,self.lunarMonthCn,self.lunarDayCn)=self.get_lunarCn()
         self.twohour8CharList = self.get_twohour8CharList()
         (self.year8Char, self.month8Char, self.day8Char, self.twohour8Char) = self.get_the8char()
-        self.chineseZodiac=self.get_chineseZodiac()
+        self.chineseYearZodiac=self.get_chineseYearZodiac()
+        self.chineseZodiacClash=self.get_chineseZodiacClash()
         self.weekDayCn=self.get_weekDayCn()
         self.todaySolarTerms=self.get_todaySolarTerms()
         self.thisYearSolarTermsDic=dict(zip(solarTermsNameList, self.solarTermsDateList))
@@ -39,8 +40,14 @@ class Lunar():
     def get_lunarCn(self):
         return self.get_lunarYearCN(), self.get_lunarMonthCN(), lunarDayNameList[(self.lunarDay - 1) % 30]
     # 生肖
-    def get_chineseZodiac(self):
+    def get_chineseYearZodiac(self):
         return chineseZodiacNameList[(self.lunarYear - 4) % 12]
+    def get_chineseZodiacClash(self):
+        zodiacNum=the12EarthlyBranches.index(self.day8Char[1])
+        zodiacClashNum=(zodiacNum+ 6) % 12
+        self.zodiacWin=chineseZodiacNameList[zodiacNum]
+        self.zodiacLose=chineseZodiacNameList[zodiacClashNum]
+        return self.zodiacWin+'日冲'+self.zodiacLose
     # 星期
     def get_weekDayCn(self):
         return weekDay[self.date.weekday()]
