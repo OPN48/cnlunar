@@ -31,6 +31,7 @@ class Lunar():
             self._upper_year += upperNum[int(i)]
         return self._upper_year
     def get_lunarMonthCN(self):
+
         leap = (self.lunarMonth >> 4) & 0xf
         m = self.lunarMonth & 0xf
         lunarMonth = lunarMonthNameList[(m - 1) % 12]
@@ -103,7 +104,7 @@ class Lunar():
                     _month_days = _leap_day
                     if (_span_days < _month_days):
                         """ 指定日期在闰月中 ???"""
-                        _month = (_leap_month << 4) | self.lunarMonth
+                        self.lunarMonth = (_leap_month << 4) | self.lunarMonth
                         break
                     """ 否则扣除闰月天数，月份加一 """
                     _span_days -= _month_days
@@ -122,7 +123,7 @@ class Lunar():
                 if (self.lunarMonth == _leap_month):
                     _month_days = _leap_day
                     if (abs(_span_days) <= _month_days):  # 指定日期在闰月中
-                        _month = (_leap_month << 4) | self.lunarMonth
+                        self.lunarMonth = (_leap_month << 4) | self.lunarMonth
                         break
                     _span_days += _month_days
                 _month_days = self.getMonthLeapMonthLeapDays(self.lunarYear, self.lunarMonth)[0]
