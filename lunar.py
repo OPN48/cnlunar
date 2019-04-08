@@ -19,7 +19,8 @@ class Lunar():
         (self.lunarYear, self.lunarMonth, self.lunarDay) = self.get_lunarDateNum()
         (self.lunarYearCn,self.lunarMonthCn,self.lunarDayCn)=self.get_lunarCn()
         self.twohour8CharList = self.get_twohour8CharList()
-        (self.year8Char, self.month8Char, self.day8Char, self.twohour8Char) = self.get_the8char()
+        self.twohour8Char=self.get_twohour8Char()
+        (self.year8Char, self.month8Char, self.day8Char,self.twohour8Char) = self.get_the8char()
         self.chineseYearZodiac=self.get_chineseYearZodiac()
         self.chineseZodiacClash=self.get_chineseZodiacClash()
         self.weekDayCn=self.get_weekDayCn()
@@ -51,6 +52,9 @@ class Lunar():
         return self.zodiacWin+'日冲'+self.zodiacLose
     # 星期
     def get_weekDayCn(self):
+        '''输出当前日期中文星期几
+        :return: 星期三
+        '''
         return weekDay[self.date.weekday()]
     # 农历月数
     def getMonthLeapMonthLeapDays(self):
@@ -142,7 +146,6 @@ class Lunar():
         return len(list(filter(lambda y: y <= findDate, solarTermsDateList)))%24
     def get_todaySolarTerms(self):
         '''
-        :param date: 输入日期
         :return:是否节气
         '''
         solarTermsDateList = self.getSolarTermsDateList()
@@ -172,6 +175,9 @@ class Lunar():
     def get_day8Char(self):
         apart=self.date-datetime(2019,1,29)
         baseNum=the60HeavenlyEarth.index('丙寅')
+        # 超过23点算第二天，为防止溢出，在baseNum上操作+1
+        if self.twohourNum == 12:
+            baseNum+=1
         dayNum=(apart.days+baseNum)%60
         return the60HeavenlyEarth[dayNum]
     def get_twohour8CharList(self):
@@ -179,10 +185,10 @@ class Lunar():
         # 北京时间离长安时间差1小时，一天24小时横跨13个时辰,清单双循环
         return (the60HeavenlyEarth+the60HeavenlyEarth)[apart*12:(apart*12+13)]
     def get_twohour8Char(self):
-        num=(self.date.hour+1)//2
-        return self.twohour8CharList[num]
+        self.twohourNum=(self.date.hour+1)//2
+        return self.twohour8CharList[self.twohourNum]
     def get_the8char(self):
-        return self.get_year8Char(),self.get_month8Char(),self.get_day8Char(),self.get_twohour8Char()
+        return self.get_year8Char(),self.get_month8Char(),self.get_day8Char(),self.twohour8Char
     # 彭祖百忌
     def get_pengTaboo(self):
         return pengTatooList[the10HeavenlyStems.index(self.day8Char[0])] + ' ' + pengTatooList[
