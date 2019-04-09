@@ -10,6 +10,8 @@
 
 from datetime import datetime,timedelta
 from config import *
+from holidays import otherLunarHolidaysList, otherHolidaysList, legalsolarTermsHolidayDic, legalHolidaysDic, \
+    legalLunarHolidaysDic
 from solar24 import getTheYearAllSolarTermsList
 
 class Lunar():
@@ -32,7 +34,6 @@ class Lunar():
             self._upper_year += upperNum[int(i)]
         return self._upper_year
     def get_lunarMonthCN(self):
-
         leap = (self.lunarMonth >> 4) & 0xf
         m = self.lunarMonth & 0xf
         lunarMonth = lunarMonthNameList[(m - 1) % 12]
@@ -85,7 +86,7 @@ class Lunar():
                 leap_day = 30
             else:
                 leap_day = 29
-        return [month_day, leap_month, leap_day]
+        return month_day, leap_month, leap_day
     # # # 基础 # # #
     def get_lunarDateNum(self):
         """ 获取数字形式的农历日期
@@ -123,7 +124,7 @@ class Lunar():
             """ 新年前倒推去年日期 """
             self.lunarMonth = 12
             self.lunarYear -= 1
-            _month_days, _leap_month, _leap_day = self.getMonthLeapMonthLeapDays(self.lunarYear, self.lunarMonth)
+            _month_days, _leap_month, _leap_day = self.getMonthLeapMonthLeapDays()
             while abs(_span_days) > _month_days:
                 _span_days += _month_days
                 self.lunarMonth -= 1
@@ -208,3 +209,26 @@ class Lunar():
             (1, 20), (2, 19), (3, 21), (4, 21), (5, 21), (6, 22), (7, 23), (8, 23), (9, 23), (10, 23), (11, 23),
             (12, 23))
         return n[len(list(filter(lambda y: y <= (self.date.month, self.date.day), d))) % 12]
+    # 节日
+    def get_legalHolidays(self):
+        temp=''
+        if self.todaySolarTerms in legalsolarTermsHolidayDic:
+            temp+=legalsolarTermsHolidayDic[self.todaySolarTerms]+' '
+        if (self.date.month,self.date.day)in legalHolidaysDic:
+            temp+=legalHolidaysDic[(self.date.month,self.date.day)]+' '
+        if not self.lunarMonth>12:
+            if (self.lunarMonth,self.lunarDay)in legalLunarHolidaysDic:
+                temp+=legalLunarHolidaysDic[(self.lunarMonth,self.lunarDay)]
+        return temp.strip().replace(' ',',')
+
+    def get_otherHolidays(self):
+        holidayDic=otherHolidaysList[self.date.month-1]
+        if self.date.day in holidayDic:
+            return holidayDic[self.date.day]
+        return ''
+    def get_otherLunarHolidays(self):
+        if not self.lunarMonth>12:
+            holidayDic = otherLunarHolidaysList[self.lunarMonth - 1]
+            if self.lunarDay in holidayDic:
+                return holidayDic[self.lunarDay]
+        return ''
