@@ -193,12 +193,9 @@ class Lunar():
     def get_the8char(self):
         return self.get_year8Char(),self.get_month8Char(),self.get_day8Char(),self.twohour8Char
     # 彭祖百忌
-    def get_pengTaboo(self):
-        return pengTatooList[the10HeavenlyStems.index(self.day8Char[0])] + ' ' + pengTatooList[
-            the12EarthlyBranches.index(self.day8Char[1]) + 10]
-    def get_pengTabooLite(self):
-        return pengTatooList[the10HeavenlyStems.index(self.day8Char[0])][:4] + '<br>' + pengTatooList[
-            the12EarthlyBranches.index(self.day8Char[1]) + 10][:4]
+    def get_pengTaboo(self,long=9,delimit=','):
+        return pengTatooList[the10HeavenlyStems.index(self.day8Char[0])][:long] + delimit + pengTatooList[
+            the12EarthlyBranches.index(self.day8Char[1]) + 10][:long]
     # 建除十二神，正月建寅，二月建卯……
     def get_today12Gods(self):
         thisMonthStartGodNum=(self.lunarMonth-1+2)%12
