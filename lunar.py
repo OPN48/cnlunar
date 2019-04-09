@@ -196,6 +196,9 @@ class Lunar():
     def get_pengTaboo(self):
         return pengTatooList[the10HeavenlyStems.index(self.day8Char[0])] + ' ' + pengTatooList[
             the12EarthlyBranches.index(self.day8Char[1]) + 10]
+    def get_pengTabooLite(self):
+        return pengTatooList[the10HeavenlyStems.index(self.day8Char[0])][:4] + '<br>' + pengTatooList[
+            the12EarthlyBranches.index(self.day8Char[1]) + 10][:4]
     # 建除十二神，正月建寅，二月建卯……
     def get_today12Gods(self):
         thisMonthStartGodNum=(self.lunarMonth-1+2)%12
