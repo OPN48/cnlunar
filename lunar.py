@@ -47,9 +47,12 @@ class Lunar():
     def get_chineseZodiacClash(self):
         zodiacNum=the12EarthlyBranches.index(self.day8Char[1])
         zodiacClashNum=(zodiacNum+ 6) % 12
+        self.zodiacMark6=chineseZodiacNameList[(25-zodiacNum)%12]
+        self.zodiacMark3List=[chineseZodiacNameList[(zodiacNum+4)%12],chineseZodiacNameList[(zodiacNum+8)%12]]
         self.zodiacWin=chineseZodiacNameList[zodiacNum]
         self.zodiacLose=chineseZodiacNameList[zodiacClashNum]
         return self.zodiacWin+'日冲'+self.zodiacLose
+
     # 星期
     def get_weekDayCn(self):
         '''输出当前日期中文星期几
