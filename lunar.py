@@ -134,7 +134,7 @@ class Lunar():
                         self.lunarMonth = (_leap_month << 4) | self.lunarMonth
                         break
                     _span_days += _month_days
-                _month_days = self.getMonthLeapMonthLeapDays(self.lunarYear, self.lunarMonth)[0]
+                _month_days = self.getMonthLeapMonthLeapDays()[0]
             self.lunarDay += (_month_days + _span_days)  # 从月份总数中倒扣 得到天数
             return self.lunarYear, self.lunarMonth, self.lunarDay
     # # # 24节气部分
