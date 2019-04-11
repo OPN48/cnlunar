@@ -9,10 +9,10 @@
 
 
 from datetime import datetime
-from config import *
-from holidays import otherLunarHolidaysList, otherHolidaysList, legalsolarTermsHolidayDic, legalHolidaysDic, \
+from .config import *
+from .holidays import otherLunarHolidaysList, otherHolidaysList, legalsolarTermsHolidayDic, legalHolidaysDic, \
     legalLunarHolidaysDic
-from solar24 import getTheYearAllSolarTermsList
+from .solar24 import getTheYearAllSolarTermsList
 
 class Lunar():
     def __init__(self,date=datetime.now()):

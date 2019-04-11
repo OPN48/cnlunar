@@ -2,8 +2,8 @@
 # author: cuba3
 # github: https://github.com/cuba3/pyGregorian2LunarCalendar
 
-from config import solarTermsData, START_YEAR
-from tools import abListMerge
+from .config import solarTermsData, START_YEAR
+from .tools import abListMerge
 
 # 解压缩16进制用
 def unZipSolarTermsList(data,rangeEndNum=24,charCountLen=2):

@@ -3,7 +3,7 @@
 # github: https://github.com/cuba3/pyGregorian2LunarCalendar
 
 # 去除空行
-from config import encryptionVectorList
+from .config import encryptionVectorList
 
 
 def not_empty(s):

@@ -1,5 +1,5 @@
 import datetime
-import lunar
+import .lunar
 
 
 now=datetime.datetime(2020,10,1,22,30)
