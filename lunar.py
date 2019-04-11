@@ -8,7 +8,7 @@
 # 数据来源: http://data.weather.gov.hk/gts/time/conversion1_text_c.htm
 
 
-from datetime import datetime,timedelta
+from datetime import datetime
 from config import *
 from holidays import otherLunarHolidaysList, otherHolidaysList, legalsolarTermsHolidayDic, legalHolidaysDic, \
     legalLunarHolidaysDic
