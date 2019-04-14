@@ -8,7 +8,7 @@
 # 数据来源: http://data.weather.gov.hk/gts/time/conversion1_text_c.htm
 
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from config import *
 from holidays import otherLunarHolidaysList, otherHolidaysList, legalsolarTermsHolidayDic, legalHolidaysDic, \
     legalLunarHolidaysDic
@@ -17,18 +17,23 @@ from solar24 import getTheYearAllSolarTermsList
 class Lunar():
     def __init__(self,date=datetime.now()):
         self.date = date
+        self.twohourNum = (self.date.hour + 1) // 2
         self._upper_year = ''
         (self.lunarYear, self.lunarMonth, self.lunarDay) = self.get_lunarDateNum()
         (self.lunarYearCn,self.lunarMonthCn,self.lunarDayCn)=self.get_lunarCn()
+
+        (self.year8Char, self.month8Char, self.day8Char) = self.get_the8char()
+        self.get_earthNum(),self.get_heavenNum(),self.get_season()
         self.twohour8CharList = self.get_twohour8CharList()
-        self.twohour8Char=self.get_twohour8Char()
-        (self.year8Char, self.month8Char, self.day8Char,self.twohour8Char) = self.get_the8char()
+        self.twohour8Char = self.get_twohour8Char()
+
         self.chineseYearZodiac=self.get_chineseYearZodiac()
         self.chineseZodiacClash=self.get_chineseZodiacClash()
         self.weekDayCn=self.get_weekDayCn()
         self.todaySolarTerms=self.get_todaySolarTerms()
         self.thisYearSolarTermsDic=dict(zip(solarTermsNameList, self.solarTermsDateList))
-    #大写农历年、月、日
+
+        self.today28Star=self.get_the28Stars()
     def get_lunarYearCN(self):
         for i in str(self.lunarYear):
             self._upper_year += upperNum[int(i)]
@@ -37,16 +42,21 @@ class Lunar():
         leap = (self.lunarMonth >> 4) & 0xf
         m = self.lunarMonth & 0xf
         lunarMonth = lunarMonthNameList[(m - 1) % 12]
+        thisLunarMonthDays=self.monthDaysList[0]
         if leap == m:
             lunarMonth = "闰" + lunarMonth
-        return lunarMonth
+            thisLunarMonthDays = self.monthDaysList[2]
+        if thisLunarMonthDays < 30:
+            return lunarMonth+'小'
+        else:
+            return lunarMonth + '大'
     def get_lunarCn(self):
         return self.get_lunarYearCN(), self.get_lunarMonthCN(), lunarDayNameList[(self.lunarDay - 1) % 30]
     # 生肖
     def get_chineseYearZodiac(self):
         return chineseZodiacNameList[(self.lunarYear - 4) % 12]
     def get_chineseZodiacClash(self):
-        zodiacNum=the12EarthlyBranches.index(self.day8Char[1])
+        zodiacNum=self.dayEarthNum
         zodiacClashNum=(zodiacNum+ 6) % 12
         self.zodiacMark6=chineseZodiacNameList[(25-zodiacNum)%12]
         self.zodiacMark3List=[chineseZodiacNameList[(zodiacNum+4)%12],chineseZodiacNameList[(zodiacNum+8)%12]]
@@ -86,6 +96,7 @@ class Lunar():
                 leap_day = 30
             else:
                 leap_day = 29
+        self.monthDaysList=[month_day, leap_month, leap_day]
         return month_day, leap_month, leap_day
     # # # 基础 # # #
     def get_lunarDateNum(self):
@@ -175,33 +186,39 @@ class Lunar():
             nextNum=25
         apartNum=(nextNum+1)//2
         # (year-2019)*12+apartNum每年固定差12个月回到第N年月柱，2019小寒甲子，加上当前过了几个节气除以2+(nextNum-1)//2，减去1
-        return the60HeavenlyEarth[((self.date.year-2019)*12+apartNum)%60]
+        month8Char=the60HeavenlyEarth[((self.date.year-2019)*12+apartNum)%60]
+        return month8Char
     def get_day8Char(self):
         apart=self.date-datetime(2019,1,29)
         baseNum=the60HeavenlyEarth.index('丙寅')
         # 超过23点算第二天，为防止溢出，在baseNum上操作+1
         if self.twohourNum == 12:
             baseNum+=1
-        dayNum=(apart.days+baseNum)%60
-        return the60HeavenlyEarth[dayNum]
+        self.dayHeavenlyEarthNum=(apart.days+baseNum)%60
+        return the60HeavenlyEarth[self.dayHeavenlyEarthNum]
     def get_twohour8CharList(self):
-        apart = (self.date - datetime(2019, 1, 2)).days % 5
         # 北京时间离长安时间差1小时，一天24小时横跨13个时辰,清单双循环
-        return (the60HeavenlyEarth+the60HeavenlyEarth)[apart*12:(apart*12+13)]
+        begin = (the60HeavenlyEarth.index(self.day8Char) * 12) % 60
+        return (the60HeavenlyEarth + the60HeavenlyEarth)[begin:begin + 13]
     def get_twohour8Char(self):
-        self.twohourNum=(self.date.hour+1)//2
         return self.twohour8CharList[self.twohourNum]
     def get_the8char(self):
-        return self.get_year8Char(),self.get_month8Char(),self.get_day8Char(),self.twohour8Char
-    # 彭祖百忌
-    def get_pengTaboo(self,long=9,delimit=','):
-        return pengTatooList[the10HeavenlyStems.index(self.day8Char[0])][:long] + delimit + pengTatooList[
-            the12EarthlyBranches.index(self.day8Char[1]) + 10][:long]
-    # 建除十二神，正月建寅，二月建卯……
-    def get_today12Gods(self):
-        thisMonthStartGodNum=(self.lunarMonth-1+2)%12
-        apartnum=the12EarthlyBranches.index(self.day8Char[1])-thisMonthStartGodNum
-        return chinese12Gods[apartnum%12]
+        return self.get_year8Char(),self.get_month8Char(),self.get_day8Char()
+    def get_earthNum(self):
+        self.yearEarthNum = the12EarthlyBranches.index(self.year8Char[1])
+        self.monthEarthNum=the12EarthlyBranches.index(self.month8Char[1])
+        self.dayEarthNum=the12EarthlyBranches.index(self.day8Char[1])
+        return self.yearEarthNum,self.monthEarthNum,self.dayEarthNum
+    def get_heavenNum(self):
+        self.yearHeavenNum = the10HeavenlyStems.index(self.year8Char[0])
+        self.monthHeavenNum = the10HeavenlyStems.index(self.month8Char[0])
+        self.dayHeavenNum = the10HeavenlyStems.index(self.day8Char[0])
+        return self.yearHeavenNum,self.monthHeavenNum,self.dayHeavenNum
+    # 季节
+    def get_season(self):
+        self.seasonType= self.monthEarthNum % 3
+        self.seasonNum = ((self.monthEarthNum - 2) % 12) // 3
+        self.lunarSeason = '仲季孟'[self.seasonType] + '春夏秋冬'[self.seasonNum]
     # 星座
     def get_starZodiac(self):
         n = ('摩羯座', '水瓶座', '双鱼座', '白羊座', '金牛座', '双子座', '巨蟹座', '狮子座', '处女座', '天秤座', '天蝎座', '射手座')
@@ -232,3 +249,259 @@ class Lunar():
             if self.lunarDay in holidayDic:
                 return holidayDic[self.lunarDay]
         return ''
+
+    # 彭祖百忌
+    def get_pengTaboo(self, long=9, delimit=','):
+        return pengTatooList[self.dayHeavenNum][:long] + delimit + pengTatooList[self.dayEarthNum + 10][:long]
+
+    # 建除十二神，《淮南子》曰：正月建寅，则寅为建，卯为除，辰为满，巳为平，主生；午为定，未为执，主陷；申为破，主衡；酉为危，主杓；戍为成，主小德；亥为收，主大备；子为开，主太阳；丑为闭，主太阴。
+    def get_today12DayOfficer(self):
+        thisMonthStartGodNum = (self.lunarMonth - 1 + 2) % 12
+        apartnum = self.dayEarthNum - thisMonthStartGodNum
+        self.today12DayOfficer = chinese12DayOfficers[apartnum % 12]
+        return self.today12DayOfficer
+    # 八字与五行
+    def get_the28Stars(self):
+        apart = self.date - datetime(2019, 1, 17)
+        return the28StarsList[apart.days%28]
+    def get_nayin(self):
+        return theHalf60HeavenlyEarth5ElementsList[the60HeavenlyEarth.index(self.day8Char) // 2]
+    def get_today5Elements(self):
+        nayin = self.get_nayin()
+        tempList = ['天干', self.day8Char[0],
+                    '属' + the10HeavenlyStems5ElementsList[self.dayHeavenNum],
+                    '地支', self.day8Char[1],
+                    '属' + the12EarthlyBranches5ElementsList[self.dayEarthNum],
+                    '纳音', nayin[-1], '属' + nayin[-1],
+                    '廿八宿', self.today28Star[0],'宿',
+                    '十二神', self.today12DayOfficer, '日'
+                    ]
+        return tempList
+    def get_the9FlyStar(self):
+        apartNum = (self.date - datetime(2019, 1, 17)).days
+        startNumList=[7,3,5,6,8,1,2,4,9]
+        flyStarList=[str((i - 1 - apartNum) % 9 + 1) for i in startNumList]
+        return ''.join(flyStarList)
+    def get_luckyGodsDirection(self):
+        todayNum=self.dayHeavenNum
+        direction=[
+        '喜神'+directionList[chinese8Trigrams.index(luckyGodDirection[todayNum])],
+        '财神'+directionList[chinese8Trigrams.index(wealthGodDirection[todayNum])],
+        '福神'+directionList[chinese8Trigrams.index(mascotGodDirection[todayNum])],
+        '阳贵'+directionList[chinese8Trigrams.index(sunNobleDirection[todayNum])],
+        '阴贵'+directionList[chinese8Trigrams.index(moonNobleDirection[todayNum])],
+        ]
+        return direction
+    def get_fetalGod(self):
+        return fetalGodList[the60HeavenlyEarth.index(self.day8Char)]
+    # 每日时辰凶吉
+    def get_twohourLuckyList(self):
+        tmp=twohourLuckyTimeList[the60HeavenlyEarth.index(self.day8Char)]
+        return ['凶' if tmp & (2 ** (12 - i)) > 0 else '吉' for i in range(1, 13)]
+    # 每日神煞、每日宜忌部分
+    def get_today12DaysGod(self):
+        '''
+        chinese12DayGods=['青龙','明堂','天刑','朱雀','金贵','天德','白虎','玉堂','天牢','玄武','司命','勾陈']
+        青龙定位口诀：子午寻申位，丑未戌上亲；寅申居子中，卯酉起于寅；辰戌龙位上，巳亥午中寻。
+        [申戌子寅辰午]
+        十二神凶吉口诀：道远几时通达，路遥何日还乡 辶为吉神(0,1,4,5,7,11)为黄道吉日
+        '''
+        num=(self.dayEarthNum-2*(self.monthEarthNum-2))%12
+        self.today12DayGod=chinese12DayGods[num]
+        dayName ='黄道日' if num in (0,1,4,5,7,11) else '黑道日'
+        return self.today12DayGod,dayName
+    def get_AngelDemon(self):
+        '''
+        the10HeavenlyStems =['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸']
+        the12EarthlyBranches = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥']
+        相冲+6
+        四绝日：一切用事皆忌之，立春，立夏，立秋，立冬前一日。忌出行、赴任、嫁娶、进人、迁移、开市、立券、祭祀
+        四离日：春分、秋分、夏至、冬至前一天。日值四离，大事勿用
+        杨公13忌日：忌开张、动工、嫁娶、签订合同
+        红纱日、正红纱日：四孟金鸡（酉）四仲蛇（巳），四季丑日是红纱，惟有孟仲合吉用 ，季月逢之俱不佳（正红纱日）
+        凤凰日、麒麟日：凤凰压朱雀，麒麟制白虎，克制朱雀白虎中效果。春井，夏尾，秋牛，冬壁，是麒麟日，春危，夏昴，秋胃，冬毕是凤凰日
+        月德、月德合:申子辰三合，阳水为壬，月德合丁；巳酉丑三合，阳金为庚，月德合乙；寅午戌三合，阳火为丙，月德合辛；亥卯未三合，阳木为甲，月德合己
+        天德、天德合:《子平赋》说：印绶得同天德，官刑不至，至老无灾.
+        岁德、岁德合:《协纪辨方书·义例一·岁德》：曾门经曰：岁德者，岁中德神也。https://www.jianshu.com/p/ec0432f31060
+        月恩:正月逢丙是月恩，二月见丁三庚真，四月己上五月戊，六辛七壬八癸成，九月庚上十月乙，冬月甲上腊月辛。
+        天恩:四季何时是天恩，甲子乙丑丙寅建。丁卯戊辰兼己卯，庚辰辛巳壬午言，癸未隔求己酉日，庚戌辛亥亦同联，壬子癸丑无差误，此是天恩吉日传
+        '''
+        good = {'满': ['嫁娶', '移徙', '求财', '祈福', '祭祀', '出行', '立契', '交易', '开市'],
+                '成': ['安床', '动土', '移徙', '修造', '嫁娶', '求财', '出行', '栽种', '立契', '竖柱', '安葬', '交易', '开市', '破土'],
+                '开': ['安床', '动土', '移徙', '修造', '赴任', '祈福', '宴会', '祭祀', '出行', '求嗣', '入学', '动土', '交易', '开市', '竖柱'],
+                '建': ['赴任', '祈福', '求嗣', '安葬', '修造', '上樑', '求财', '入学', '嫁娶', '立契', '交涉', '出行'],
+                '除': ['祭祀', '祈福', '嫁娶', '出行', '移徙', '动土', '求医', '交易'],
+                '平': ['嫁娶', '修造', '破土', '安葬', '开市', '动土', '求嗣'],
+                '定': ['祭祀', '祈福', '嫁娶', '修造', '开市', '赴任'],
+                '执': ['修造', '装修', '嫁娶', '立契', '祭祀'], '破': ['破土', '求医'],
+                '危': ['祭祀', '祈福', '安床', '破土'],
+                '收': ['祈福', '求嗣', '赴任', '嫁娶', '修造', '动土', '交易', '立契'],
+                '闭': ['祭祀', '祈福', '埋穴', '安葬', '填补']}
+        bad = {'建': ['动土', '开仓', '纳采'],
+               '平': ['赴任', '移徙', '进人口', '嫁娶', '祈福', '动土', '纳采', '修造', '竖柱'],
+               '收': ['安床', '移徙', '嫁娶', '安葬', '放债', '动土', '纳采', '开市', '修造', '竖柱', '破土'],
+               '闭': ['安床', '手术', '移徙', '求医', '嫁娶', '进人口', '出行', '动土', '纳采', '赴任', '开市', '修造', '竖柱', '上梁'],
+               '除': ['嫁娶', '赴任', '出行', '立契'], '满': ['安葬', '赴任', '求医'], '定': ['诉讼', '出行', '交涉'],
+               '执': ['开市', '求财', '出行', '搬迁'], '破': ['嫁娶', '立契', '交涉', '出行', '搬迁'],
+               '危': ['出行', '嫁娶', '安葬', '迁徙'], '成': ['诉讼'], '开': ['放债', '诉讼', '安葬']}
+        def defauleThing(o=self.today12DayOfficer):
+            dic = {'goodName': [], 'badName': [], 'goodThing': [], 'badThing': []}
+            if o in good:
+                dic['goodThing'] = good[o]
+            if o in bad:
+                dic['badThing'] = bad[o]
+            return dic
+        dic=defauleThing(self.today12DayOfficer)
+        bujiang=['壬寅壬辰辛丑辛卯辛巳庚寅庚辰丁丑丁卯丁巳戊寅戊辰','辛丑辛卯庚子庚寅庚辰丁丑丁卯丙子丙寅丙辰戊子戊寅戊辰','辛亥辛丑辛卯庚子庚寅丁亥丁丑丁卯丙子丙寅戊子戊寅','庚戌庚子庚寅丁亥丁丑丙戌丙子丙寅乙亥乙丑戊戌戊子戊寅','丁酉丁亥丁丑丙戌丙子乙酉乙亥乙丑甲戌甲子戊戌戊子','丁酉丁亥丙申丙戌丙子乙酉乙亥甲申甲戌甲子戊申戊戌戊子','丙申丙戌乙未乙酉乙亥甲申甲戌癸未癸酉癸亥戊申戊戌','乙未乙酉甲午甲申甲戌癸未癸酉壬午壬申壬戌戊午戊申戊戌','乙巳乙未乙酉甲午甲申癸巳癸未癸酉壬午壬申戊午戊申','甲辰甲午甲申癸巳癸未壬辰壬午壬申辛巳辛未戊辰戊午戊申','癸卯癸巳癸未壬辰壬午辛卯辛巳辛未庚辰庚午戊辰戊午','癸卯癸巳壬寅壬辰壬午辛卯辛巳庚寅庚辰庚午戊寅戊辰戊午']
+        mrY13 = [(1, 13), (2, 11), (3, 9), (4, 7), (5, 5), (6, 2), (7, 1), (7, 29), (8, 27), (9, 25), (10, 23), (11, 21),(12, 19)]
+        tomorrow = self.date + timedelta(days=1)
+        tmd=(tomorrow.month, tomorrow.day)
+        t4l=[self.thisYearSolarTermsDic[i] for i in ['春分', '夏至', '秋分', '冬至']]
+        t4j=[self.thisYearSolarTermsDic[i] for i in ['立春', '立夏', '立秋', '立冬']]
+        s=self.today28Star
+        d=self.day8Char
+        den=self.dayEarthNum
+        dhen=self.dayHeavenlyEarthNum
+        sn=self.seasonNum
+        # st=self.seasonType
+        yhn=self.yearHeavenNum
+        yen=self.yearEarthNum
+        men=self.monthEarthNum
+        ldn=self.lunarDay
+        lmn=self.lunarMonth
+
+        angel =[
+            ('岁德','甲庚丙壬戊甲庚丙壬戊'[yhn],d,['修造','动土','嫁娶','纳采','移徙','入宅','百事皆宜']),# 岁德、岁德合：年天干对日天干['修造','动土','嫁娶','纳采','移徙','入宅','百事皆宜'] 天干相合+5  20190206
+            ('岁德合', '己乙辛丁癸己乙辛丁癸'[yhn], d, ['修造','动土','赴任','嫁娶','纳采','移徙','入宅', '出行','百事皆宜']),#修营、起土，上官。嫁娶、远行，参谒
+            ('月德','壬庚丙甲'[men %4],d[0],['谒贵', '求贤', '赴任', '修造','动土', '嫁娶', '移徙', '纳财', '买畜', '市贾', '立契']),# 月德20190208《天宝历》曰：“月德者，月之德神也。取土、修营宜向其方，宴乐、上官利用其日。
+            ('月德合', '丁乙辛己'[men % 4],d[0], ['上书', '祭祀', '修造', '动土','赴任', '出行', '嫁娶', '移徙', '开市', '纳财', '纳畜', '种植'],['诉讼']),
+            ('天德', '巳庚丁申壬辛亥甲癸寅丙乙'[men], d, ['嫁娶', '动土']),# 天德'巳庚丁申壬辛亥甲癸寅丙乙'天德合'申乙壬巳丁丙寅己戊亥辛庚'
+            ('天德合', '申乙壬巳丁丙寅己戊亥辛庚'[men],d, ['嫁娶','修造', '上书', '动土','祈福']),#《天宝历》曰：“天德合者，合德之神也。所理之方宜营构宫室、修筑城垣，所值之日宜覃恩肆赦、命将出师、祷礼山川，祈请福愿。
+            ('凤凰日', s[0], '危昴胃毕'[sn], ['嫁娶']),
+            ('麒麟日', s[0], '井尾牛壁'[sn], []),  # 凤凰日、麒麟日（麒麟日测试日期2019.03.07）
+            ('四相', d[0], ('丙丁', '戊己', '壬癸', '甲乙')[sn], ['祭祀', '赴任', '订婚', '嫁娶', '修作', '移徙', '种植', '出行']),#《总要历》曰：“四相者，四时王相之辰也。其日宜修营、起工、养育，生财、栽植、种莳、移徙、远行，曰：“春丙丁，夏戊己，秋壬癸，冬甲乙。
+            ('不将',d,bujiang[men],['嫁娶']),
+            ('时德', '午辰子寅'[sn], d[1], ['祈福', '宴请', '求职', '谒贵']),  # 时德:春午 夏辰 秋子 冬寅 20190204
+            ('大葬', d, '壬申癸酉壬午甲申乙酉丙申丁酉壬寅丙午己酉庚申辛酉', ['安葬']),
+            ('鸣吠', d, '庚午壬申癸酉壬午甲申乙酉己酉丙申丁酉壬寅丙午庚寅庚申辛酉',['安葬']),
+            ('小葬', d, '庚午壬辰甲辰乙巳甲寅丙辰庚寅', ['安葬']),
+            ('鸣吠对', d, '丙寅丁卯丙子辛卯甲午庚子癸卯壬子甲寅乙卯', ['安葬']),
+            ('不守塚',d,'庚午辛未壬申癸酉戊寅己卯壬午癸未甲申乙酉丁未甲午乙未丙申丁酉壬寅癸卯丙午戊申己酉庚申辛酉',['破土']),
+            ('官日', '卯午酉子'[sn], d[1], ['赴任']),
+            ('民日', '午酉子卯'[sn], d[1], []),
+            ('天贵', d[0], ('甲乙', '丙丁', '庚辛', '壬癸')[sn], []),# 20190216
+            ('天喜', '申酉戌亥子丑寅卯辰巳午未'[men], d[1], ['嫁娶', '纳采', '求嗣']),
+            ('天富', '寅卯辰巳午未申酉戌亥子丑'[men], d, ['造葬', '作仓']),
+            ('天恩', dhen % 15 < 5 and dhen // 15 != 2, [True], ['动土']),
+            ('三合',(den-men)%4==0,[True],[]),#三合数在地支上相差4个顺位
+            ('六合', '丑子亥戌酉申未午巳辰卯寅'[men], d, []),
+            ('月恩', '甲辛丙丁庚己戊辛壬癸庚乙'[men], d, ['营造', '婚姻', '移徙', '祭祀', '上官', '纳财', '动土']),#《五行论》曰：“月恩者，阳建所生之干也，子母相从谓之月恩。其日宜营造，婚姻、移徙，祭祀，上官，纳财。”
+            ('天成', '卯巳未酉亥丑卯巳未酉亥丑'[men], d, []),
+            ('天官', '午申戌子寅辰午申戌子寅辰'[men], d, []),
+            ('天医', '亥子丑寅卯辰巳午未申酉戌'[men], d, ['求医', '合药', '治病']),#《总要历》曰：“天医者，人之巫医。其日宜请药，避病、寻巫、祷祀。
+            ('天马', '寅辰午申戌子寅辰午申戌子'[men], d, []),
+            ('天财', '子寅辰午申戌子寅辰午申戌'[men], d, []),
+            ('地财', '丑卯巳未酉亥丑卯巳未酉亥'[men], d, ['入财']),
+            ('月财', '酉亥午巳巳未酉亥午巳巳未'[men], d, ['开市', '作仓', '作灶', '移徙', '出行', '移徙']),#起造、出行、移居
+            ('月空', '丙甲壬庚丙甲壬庚丙甲壬庚'[men], d, ['上书', '陈策', '造床', '修屋', '动土']),#《天宝历》曰：“月中之阳辰也。所理之日宜设筹谋。陈计策。
+            ('母仓', d[1], ('亥子', '寅卯', '辰丑戌未', '申酉')[sn], ['种植', '畜牧', '纳财']),
+            ('明星', '辰午甲戌子寅辰午甲戌子寅'[men], d, ['赴任', '诉讼', '造葬']),
+            ('圣心', '辰戌亥巳子午丑未寅申卯酉'[men], d, []),
+            ('五富', '巳申亥寅巳申亥寅巳申亥寅'[men], d, []),
+            ('禄库', '寅卯辰巳午未申酉戌亥子丑'[men], d, ['纳财']),
+            ('福生', '寅申酉卯戌辰亥巳子午丑未'[men], d, []),
+            ('福厚', '寅巳申亥'[sn], d, []),
+            ('吉庆', '未子酉寅亥辰丑午卯申巳戌'[men], d, []),
+            ('阴德', '丑亥酉未巳卯丑亥酉未巳卯'[men], d, []),
+            ('活曜', '卯申巳戌未子酉寅亥辰丑午'[men], d, []),
+            ('解神', '午午申申戌戌子子寅寅辰辰'[men], d, ['讼狱', '解冤']),
+            ('生气', '戌亥子丑寅卯辰巳午未申酉'[men], d, ['修造', '动土', '种植']),
+            ('普护', '丑卯申寅酉卯戌辰亥巳子午'[men], d, ['祈福', '嫁娶', '出行']),
+            ('益后', '巳亥子午丑未寅申卯酉辰戌'[men], d, ['嫁娶', '立嗣']),
+            ('续世', '午子丑未寅申卯酉辰戌巳亥'[men], d, ['嫁娶', '立嗣']),
+            ('要安', '未丑寅申卯酉辰戌巳亥午子'[men], d, []),
+            ('驿马', '寅亥申巳寅亥申巳寅亥申巳'[men], d, ['出行']),
+           ]
+        demon = [
+            ('岁破',den==(yen+6)%12,[True],['修造','移徙','嫁娶','出行']),#《广圣历》曰：“岁破者，太岁所冲之辰也。其地不可兴造、移徙，嫁娶、远行，犯者主损财物及害家长，惟战伐向之吉。
+            ('天罡', '卯戌巳子未寅酉辰亥午丑申'[men], d, ['动土']),
+            ('月厌', '子亥戌酉申未午巳辰卯寅丑'[men], d, ['嫁娶','出行','祈福', '求嗣', '进人口', '赴任', '动土', '开市', '立券', '交易', '伐木', '栽种', '牧养', '纳畜', '破土', '安葬']),
+            ('厌对', '午巳辰卯寅丑子亥戌酉申未'[men], d, ['嫁娶','出行']),
+            ('河魁', '酉辰亥午丑申卯戌巳子未寅'[men], d, ['动土','安门']),
+            # ('勾绞', '酉辰亥午丑申卯戌巳子未寅'[men], d, ['勾绞同大祸，百事凶。']),
+            ('小红砂', '酉丑巳酉丑巳酉丑巳酉丑巳'[men], d, []),
+            ('人隔。', '丑亥酉未巳卯丑亥酉未巳卯'[men], d, ['嫁娶','进人']),
+            ('往亡', '戌丑寅巳申亥卯午酉子辰未'[men], d, ['出行','赴任','嫁娶','求谋']),
+            ('重丧', '癸己甲乙己丙丁己庚辛己壬'[men], d, ['嫁娶','动土','安葬']),
+            ('重复', '癸己庚辛己壬癸戊甲乙己壬'[men], d, ['嫁娶','安葬']),
+            ('杨公忌', (lmn, ldn), mrY13, ['开张', '动土', '嫁娶', '立券']),# 杨筠松根据“二十八星宿”顺数，订定了“杨公十三忌”
+            ('神号', '申酉戌亥子丑寅卯辰巳午未'[men], d, []),
+            ('妨择', '辰辰午午申申戌戌子子寅寅'[men], d, []),
+            ('披麻杀', '午卯子酉午卯子酉午卯子酉'[men], d, ['嫁娶', '入宅']),
+            ('冰消瓦陷', '酉辰巳子丑申卯戌亥午未寅'[men], d, ['修造']),
+            ('大耗', '辰巳午未申酉戌亥子丑寅卯'[men], d, ['修仓','纳财']),#历例曰：“大耗者，岁中虚耗之神也。所理之地不可营造仓库、纳财物
+            ('天吏', '卯子酉午卯子酉午卯子酉午'[men], d, []),
+            ('天瘟', '丑卯未戌辰寅午子酉申巳亥'[men], d, ['修造','治病','六畜', '修造']),
+            ('天狱', '午酉子卯午酉子卯午酉子卯'[men], d, []),
+            ('天火', '午酉子卯午酉子卯午酉子卯'[men], d, ['修造']),
+            ('天棒', '寅辰午申戌子寅辰午申戌子'[men], d, ['诉讼']),
+            ('天狗', '寅卯辰巳午未申酉戌亥子丑'[men], d, []),
+            ('天狗下食', '戌亥子丑寅卯辰巳午未申酉'[men], d, ['祭祀']),
+            ('天贼', '卯寅丑子亥戌酉申未午巳辰'[men], d, ['安葬','出行','开池','动土']),
+            ('地火', '子亥戌酉申未午巳辰卯寅丑'[men], d, ['栽种']),
+            ('独火', '未午巳辰卯寅丑子亥戌酉申'[men], d, ['作灶', '修造']),
+            ('月破', '午未申酉戌亥子丑寅卯辰巳'[men], d, ['开市', '修造','大事勿用']),
+            ('月杀月虚', '未辰丑戌未辰丑戌未辰丑戌'[men], d, ['造门']),
+            ('受死', '卯酉戌辰亥巳子午丑未寅申'[men], d, [],['捕猎']),
+            ('死气', '辰巳午未申酉戌亥子丑寅卯'[men], d, ['修造','安床']),
+            ('黄沙', '寅子午寅子午寅子午寅子午'[men], d, ['出行']),
+            ('六不成', '卯未寅午戌巳酉丑申子辰亥'[men], d, ['修造']),
+            ('小耗', '卯辰巳午未申酉戌亥子丑寅'[men], d, ['入财']),
+            ('神隔', '酉未巳卯丑亥酉未巳卯丑亥'[men], d, ['祭祀','祈福']),
+            ('朱雀', '亥丑卯巳未酉亥丑卯巳未酉'[men], d, ['入宅','开门']),
+            ('白虎', '寅辰午申戌子寅辰午申戌子'[men], d, ['安葬']),
+            ('玄武', '巳未酉亥丑卯巳未酉亥丑卯'[men], d, ['安葬']),
+            ('勾陈', '未酉亥丑卯巳未酉亥丑卯巳'[men], d, []),
+            ('木马', '辰午巳未酉申戌子亥丑卯寅'[men], d, []),
+            ('五鬼', '未戌午寅辰酉卯申丑巳子亥'[men], d, ['出行']),
+            ('破败', '辰午申戌子寅辰午申戌子寅'[men], d, []),
+            ('殃败', '巳辰卯寅丑子亥戌酉申未午'[men], d, []),
+            ('雷公', '巳申寅亥巳申寅亥巳申寅亥'[men], d, []),
+            ('飞廉', '申酉戌巳午未寅卯辰亥子丑'[men], d, ['纳畜','修造','动土','移徙','嫁娶']),#《神枢经》曰：“飞廉者，岁之廉察使君之象，亦名大煞。所理之不可兴工、动土，移徙，嫁娶《广圣历》曰：“子年在申，丑年在酉，寅年在戌，卯年在巳，辰年在午，巳年在未，午年在寅，未年在卯，申 年在辰，酉年在亥，戌年在子，亥年在丑也。”
+            ('枯鱼', '申巳辰丑戌未卯子酉午寅亥'[men], d, ['栽种']),
+            ('九空', '申巳辰丑戌未卯子酉午寅亥'[men], d, ['出行','求财','开仓','种植']),
+            ('八座', '酉戌亥子丑寅卯辰巳午未申'[men], d, []),
+            ('血忌', '午子丑未寅申卯酉辰戌巳亥'[men], d, ['针灸','纳畜']),
+            ('阴错', '壬子癸丑庚寅辛卯庚辰丁巳丙午丁未甲申乙酉甲戌癸亥'[men*2:men*2+2], d, ['赴任']),
+            ('三娘煞', ldn, (3, 7, 13, 18, 22, 27), ['嫁娶']),
+            ('月忌', ldn, (5, 14, 23), ['出游', '入宅', '行船']),
+            ('四绝日',tmd,t4j,['出行','赴任','嫁娶','进人','迁移','开市','立券','祭祀']),
+            ('四离日', tmd, t4l, ['出行','嫁娶']),
+            # 天转有四日，分别是春季的乙卯日，夏季的丙午日，秋季的辛酉日，冬季的壬子日。
+            # 地转也有四日，分别是春季的辛卯日，夏季的戊午日，秋季的癸酉日，冬季的丙子日。
+            # “春季乙辛到兔位，夏天丙戊马上求；秋来辛癸听鸡叫，冬寒丙壬鼠洞留”。
+            ('天转', '乙卯丙午辛酉壬子'[sn * 2:sn * 2 + 2], d, ['动土', '修造', '搬家', '嫁娶']),
+            ('地转', '辛卯戊午癸酉丙子'[sn * 2:sn * 2 + 2], d, ['动土', '修造', '搬家', '嫁娶']),
+            ('月建转杀', '卯午酉子'[sn], d, ['动土', '修造']),
+            ('荒芜', d[1], '巳酉丑申子辰亥卯未寅午戌'[sn * 3:sn * 3 + 3], []),
+            # ('四正废', d, '庚申辛酉壬子癸亥甲寅乙卯丙午丁巳'[sn * 4:sn * 4 + 4], ['修造', '交易', '安床']),
+            ('四废', d, ('庚申辛酉', '壬子癸亥', '甲寅乙卯', '丁巳丙午')[sn], ['修造', '交易', '安床']),  # 庚申辛酉为春废，壬子癸亥夏时当。甲寅乙卯秋月值，丁巳丙午冬季防。
+            ('蚩尤', '戌子寅辰午申'[men % 6], d, ['冠笄']),  # 正七逢寅二八辰，三九午上四十申。五十一月原在戌，六十二月子为真。
+        ]
+        def getTodayGoodBadThing():
+            for i in [(angel,'goodName','goodThing'),(demon, 'badName', 'badThing')]:
+                y,y1,y2=i[0],i[1],i[2]
+                for x in y:
+                    if x[1] in x[2]:
+                        dic[y1] += [x[0]]
+                        dic[y2] += x[3]
+                dic[y2]=list(set(dic[y2]))
+            # 宜忌抵消
+            for i in dic['goodThing']:
+                if i in dic['badThing']:
+                    dic['goodThing'].remove(i)
+                    dic['badThing'].remove(i)
+            # 宜忌抵消后相克，岁德、月德、凤凰麒麟压朱雀白虎、三丧、月破、岁破、重丧、天罡等
+            # 待补充
+        getTodayGoodBadThing()
+        return (dic['goodName'],dic['badName']),(dic['goodThing'],dic['badThing'])
