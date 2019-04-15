@@ -296,8 +296,12 @@ class Lunar():
         return fetalGodList[the60HeavenlyEarth.index(self.day8Char)]
     # 每日时辰凶吉
     def get_twohourLuckyList(self):
-        tmp=twohourLuckyTimeList[the60HeavenlyEarth.index(self.day8Char)]
-        return ['凶' if tmp & (2 ** (12 - i)) > 0 else '吉' for i in range(1, 13)]
+        def tmp2List(tmp):
+            return ['凶' if tmp & (2 ** (12 - i)) > 0 else '吉' for i in range(1, 13)]
+        todayNum=self.dayHeavenlyEarthNum
+        tomorrowNum=(self.dayHeavenlyEarthNum+1)%60
+        outputList=(tmp2List(twohourLuckyTimeList[todayNum])+tmp2List(twohourLuckyTimeList[tomorrowNum]))
+        return outputList[:13]
     # 每日神煞、每日宜忌部分
     def get_today12DaysGod(self):
         '''
