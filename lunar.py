@@ -26,6 +26,7 @@ class Lunar():
         self.get_earthNum(),self.get_heavenNum(),self.get_season()
         self.twohour8CharList = self.get_twohour8CharList()
         self.twohour8Char = self.get_twohour8Char()
+        self.get_today12DayOfficer()
 
         self.chineseYearZodiac=self.get_chineseYearZodiac()
         self.chineseZodiacClash=self.get_chineseZodiacClash()
