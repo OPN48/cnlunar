@@ -240,10 +240,19 @@ class Lunar():
         return temp.strip().replace(' ',',')
 
     def get_otherHolidays(self):
-        holidayDic=otherHolidaysList[self.date.month-1]
-        if self.date.day in holidayDic:
-            return holidayDic[self.date.day]
-        return ''
+        tempList,y,m,d,wn,w=[],self.date.year,self.date.month,self.date.day,self.date.isocalendar()[1],self.date.isocalendar()[2]
+        eastHolidays={5: (2, 7, '母亲节'), 6: (3, 7, '父亲节')}
+        if m in eastHolidays:
+            t1dwn=datetime(y,m,1).isocalendar()[1]
+            if ((wn-t1dwn+1),w)==(eastHolidays[m][0],eastHolidays[m][1]):
+                tempList.append(eastHolidays[m][2])
+        holidayDic=otherHolidaysList[m-1]
+        if d in holidayDic:
+            tempList.append(holidayDic[d])
+        if tempList!=[]:
+            return ','.join(tempList)
+        else:
+            return ''
     def get_otherLunarHolidays(self):
         if not self.lunarMonth>12:
             holidayDic = otherLunarHolidaysList[self.lunarMonth - 1]
@@ -376,8 +385,8 @@ class Lunar():
         lmn=self.lunarMonth
 
         angel =[
-            ('岁德','甲庚丙壬戊甲庚丙壬戊'[yhn],d,['修造','动土','嫁娶','纳采','移徙','入宅','百事皆宜']),# 岁德、岁德合：年天干对日天干['修造','动土','嫁娶','纳采','移徙','入宅','百事皆宜'] 天干相合+5  20190206
-            ('岁德合', '己乙辛丁癸己乙辛丁癸'[yhn], d, ['修造','动土','赴任','嫁娶','纳采','移徙','入宅', '出行','百事皆宜']),#修营、起土，上官。嫁娶、远行，参谒
+            ('岁德','甲庚丙壬戊甲庚丙壬戊'[yhn],d,['修造','动土','嫁娶','纳采','移徙','入宅']),# 岁德、岁德合：年天干对日天干['修造','动土','嫁娶','纳采','移徙','入宅','百事皆宜'] 天干相合+5  20190206
+            ('岁德合', '己乙辛丁癸己乙辛丁癸'[yhn], d, ['修造','动土','赴任','嫁娶','纳采','移徙','入宅', '出行']),#修营、起土，上官。嫁娶、远行，参谒
             ('月德','壬庚丙甲'[men %4],d[0],['谒贵', '求贤', '赴任', '修造','动土', '嫁娶', '移徙', '纳财', '买畜', '市贾', '立契']),# 月德20190208《天宝历》曰：“月德者，月之德神也。取土、修营宜向其方，宴乐、上官利用其日。
             ('月德合', '丁乙辛己'[men % 4],d[0], ['上书', '祭祀', '修造', '动土','赴任', '出行', '嫁娶', '移徙', '开市', '纳财', '纳畜', '种植'],['诉讼']),
             ('天德', '巳庚丁申壬辛亥甲癸寅丙乙'[men], d, ['嫁娶', '动土']),# 天德'巳庚丁申壬辛亥甲癸寅丙乙'天德合'申乙壬巳丁丙寅己戊亥辛庚'
@@ -508,5 +517,8 @@ class Lunar():
                     dic['badThing'].remove(i)
             # 宜忌抵消后相克，岁德、月德、凤凰麒麟压朱雀白虎、三丧、月破、岁破、重丧、天罡等
             # 待补充
+            for i in angel[:2]:
+                if i[0] in dic['goodName']:
+                    dic['goodThing']=list(set(dic['goodThing']+i[3]))
         getTodayGoodBadThing()
         return (dic['goodName'],dic['badName']),(dic['goodThing'],dic['badThing'])
