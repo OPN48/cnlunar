@@ -571,5 +571,13 @@ class Lunar():
             for i in angel[:2]:
                 if i[0] in dic['goodName']:
                     dic['goodThing']=list(set(dic['goodThing']+i[3]))
+            # 排序
+            def sortCollation(x):
+                sortList=['出行','嫁娶', '开市','祭祀', '祈福', '动土']
+                if x in sortList:
+                    return sortList.index(x)
+                return len(sortList)+1
+            dic['goodThing'].sort(key=sortCollation)
+            dic['badThing'].sort(key=sortCollation)
         getTodayGoodBadThing()
         return (dic['goodName'],dic['badName']),(dic['goodThing'],dic['badThing'])
