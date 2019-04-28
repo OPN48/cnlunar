@@ -15,7 +15,7 @@ from .holidays import otherLunarHolidaysList, otherHolidaysList, legalsolarTerms
 from .solar24 import getTheYearAllSolarTermsList
 
 class Lunar():
-    def __init__(self,date=datetime.now()):
+    def __init__(self,date):
         self.date = date
         self.twohourNum = (self.date.hour + 1) // 2
         self._upper_year = ''
@@ -189,6 +189,7 @@ class Lunar():
         # (year-2019)*12+apartNum每年固定差12个月回到第N年月柱，2019小寒甲子，加上当前过了几个节气除以2+(nextNum-1)//2，减去1
         month8Char=the60HeavenlyEarth[((self.date.year-2019)*12+apartNum)%60]
         return month8Char
+
     def get_day8Char(self):
         apart=self.date-datetime(2019,1,29)
         baseNum=the60HeavenlyEarth.index('丙寅')
@@ -197,19 +198,24 @@ class Lunar():
             baseNum+=1
         self.dayHeavenlyEarthNum=(apart.days+baseNum)%60
         return the60HeavenlyEarth[self.dayHeavenlyEarthNum]
+
     def get_twohour8CharList(self):
         # 北京时间离长安时间差1小时，一天24小时横跨13个时辰,清单双循环
         begin = (the60HeavenlyEarth.index(self.day8Char) * 12) % 60
         return (the60HeavenlyEarth + the60HeavenlyEarth)[begin:begin + 13]
+
     def get_twohour8Char(self):
         return self.twohour8CharList[self.twohourNum]
+
     def get_the8char(self):
         return self.get_year8Char(),self.get_month8Char(),self.get_day8Char()
+
     def get_earthNum(self):
         self.yearEarthNum = the12EarthlyBranches.index(self.year8Char[1])
         self.monthEarthNum=the12EarthlyBranches.index(self.month8Char[1])
         self.dayEarthNum=the12EarthlyBranches.index(self.day8Char[1])
         return self.yearEarthNum,self.monthEarthNum,self.dayEarthNum
+
     def get_heavenNum(self):
         self.yearHeavenNum = the10HeavenlyStems.index(self.year8Char[0])
         self.monthHeavenNum = the10HeavenlyStems.index(self.month8Char[0])
