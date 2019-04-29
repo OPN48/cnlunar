@@ -601,6 +601,8 @@ class Lunar():
             for i in angel[:2]:
                 if i[0] in dic['goodName']:
                     dic['goodThing']=list(set(dic['goodThing']+i[3]))
+                    for j in i[3]:
+                        dic['badThing'].remove(j)
             # 排序
             def sortCollation(x):
                 sortList=['出行','嫁娶', '开市','祭祀', '祈福', '动土']
