@@ -598,12 +598,13 @@ class Lunar():
                     dic['badThing'].remove(i)
             # 宜忌抵消后相克，岁德、月德、凤凰麒麟压朱雀白虎、三丧、月破、岁破、重丧、天罡等
             # 待补充
+
             for i in angel[:2]:
                 if i[0] in dic['goodName']:
                     dic['goodThing']=list(set(dic['goodThing']+i[3]))
-                    for j in i[3]:
-                        dic['badThing'].remove(j)
             # 排序
+            for removeThing in list(set(dic['goodThing']).intersection(set(dic['badThing']))):
+                dic['badThing'].remove(removeThing)
             def sortCollation(x):
                 sortList=['出行','嫁娶', '开市','祭祀', '祈福', '动土']
                 if x in sortList:
