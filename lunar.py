@@ -184,7 +184,7 @@ class Lunar():
         nextNum = self.getNextNum(findDate,solarTermsDateList)
         # 2019年正月为丙寅月
         if nextNum==0 and self.date.month==12:
-            nextNum=25
+            nextNum=24
         apartNum=(nextNum+1)//2
         # (year-2019)*12+apartNum每年固定差12个月回到第N年月柱，2019小寒甲子，加上当前过了几个节气除以2+(nextNum-1)//2，减去1
         month8Char=the60HeavenlyEarth[((self.date.year-2019)*12+apartNum)%60]
