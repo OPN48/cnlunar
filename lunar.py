@@ -270,12 +270,18 @@ class Lunar():
     def get_pengTaboo(self, long=9, delimit=','):
         return pengTatooList[self.dayHeavenNum][:long] + delimit + pengTatooList[self.dayEarthNum + 10][:long]
 
+
     # 建除十二神，《淮南子》曰：正月建寅，则寅为建，卯为除，辰为满，巳为平，主生；午为定，未为执，主陷；申为破，主衡；酉为危，主杓；戍为成，主小德；亥为收，主大备；子为开，主太阳；丑为闭，主太阴。
     def get_today12DayOfficer(self):
-        thisMonthStartGodNum = (self.lunarMonth - 1 + 2) % 12
-        apartnum = self.dayEarthNum - thisMonthStartGodNum
-        self.today12DayOfficer = chinese12DayOfficers[apartnum % 12]
+        # thisMonthStartGodNum = (self.lunarMonth -1 + 2) % 12
+        # print(str(self.lunarMonth)+'=========='+str(thisMonthStartGodNum))
+        thisMonthStartGodNum = (self.monthEarthNum) % 12
+        print(str(self.monthEarthNum) + '==========' + str(thisMonthStartGodNum))
+        apartNum = self.dayEarthNum - thisMonthStartGodNum
+        self.today12DayOfficer = chinese12DayOfficers[apartNum % 12]
         return self.today12DayOfficer
+
+
     # 八字与五行
     def get_the28Stars(self):
         apart = self.date - datetime(2019, 1, 17)
