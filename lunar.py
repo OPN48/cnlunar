@@ -589,9 +589,9 @@ class Lunar():
             ('大煞', '申酉戌巳午未寅卯辰亥子丑'[men], d, [])
         ]
         # 宜忌等第表 计算凶吉
-        def getTodayThingLevel():
-            i=self.today12DayOfficer
-            if i =='平':
+        # def getTodayThingLevel():
+        #     i=self.today12DayOfficer
+        #     if i =='平':
 
 
 
