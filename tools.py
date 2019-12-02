@@ -3,7 +3,7 @@
 # github: https://github.com/cuba3/pyGregorian2LunarCalendar
 
 # 去除空行
-from config import encryptionVectorList
+from config import encryptionVectorList, thingsSort
 
 
 def not_empty(s):
@@ -15,3 +15,9 @@ def abListMerge(a, b=encryptionVectorList, type=1):
     for i in range(len(a)):
         c.append(a[i]+b[i]*type)
     return c
+
+def sortCollation(x, sortList=thingsSort):
+    if x in sortList:
+        return sortList.index(x)
+    else:
+        return len(sortList) + 1
