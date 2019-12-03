@@ -2,7 +2,7 @@ import datetime
 from . import lunar
 
 
-now=datetime.datetime(2019,2,5,22,30)
+now=datetime.datetime(2019,12,3,22,30)
 a=lunar.Lunar(now)
 # a.showMonth()
 print(a.date)
@@ -23,7 +23,7 @@ print('建除十二神', a.get_today12DayOfficer())
 
 print('节日',a.get_legalHolidays(),a.get_otherHolidays(),a.get_otherLunarHolidays())
 
-print('农历%s年%s'% (a.year8Char, a.lunarMonthCn))
+print('%s年%s'% (a.year8Char, a.lunarMonthCn))
 print('今日五行',a.get_today5Elements())
 print(a.get_the28Stars(),a.get_nayin())
 print(a.get_the9FlyStar())
