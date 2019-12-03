@@ -6,6 +6,8 @@ month_DAY_BIT = 12
 month_NUM_BIT = 13
 stc= '小寒大寒立春雨水惊蛰春分清明谷雨立夏小满芒种夏至小暑大暑立秋处暑白露秋分寒露霜降立冬小雪大雪冬至'
 solarTermsNameList=[stc[x * 2:(x + 1) * 2] for x in range(0, len(stc) // 2)]
+eastZodiacList=['玄枵','娵訾','降娄','大梁','实沈','鹑首','鹑火','鹑尾','寿星','大火','析木','星纪']
+
 the10HeavenlyStems =['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸']
 the10HeavenlyStems5ElementsList=['木', '木', '火', '火', '土', '土', '金', '金', '水', '水']
 the12EarthlyBranches = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥']

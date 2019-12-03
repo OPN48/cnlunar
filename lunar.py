@@ -34,6 +34,7 @@ class Lunar():
         self.chineseZodiacClash=self.get_chineseZodiacClash()
         self.weekDayCn=self.get_weekDayCn()
         self.todaySolarTerms=self.get_todaySolarTerms()
+        self.todayEastZodiac=self.get_eastZodiac()
         self.thisYearSolarTermsDic=dict(zip(solarTermsNameList, self.solarTermsDateList))
 
         self.today28Star=self.get_the28Stars()
@@ -162,9 +163,11 @@ class Lunar():
         return self.solarTermsDateList
     def getNextNum(self,findDate,solarTermsDateList):
         return len(list(filter(lambda y: y <= findDate, solarTermsDateList)))%24
+
+
     def get_todaySolarTerms(self):
         '''
-        :return:是否节气
+        :return:节气
         '''
         solarTermsDateList = self.getSolarTermsDateList()
         findDate = (self.date.month, self.date.day)
@@ -175,6 +178,13 @@ class Lunar():
         else:
             todaySolarTerm = '无'
         return todaySolarTerm
+
+    # 星次
+    def get_eastZodiac(self):
+        todayEastZodiac=eastZodiacList[(solarTermsNameList.index(self.nextSolarTerm)-1)%24//2]
+        return todayEastZodiac
+
+
     # # # 八字部分
     def get_year8Char(self):
         str=the10HeavenlyStems[(self.lunarYear-4)%10] + the12EarthlyBranches[(self.lunarYear - 4) % 12]
@@ -342,8 +352,13 @@ class Lunar():
     # 宜忌等第表 计算凶吉
     def getTodayThingLevel(self):
         '''
-        # '建除满平定执破危成收开闭'
-        # '子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'
+        # 上：吉足胜凶，从宜不从忌;
+        # 上次：吉足抵凶，遇德从宜不从忌，不遇从宜亦从忌；
+        # 中：吉不抵凶，遇德从宜不从忌，不遇从忌不从宜；
+        # 中次：凶胜于吉，遇德从宜亦从忌，不遇从忌不从宜；
+        # 下：凶又逢凶，遇德从忌不从宜，不遇诸事皆忌；
+        # 下下：凶叠大凶，遇德亦诸事皆忌；卯酉月 灾煞遇 月破、月厌  月厌遇灾煞、月破
+        # level = {0: '上', 1: '上次', 2: '中', 3: '中次', 4: '下', 5: '下下', -1: '无'}
         '''
         badGodDic={
             '平日': [
@@ -430,14 +445,9 @@ class Lunar():
                 ('子', ['平日', '月刑'], 4),
             ]
         }
-        # 上：吉足胜凶，从宜不从忌;
-        # 上次：吉足抵凶，遇德从宜不从忌，不遇从宜亦从忌；
-        # 中：吉不抵凶，遇德从宜不从忌，不遇从忌不从宜；
-        # 中次：凶胜于吉，遇德从宜亦从忌，不遇从忌不从宜；
-        # 下：凶又逢凶，遇德从忌不从宜，不遇诸事皆忌；
-        # 下下：凶叠大凶，遇德亦诸事皆忌；卯酉月 灾煞遇 月破、月厌  月厌遇灾煞、月破
+        # 判断是否德大会 大时 与 月德相会
 
-        # level = {0: '上', 1: '上次', 2: '中', 3: '中次', 4: '下', 5: '下下', -1: '无'}
+
         todayAllGodName =self.goodGodName + self.badGodName+ [self.today12DayOfficer + '日']
         l=-1
         for gnoItem in todayAllGodName:
@@ -705,24 +715,30 @@ class Lunar():
             ('大煞', '申酉戌巳午未寅卯辰亥子丑'[men], d, [])
         ]
 
-
-
-
-        def getTodayGoodBadThing():
-            # 配合angel、demon的数据结构的吉神凶神筛选
+        # 配合angel、demon的数据结构的吉神凶神筛选
+        def getTodayGoodBadThing(dic):
             for i in [(angel,'goodName','goodThing'),(demon, 'badName', 'badThing')]:
-                y,y1,y2=i[0],i[1],i[2]
+                godDb,godNameKey,thingKey=i[0],i[1],i[2]
                 # print(demon)
-                for x in y:
+                for godItem in godDb:
                     # print(x, x[1] , x[2]) 输出当日判断结果x[1]，看x[1]是否落在判断范围x[2]里面
-                    if x[1] in x[2]:
-                        goodBadGodAndThingDic[y1] += [x[0]]
-                        goodBadGodAndThingDic[y2] += x[3]
+                    if godItem[1] in godItem[2]:
+                        dic[godNameKey] += [godItem[0]]
+                        dic[thingKey] += godItem[3]
                 # 宜列、忌列分别去重
-                goodBadGodAndThingDic[y2]=list(set(goodBadGodAndThingDic[y2]))
-            return goodBadGodAndThingDic['goodName'],goodBadGodAndThingDic['badName']
+                dic[thingKey]=list(set(dic[thingKey]))
+            return dic
 
-        self.goodGodName,self.badGodName=getTodayGoodBadThing()
+        goodBadGodAndThingDic=getTodayGoodBadThing(goodBadGodAndThingDic)
+
+        self.goodGodName = goodBadGodAndThingDic['goodName']
+        self.badGodName = goodBadGodAndThingDic['badName']
+        # 宜忌等第等级
+        todayThingLevel=self.getTodayThingLevel()
+        # 是否遇德
+        #
+
+
         # 不完备做法，预备替换成宜忌等第表
 
         # 第一方案：《钦定协纪辨方书》古书影印版，宜忌等第表

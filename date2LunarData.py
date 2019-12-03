@@ -12,7 +12,7 @@ print('时辰凶吉：%s'%a.get_twohourLuckyList())
 
 print('%s %s[%s]年 %s%s' % (a.lunarYearCn, a.year8Char, a.chineseYearZodiac, a.lunarMonthCn, a.lunarDayCn))
 
-print(a.chineseZodiacClash,a.weekDayCn,a.get_starZodiac())
+print(a.chineseZodiacClash,a.weekDayCn,a.get_starZodiac(),a.todayEastZodiac)
 print('今日三合',a.zodiacMark3List,'今日六合',a.zodiacMark6)
 # 今天是否是节气，下一个节气名称
 print(a.todaySolarTerms,a.nextSolarTerm,a.thisYearSolarTermsDic[a.nextSolarTerm])
@@ -32,4 +32,3 @@ print('今日胎神',a.get_fetalGod())
 
 print(a.get_AngelDemon())
 print(a.lunarSeason)
-print(a.getTodayThingLevel())
