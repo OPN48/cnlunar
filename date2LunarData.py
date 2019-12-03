@@ -32,3 +32,4 @@ print('今日胎神',a.get_fetalGod())
 
 print(a.get_AngelDemon())
 print(a.lunarSeason)
+print(a.getTodayThingLevel())
