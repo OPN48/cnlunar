@@ -455,8 +455,8 @@ class Lunar():
                 for item in badGodDic[gnoItem]:
                     if self.month8Char[1] in item[0]:
                         for godname in item[1]:
-                            if godname in todayAllGodName and item[3]>l:
-                                l=item[3]
+                            if godname in todayAllGodName and item[2]>l:
+                                l=item[2]
                                 break
         return l
 
@@ -714,7 +714,6 @@ class Lunar():
               '破土', '安葬', '启攒']),
             ('大煞', '申酉戌巳午未寅卯辰亥子丑'[men], d, [])
         ]
-
         # 配合angel、demon的数据结构的吉神凶神筛选
         def getTodayGoodBadThing(dic):
             for i in [(angel,'goodName','goodThing'),(demon, 'badName', 'badThing')]:
