@@ -285,14 +285,21 @@ class Lunar():
 
     # 建除十二神，《淮南子》曰：正月建寅，则寅为建，卯为除，辰为满，巳为平，主生；午为定，未为执，主陷；申为破，主衡；酉为危，主杓；戍为成，主小德；亥为收，主大备；子为开，主太阳；丑为闭，主太阴。
     def get_today12DayOfficer(self):
+        '''
+        chinese12DayGods=['青龙','明堂','天刑','朱雀','金贵','天德','白虎','玉堂','天牢','玄武','司命','勾陈']
+        青龙定位口诀：子午寻申位，丑未戌上亲；寅申居子中，卯酉起于寅；辰戌龙位上，巳亥午中寻。
+        [申戌子寅辰午]
+        十二神凶吉口诀：道远几时通达，路遥何日还乡 辶为吉神(0,1,4,5,7,11)为黄道吉日
+        '''
         # thisMonthStartGodNum = (self.lunarMonth -1 + 2) % 12
         # print(str(self.lunarMonth)+'=========='+str(thisMonthStartGodNum))
         thisMonthStartGodNum = (self.monthEarthNum) % 12
         # print(str(self.monthEarthNum) + '==========' + str(thisMonthStartGodNum))
         apartNum = self.dayEarthNum - thisMonthStartGodNum
+        self.today12DayGod = chinese12DayGods[apartNum% 12]
+        dayName = '黄道日' if apartNum in (0, 1, 4, 5, 7, 11) else '黑道日'
         self.today12DayOfficer = chinese12DayOfficers[apartNum % 12]
-        return self.today12DayOfficer
-
+        return self.today12DayOfficer,self.today12DayGod,dayName
 
     # 八字与五行
     def get_the28Stars(self):
@@ -336,18 +343,7 @@ class Lunar():
         tomorrowNum=(self.dayHeavenlyEarthNum+1)%60
         outputList=(tmp2List(twohourLuckyTimeList[todayNum])+tmp2List(twohourLuckyTimeList[tomorrowNum]))
         return outputList[:13]
-    # 每日神煞、每日宜忌部分
-    def get_today12DaysGod(self):
-        '''
-        chinese12DayGods=['青龙','明堂','天刑','朱雀','金贵','天德','白虎','玉堂','天牢','玄武','司命','勾陈']
-        青龙定位口诀：子午寻申位，丑未戌上亲；寅申居子中，卯酉起于寅；辰戌龙位上，巳亥午中寻。
-        [申戌子寅辰午]
-        十二神凶吉口诀：道远几时通达，路遥何日还乡 辶为吉神(0,1,4,5,7,11)为黄道吉日
-        '''
-        num=(self.dayEarthNum-2*(self.monthEarthNum-2))%12
-        self.today12DayGod=chinese12DayGods[num]
-        dayName ='黄道日' if num in (0,1,4,5,7,11) else '黑道日'
-        return self.today12DayGod,dayName
+
 
     # 宜忌等第表 计算凶吉
     def getTodayThingLevel(self):

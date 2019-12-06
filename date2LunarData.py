@@ -2,7 +2,7 @@ import datetime
 import lunar
 
 
-now=datetime.datetime(2019,12,6,22,30)
+now=datetime.datetime(2019,12,7,22,30)
 a=lunar.Lunar(now)
 # a.showMonth()
 print(a.date)
