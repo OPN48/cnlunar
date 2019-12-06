@@ -9,6 +9,8 @@
 
 
 from datetime import datetime, timedelta
+
+from .tools import sortCollation
 from .config import *
 from .holidays import otherLunarHolidaysList, otherHolidaysList, legalsolarTermsHolidayDic, legalHolidaysDic, \
     legalLunarHolidaysDic
@@ -32,6 +34,7 @@ class Lunar():
         self.chineseZodiacClash=self.get_chineseZodiacClash()
         self.weekDayCn=self.get_weekDayCn()
         self.todaySolarTerms=self.get_todaySolarTerms()
+        self.todayEastZodiac=self.get_eastZodiac()
         self.thisYearSolarTermsDic=dict(zip(solarTermsNameList, self.solarTermsDateList))
 
         self.today28Star=self.get_the28Stars()
@@ -160,9 +163,11 @@ class Lunar():
         return self.solarTermsDateList
     def getNextNum(self,findDate,solarTermsDateList):
         return len(list(filter(lambda y: y <= findDate, solarTermsDateList)))%24
+
+
     def get_todaySolarTerms(self):
         '''
-        :return:是否节气
+        :return:节气
         '''
         solarTermsDateList = self.getSolarTermsDateList()
         findDate = (self.date.month, self.date.day)
@@ -173,6 +178,13 @@ class Lunar():
         else:
             todaySolarTerm = '无'
         return todaySolarTerm
+
+    # 星次
+    def get_eastZodiac(self):
+        todayEastZodiac=eastZodiacList[(solarTermsNameList.index(self.nextSolarTerm)-1)%24//2]
+        return todayEastZodiac
+
+
     # # # 八字部分
     def get_year8Char(self):
         str=the10HeavenlyStems[(self.lunarYear-4)%10] + the12EarthlyBranches[(self.lunarYear - 4) % 12]
@@ -336,6 +348,119 @@ class Lunar():
         self.today12DayGod=chinese12DayGods[num]
         dayName ='黄道日' if num in (0,1,4,5,7,11) else '黑道日'
         return self.today12DayGod,dayName
+
+    # 宜忌等第表 计算凶吉
+    def getTodayThingLevel(self):
+        '''
+        # 上：吉足胜凶，从宜不从忌;
+        # 上次：吉足抵凶，遇德从宜不从忌，不遇从宜亦从忌；
+        # 中：吉不抵凶，遇德从宜不从忌，不遇从忌不从宜；
+        # 中次：凶胜于吉，遇德从宜亦从忌，不遇从忌不从宜；
+        # 下：凶又逢凶，遇德从忌不从宜，不遇诸事皆忌；
+        # 下下：凶叠大凶，遇德亦诸事皆忌；卯酉月 灾煞遇 月破、月厌  月厌遇灾煞、月破
+        # level = {0: '上', 1: '上次', 2: '中', 3: '中次', 4: '下', 5: '下下', -1: '无'}
+        '''
+        badGodDic={
+            '平日': [
+                ('亥', ['相日', '时德', '六合'],0),
+                ('巳', ['相日', '六合', '月刑'],1),
+                ('申', ['相日', '月害'],2),
+                ('寅', ['相日', '月害', '月刑'],3),
+                ('卯午酉', ['天吏'], 3),
+                ('辰戌丑未', ['月煞'],4),
+                ('子', ['天吏', '月刑'],4)
+            ],
+            '收日': [
+                ('寅申', ['长生', '六合', '劫煞'],0),
+                ('巳亥', ['长生', '劫煞'],2),
+                ('辰未', ['月害'],2),
+                ('子午酉', ['大时'],3),
+                ('丑戌', ['月刑'], 3),
+                ('卯', ['大时'], 4),
+            ],
+            '闭日':  [
+                ('子午卯酉', ['王日'],3),
+                ('辰戌丑未', ['官日', '天吏'],3),
+                ('寅申巳亥', ['月煞'],4)
+            ],
+            '劫煞': [
+                # ('寅申', ['长生', '六合', '收日'], 0
+                ('寅申', ['长生', '六合'], 0),
+                ('辰戌丑未', ['除日', '相日'], 1),
+                # ('巳亥', ['长生', '月害', '收日'], 2)
+                ('巳亥', ['长生', '月害'], 2),
+                ('子午卯酉', ['执日'], 3)
+            ],
+            '灾煞': [
+                ('寅申巳亥', ['开日'], 1),
+                ('辰戌丑未', ['满日', '民日'], 2),
+                ('子午', ['月破'], 4),
+                ('卯酉', ['月破', '月厌'], 5)
+            ],
+            '月煞': [
+                ('卯酉', ['六合', '危日'], 1),
+                ('子午', ['月害', '危日'], 3),
+                # ('寅申巳亥', ['闭日'], 4),
+                # ('辰戌丑未', ['平日'], 4)
+            ],
+            '月刑': [
+                ('巳', ['平日', '六合', '相日'], 1),
+                ('寅', ['相日', '月害', '平日'], 3),
+                ('辰酉亥', ['建日'], 3),
+                # ('丑戌', ['收日'], 3),
+                ('子', ['平日', '天吏'], 4),
+                ('卯', ['收日', '大时', '天破'], 4),
+                ('未申', ['月破'], 4),
+                ('午', ['月建', '月厌', '德大会'], 4)
+            ],
+            '月害': [
+                ('卯酉', ['守日', '除日'], 2),
+                ('丑未', ['执日', '大时'], 2),
+                ('巳亥', ['长生', '劫煞'], 2),
+                ('申', ['相日', '平日'], 2),
+                ('子午', ['月煞'], 3),
+                ('辰戌', ['官日', '闭日', '天吏'], 3),
+                ('寅', ['相日', '平日', '月刑'], 3)
+            ],
+            '月厌': [
+                ('寅申', ['成日'], 2),
+                ('丑未', ['开日'], 2),
+                ('辰戌', ['定日'], 3),
+                ('已亥', ['满日'], 3),
+                ('子', ['月建', '德大会'], 4),
+                ('午', ['月建', '月刑', '德大会'], 4),
+                ('卯酉', ['月破', '灾煞'], 5)
+            ],
+            '大时': [
+                ('寅申已亥', ['除日', '官日'], 0),
+                ('辰戌', ['执日', '六合'], 0),
+                ('丑未', ['执日', '月害'], 2),
+                ('子午酉', ['收日'], 3),
+                ('卯', ['收日', '月刑'], 4)
+            ],
+            '天吏': [
+                ('寅申已亥', ['危日'], 2),
+                ('辰戌丑未', ['闭日'], 3),
+                ('卯午酉', ['平日'], 3),
+                ('子', ['平日', '月刑'], 4),
+            ]
+        }
+        # 判断是否德大会 大时 与 月德相会
+
+
+        todayAllGodName =self.goodGodName + self.badGodName+ [self.today12DayOfficer + '日']
+        l=-1
+        for gnoItem in todayAllGodName:
+            if gnoItem in badGodDic:
+                for item in badGodDic[gnoItem]:
+                    if self.month8Char[1] in item[0]:
+                        for godname in item[1]:
+                            if godname in todayAllGodName and item[2]>l:
+                                l=item[2]
+                                break
+        return l
+
+
     def get_AngelDemon(self):
         '''
         the10HeavenlyStems =['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸']
@@ -377,7 +502,10 @@ class Lunar():
             if o in bad:
                 dic['badThing'] = bad[o]
             return dic
-        dic=defauleThing(self.today12DayOfficer)
+
+        goodBadGodAndThingDic=defauleThing(self.today12DayOfficer)
+
+
         bujiang=['壬寅壬辰辛丑辛卯辛巳庚寅庚辰丁丑丁卯丁巳戊寅戊辰','辛丑辛卯庚子庚寅庚辰丁丑丁卯丙子丙寅丙辰戊子戊寅戊辰','辛亥辛丑辛卯庚子庚寅丁亥丁丑丁卯丙子丙寅戊子戊寅','庚戌庚子庚寅丁亥丁丑丙戌丙子丙寅乙亥乙丑戊戌戊子戊寅','丁酉丁亥丁丑丙戌丙子乙酉乙亥乙丑甲戌甲子戊戌戊子','丁酉丁亥丙申丙戌丙子乙酉乙亥甲申甲戌甲子戊申戊戌戊子','丙申丙戌乙未乙酉乙亥甲申甲戌癸未癸酉癸亥戊申戊戌','乙未乙酉甲午甲申甲戌癸未癸酉壬午壬申壬戌戊午戊申戊戌','乙巳乙未乙酉甲午甲申癸巳癸未癸酉壬午壬申戊午戊申','甲辰甲午甲申癸巳癸未壬辰壬午壬申辛巳辛未戊辰戊午戊申','癸卯癸巳癸未壬辰壬午辛卯辛巳辛未庚辰庚午戊辰戊午','癸卯癸巳壬寅壬辰壬午辛卯辛巳庚寅庚辰庚午戊寅戊辰戊午']
         mrY13 = [(1, 13), (2, 11), (3, 9), (4, 7), (5, 5), (6, 2), (7, 1), (7, 29), (8, 27), (9, 25), (10, 23), (11, 21),(12, 19)]
         tomorrow = self.date + timedelta(days=1)
@@ -400,9 +528,9 @@ class Lunar():
             ('岁德', '甲庚丙壬戊甲庚丙壬戊'[yhn], d, ['修造', '动土', '嫁娶', '纳采', '移徙', '入宅']),
             # 岁德、岁德合：年天干对日天干['修造','动土','嫁娶','纳采','移徙','入宅','百事皆宜'] 天干相合+5  20190206
             ('岁德合', '己乙辛丁癸己乙辛丁癸'[yhn], d, ['修造', '动土', '赴任', '嫁娶', '纳采', '移徙', '入宅', '出行']),  # 修营、起土，上官。嫁娶、远行，参谒
-            ('月德', '壬庚丙甲'[men % 4], d[0], ['赴任', '谒贵', '求贤', '修造', '动土', '嫁娶', '移徙', '纳财', '买畜', '立券']),
+            ('月德', '庚丙甲壬'[lmn % 4], d[0], ['赴任', '谒贵', '求贤', '修造', '动土', '嫁娶', '移徙', '纳财', '买畜', '立券']),
             # 月德20190208《天宝历》曰：“月德者，月之德神也。取土、修营宜向其方，宴乐、上官利用其日。
-            ('月德合', '丁乙辛己'[men % 4], d[0], ['上书', '祭祀', '修造', '动土', '赴任', '出行', '嫁娶', '移徙', '开市', '纳财', '纳畜', '种植'],
+            ('月德合', '乙辛己丁'[lmn % 4], d[0], ['上书', '祭祀', '修造', '动土', '赴任', '出行', '嫁娶', '移徙', '开市', '纳财', '纳畜', '种植'],
              ['诉讼']),
             ('天德', '巳庚丁申壬辛亥甲癸寅丙乙'[men], d,
              ['嫁娶', '祭祀', '修造', '上书', '动土', '祈福', '入宅', '安葬', '订婚', '六礼', '宴会', '纳采', '修仓', '栽种', '求医', '赴任', '雪冤',
@@ -588,35 +716,79 @@ class Lunar():
             ('大煞', '申酉戌巳午未寅卯辰亥子丑'[men], d, [])
         ]
 
-
-        def getTodayGoodBadThing():
+        # 配合angel、demon的数据结构的吉神凶神筛选
+        def getTodayGoodBadThing(dic):
             for i in [(angel,'goodName','goodThing'),(demon, 'badName', 'badThing')]:
-                y,y1,y2=i[0],i[1],i[2]
-                for x in y:
-                    if x[1] in x[2]:
-                        dic[y1] += [x[0]]
-                        dic[y2] += x[3]
-                dic[y2]=list(set(dic[y2]))
-            # 宜忌抵消
-            for i in dic['goodThing']:
-                if i in dic['badThing']:
-                    dic['goodThing'].remove(i)
-                    dic['badThing'].remove(i)
-            # 宜忌抵消后相克，岁德、月德、凤凰麒麟压朱雀白虎、三丧、月破、岁破、重丧、天罡等
-            # 待补充
+                godDb,godNameKey,thingKey=i[0],i[1],i[2]
+                # print(demon)
+                for godItem in godDb:
+                    # print(x, x[1] , x[2]) 输出当日判断结果x[1]，看x[1]是否落在判断范围x[2]里面
+                    if godItem[1] in godItem[2]:
+                        dic[godNameKey] += [godItem[0]]
+                        dic[thingKey] += godItem[3]
+                # 宜列、忌列分别去重
+                dic[thingKey]=list(set(dic[thingKey]))
+            return dic
 
-            for i in angel[:2]:
-                if i[0] in dic['goodName']:
-                    dic['goodThing']=list(set(dic['goodThing']+i[3]))
-            # 排序
-            for removeThing in list(set(dic['goodThing']).intersection(set(dic['badThing']))):
-                dic['badThing'].remove(removeThing)
-            def sortCollation(x):
-                sortList=['出行','嫁娶', '开市','祭祀', '祈福', '动土']
-                if x in sortList:
-                    return sortList.index(x)
-                return len(sortList)+1
-            dic['goodThing'].sort(key=sortCollation)
-            dic['badThing'].sort(key=sortCollation)
-        getTodayGoodBadThing()
-        return (dic['goodName'],dic['badName']),(dic['goodThing'],dic['badThing'])
+        goodBadGodAndThingDic=getTodayGoodBadThing(goodBadGodAndThingDic)
+
+        self.goodGodName = goodBadGodAndThingDic['goodName']
+        self.badGodName = goodBadGodAndThingDic['badName']
+        # 宜忌等第等级
+        todayThingLevel=self.getTodayThingLevel()
+        # 是否遇德
+        #
+
+
+        # 不完备做法，预备替换成宜忌等第表
+
+        # 第一方案：《钦定协纪辨方书》古书影印版，宜忌等第表
+
+        # 宜忌相冲抵消方案待补充
+        # 凡铺注《万年历》、《通书》，先依用事次第察其所宜忌之日，于某日下注宜某事，某日下注忌某事，次按宜忌，较量其凶吉之轻重，以定去取。
+        # 凡宜宣政事，布政事之日，只注宜宣政事。
+        # 凡宜营建宫室、修宫室之日，只注宜营建宫室。。
+        #
+        # 凡德合、赦愿、月恩、四相、时德等日，不注忌进人口、安床、经络、酝酿、开市、立券、交易、纳财、开仓库、出货财。如遇德犹忌，及从忌不从宜之日，则仍注忌。
+        # 凡天狗寅日忌祭祀，不注宜求福、祈嗣。
+        # 凡卯日忌穿井，不注宜开渠。壬日忌开渠，不注宜穿井。
+        # 凡巳日忌出行，不注宜出师、遣使。
+        # 凡酉日忌宴会，亦不注宜庆赐、赏贺。
+        # 凡丁日忌剃头，亦不注宜整容。
+        #
+        # 凡吉足胜凶，从宜不从忌者，如遇德犹忌之事，则仍注忌。
+        # 凡吉足胜凶，从宜不从忌者，如遇德犹忌之事，则仍注忌。
+        #
+        # 凡吉凶相抵，不注宜亦不注忌者，如遇德犹忌之事，则仍注忌。
+        # 凡吉凶相抵，不注忌祈福，亦不注忌求嗣。
+        # 凡吉凶相抵，不注忌结婚姻，亦不注忌冠带、纳采问名、嫁娶、进人口，如遇德犹忌之日则仍注忌。
+        # 凡吉凶相抵，不注忌嫁娶，亦不注忌冠带、结婚姻、纳采问名、进人口、搬移、安床，如遇德犹忌之日，则仍注忌。遇不将而不注忌嫁娶者，亦仍注忌。遇亥日、厌对、八专、四忌、四穷而仍注忌嫁娶者，只注所忌之事，其不忌者仍不注忌。
+        # 凡吉凶相抵，不注忌搬移，亦不注忌安床。不注忌安床，亦不注忌搬移。如遇德犹忌之日，则仍注忌。
+        # 凡吉凶相抵，不注忌解除，亦不注忌整容、剃头、整手足甲。如遇德犹忌之日，则仍注忌。
+        # 凡吉凶相抵，不注忌修造动土、竖柱上梁，亦不注忌修宫室、缮城郭、筑提防、修仓库、鼓铸、苫盖、修置产室、开渠穿井、安碓硙、补垣塞穴、修饰垣墙、平治道涂、破屋坏垣。如遇德犹忌之日，则仍注忌。
+        # 凡吉凶相抵，不注忌开市，亦不注忌立券、交易、纳财。不注忌纳财，亦不注忌开市、立券、交易。不注忌立券、交易，亦不注忌开市、纳财。
+        # 凡吉凶相抵，不注忌开市、立券、交易，亦不注忌开仓库、出货财。如遇专忌之日，则仍注忌。
+        # 凡吉凶相抵，不注忌牧养，亦不注忌纳畜。不注忌纳畜，亦不注忌牧养。
+        # 凡吉凶相抵，有宜安葬不注忌启攒，有宜启攒不注忌安葬。
+        #
+        # 凡忌诏命公卿、招贤，不注宜施恩、封拜、举正直、袭爵受封。
+        # 凡忌施恩、封拜、举正直、袭爵受封，亦不注宜诏命公卿、招贤。
+        # 凡宜宣政事之日遇往亡则改宣为布。
+        # 凡月厌忌行幸、上官，不注宜颁诏、施恩封拜、诏命公卿、招贤、举正直。遇宜宣政事之日，则改宣为布。
+
+        # for i in dic['goodThing']:
+        #     if i in dic['badThing']:
+        #         dic['goodThing'].remove(i)
+        #         dic['badThing'].remove(i)
+
+        # 宜忌抵消后相克，岁德、月德、凤凰麒麟压朱雀白虎、三丧、月破、岁破、重丧、天罡等
+        for i in angel[:2]:  # 岁德、岁德合
+            if i[0] in goodBadGodAndThingDic['goodName']:
+                goodBadGodAndThingDic['goodThing'] = list(set(goodBadGodAndThingDic['goodThing'] + i[3]))
+        # 排序
+        for removeThing in list(set(goodBadGodAndThingDic['goodThing']).intersection(set(goodBadGodAndThingDic['badThing']))):
+            goodBadGodAndThingDic['badThing'].remove(removeThing)
+        # 输出排序调整
+        goodBadGodAndThingDic['goodThing'].sort(key=sortCollation)
+        goodBadGodAndThingDic['badThing'].sort(key=sortCollation)
+        return (goodBadGodAndThingDic['goodName'],goodBadGodAndThingDic['badName']),(goodBadGodAndThingDic['goodThing'],goodBadGodAndThingDic['badThing'])
