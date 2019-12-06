@@ -785,4 +785,4 @@ class Lunar():
         # 输出排序调整
         goodBadGodAndThingDic['goodThing'].sort(key=sortCollation)
         goodBadGodAndThingDic['badThing'].sort(key=sortCollation)
-        return (goodBadGodAndThingDic['goodName'],goodBadGodAndThingDic['badName']),(goodBadGodAndThingDic['goodThing'],goodBadGodAndThingDic['badThing'])'badName']),(goodBadGodAndThingDic['goodThing'],goodBadGodAndThingDic['badThing'])
+        return (goodBadGodAndThingDic['goodName'],goodBadGodAndThingDic['badName']),(goodBadGodAndThingDic['goodThing'],goodBadGodAndThingDic['badThing'])
