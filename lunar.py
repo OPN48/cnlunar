@@ -34,6 +34,7 @@ class Lunar():
         self.chineseZodiacClash=self.get_chineseZodiacClash()
         self.weekDayCn=self.get_weekDayCn()
         self.todaySolarTerms=self.get_todaySolarTerms()
+        self.starZodiac=self.get_starZodiac()
         self.todayEastZodiac=self.get_eastZodiac()
         self.thisYearSolarTermsDic=dict(zip(solarTermsNameList, self.solarTermsDateList))
 
