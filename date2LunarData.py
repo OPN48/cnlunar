@@ -1,11 +1,8 @@
 import datetime
 import lunar
 
-
 now=datetime.datetime(2020,1,16,22,30)
 a=lunar.Lunar(now)
-# a.showMonth()
-
 dic={
     '日期':a.date,
     '农历数字':(a.lunarYear, a.lunarMonth, a.lunarDay),
