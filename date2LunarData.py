@@ -1,7 +1,8 @@
 import datetime
 import lunar
+# 测试数据
+now=datetime.datetime(2020,1,16,23,30)
 
-now=datetime.datetime(2020,1,16,22,30)
 a=lunar.Lunar(now)
 dic={
     '日期':a.date,
@@ -10,7 +11,7 @@ dic={
     '星期':a.weekDayCn,
     # 未增加除夕
     '今日节日': (a.get_legalHolidays(), a.get_otherHolidays(), a.get_otherLunarHolidays()),
-    '八字':(a.year8Char,a.month8Char,a.day8Char,a.twohour8Char),
+    '八字':' '.join([a.year8Char,a.month8Char,a.day8Char,a.twohour8Char]),
     '今日节气':a.todaySolarTerms,
     '下一节气':(a.nextSolarTerm,a.thisYearSolarTermsDic[a.nextSolarTerm]),
     '今年节气表':a.thisYearSolarTermsDic,
@@ -39,7 +40,8 @@ dic={
     '今日吉神':a.get_AngelDemon()[0][0],
     '今日凶煞':a.get_AngelDemon()[0][1],
     '宜':a.get_AngelDemon()[1][0],
-    '忌':a.get_AngelDemon()[1][1]
+    '忌':a.get_AngelDemon()[1][1],
+    '时辰经络':a.meridians
 }
 
 for i in dic:
