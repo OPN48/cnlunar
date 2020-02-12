@@ -21,7 +21,7 @@ class Lunar():
         self.date = date
         self.twohourNum = (self.date.hour + 1) // 2 % 12
         self._upper_year = ''
-        self.islunarLeapMonth = False
+        self.isLunarLeapMonth = False
         (self.lunarYear, self.lunarMonth, self.lunarDay) = self.get_lunarDateNum()
         (self.lunarYearCn,self.lunarMonthCn,self.lunarDayCn)=self.get_lunarCn()
 
@@ -51,7 +51,7 @@ class Lunar():
         # m = self.lunarMonth & 0xf
         lunarMonth = lunarMonthNameList[(self.lunarMonth - 1) % 12]
         thisLunarMonthDays=self.monthDaysList[0]
-        if self.islunarLeapMonth:
+        if self.isLunarLeapMonth:
             lunarMonth = "闰" + lunarMonth
             thisLunarMonthDays = self.monthDaysList[2]
         if thisLunarMonthDays < 30:
@@ -132,7 +132,7 @@ class Lunar():
                     if (_span_days < _month_days):
                         """ 指定日期在闰月中 ???"""
                         # self.lunarMonth = _leap_month
-                        self.islunarLeapMonth = True
+                        self.isLunarLeapMonth = True
                         break
                     """ 否则扣除闰月天数，月份加一 """
                     _span_days -= _month_days

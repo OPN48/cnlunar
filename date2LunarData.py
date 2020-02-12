@@ -8,7 +8,7 @@ now=datetime.datetime(2020,6,12,23,30)
 a=lunar.Lunar(now)
 dic={
     '日期':a.date,
-    '农历数字':(a.lunarYear, a.lunarMonth, a.lunarDay),
+    '农历数字':(a.lunarYear, a.lunarMonth, a.lunarDay,'闰' if a.isLunarLeapMonth else ''),
     '农历':'%s %s[%s]年 %s%s' % (a.lunarYearCn, a.year8Char, a.chineseYearZodiac, a.lunarMonthCn, a.lunarDayCn),
     '星期':a.weekDayCn,
     # 未增加除夕
@@ -45,13 +45,13 @@ dic={
     '忌':a.get_AngelDemon()[1][1],
     '时辰经络':a.meridians
 }
-i=1
-now = datetime.datetime(2020, 1, 1, 23, 30)
-while i<=367:
-    a = lunar.Lunar(now)
-    print(now,a.lunarMonth,a.lunarDay,a.lunarMonthCn)
-    now+=datetime.timedelta(days=1)
-    i+=1
-# for i in dic:
-#     midstr='\t'* (2- len(i) // 2)+':'+'\t'
-#     print(i,midstr,dic[i])
+# i=1
+# now = datetime.datetime(2020, 1, 1, 23, 30)
+# while i<=367:
+#     a = lunar.Lunar(now)
+#     print(now,a.lunarMonth,a.lunarDay,a.lunarMonthCn)
+#     now+=datetime.timedelta(days=1)
+#     i+=1
+for i in dic:
+    midstr='\t'* (2- len(i) // 2)+':'+'\t'
+    print(i,midstr,dic[i])
