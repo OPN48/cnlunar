@@ -130,7 +130,8 @@ class Lunar():
                     _month_days = _leap_day
                     if (_span_days < _month_days):
                         """ 指定日期在闰月中 ???"""
-                        self.lunarMonth = (_leap_month << 4) | self.lunarMonth
+                        self.lunarMonth = _leap_month
+                        # self.lunarMonth = (_leap_month << 4) | self.lunarMonth
                         break
                     """ 否则扣除闰月天数，月份加一 """
                     _span_days -= _month_days
