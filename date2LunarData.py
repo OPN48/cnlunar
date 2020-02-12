@@ -43,10 +43,13 @@ dic={
     '忌':a.get_AngelDemon()[1][1],
     '时辰经络':a.meridians
 }
-# for i in range(1,31):
-#     now = datetime.datetime(2020, 6, i, 23, 30)
+# i=1
+# now = datetime.datetime(2020, 1, 1, 23, 30)
+# while i<=367:
 #     a = lunar.Lunar(now)
 #     print(a.lunarMonth,a.lunarDay)
+#     now+=datetime.timedelta(days=1)
+#     i+=1
 for i in dic:
     midstr='\t'* (2- len(i) // 2)+':'+'\t'
     print(i,midstr,dic[i])
