@@ -50,6 +50,6 @@ dic={
 #     print(now,a.lunarMonth,a.lunarDay,a.lunarMonthCn)
 #     now+=datetime.timedelta(days=1)
 #     i+=1
-for i in dic:
-    midstr='\t'* (2- len(i) // 2)+':'+'\t'
-    print(i,midstr,dic[i])
+# for i in dic:
+#     midstr='\t'* (2- len(i) // 2)+':'+'\t'
+#     print(i,midstr,dic[i])
