@@ -1,7 +1,7 @@
 import datetime
 import lunar
 # 测试数据
-now=datetime.datetime(2020,6,12,23,30)
+now=datetime.datetime(2034,1,1,23,30)
 
 a=lunar.Lunar(now)
 dic={
@@ -50,6 +50,6 @@ dic={
 #     print(now,a.lunarMonth,a.lunarDay,a.lunarMonthCn)
 #     now+=datetime.timedelta(days=1)
 #     i+=1
-# for i in dic:
-#     midstr='\t'* (2- len(i) // 2)+':'+'\t'
-#     print(i,midstr,dic[i])
+for i in dic:
+    midstr='\t'* (2- len(i) // 2)+':'+'\t'
+    print(i,midstr,dic[i])
