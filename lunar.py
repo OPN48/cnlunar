@@ -151,7 +151,8 @@ class Lunar():
                 if (self.lunarMonth == _leap_month):
                     _month_days = _leap_day
                     if (abs(_span_days) <= _month_days):  # 指定日期在闰月中
-                        self.lunarMonth = (_leap_month << 4) | self.lunarMonth
+                        self.isLunarLeapMonth = True
+                        # self.lunarMonth = self.lunarMonth | (_leap_month << 4)
                         break
                     _span_days += _month_days
                 _month_days = self.getMonthLeapMonthLeapDays()[0]
