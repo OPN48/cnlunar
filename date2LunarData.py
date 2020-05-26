@@ -3,7 +3,7 @@ import datetime
 from . import lunar
 
 # 测试数据
-now=datetime.datetime(2034,1,1,23,30)
+now=datetime.datetime(2020,5,26,12,30)
 
 a=lunar.Lunar(now)
 dic={
@@ -46,10 +46,14 @@ dic={
     '时辰经络':a.meridians
 }
 # i=1
-# now = datetime.datetime(2020, 1, 1, 23, 30)
+# c=0
+# now = datetime.datetime(2019, 1, 1, 23, 30)
 # while i<=367:
 #     a = lunar.Lunar(now)
-#     print(now,a.lunarMonth,a.lunarDay,a.lunarMonthCn)
+#     # print(a.get_AngelDemon()[1][0])
+#     if '嫁娶' in a.get_AngelDemon()[1][0]:
+#         c+=1
+#         print(c,i)
 #     now+=datetime.timedelta(days=1)
 #     i+=1
 for i in dic:
