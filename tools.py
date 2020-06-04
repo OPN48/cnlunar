@@ -5,6 +5,12 @@
 # 去除空行
 from .config import encryptionVectorList,thingsSort
 
+def rfRemove(l=[],removeList=[]):
+    for removeThing in list(set(l).intersection(set(removeList))):
+        l.remove(removeThing)
+    return l
+def rfAdd(l=[],addList=[]):
+    return list(set(l+addList))
 
 def not_empty(s):
     return s and s.strip()
