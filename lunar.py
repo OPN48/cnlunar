@@ -954,122 +954,125 @@ class Lunar():
                 if i in deIsBadThingDic:
                     deIsBadThing += deIsBadThingDic[i]
         deIsBadThing = list(set(deIsBadThing))
+        if thingLevel != 3:
+            # 凡宜宣政事，布政事之日，只注宜宣政事。
+            if '宣政事' in self.goodThing and '布政事' in self.goodThing:
+                self.goodThing.remove('布政事')
+            # 凡宜营建宫室、修宫室之日，只注宜营建宫室。
+            if '营建宫室' in self.goodThing and '修宫室' in self.goodThing:
+                self.goodThing.remove('修宫室')
+            # 凡德合、赦愿、月恩、四相、时德等日，不注忌进人口、安床、经络、酝酿、开市、立券、交易、纳财、开仓库、出货财。如遇德犹忌，及从忌不从宜之日，则仍注忌。
+            temp = False
+            for i in self.goodGodName:
+                if i in ['岁德合', '月德合', '天德合', '天赦', '天愿', '月恩', '四相', '时德']:
+                    temp = True
+                    break
+            if temp:
+                # 如遇德犹忌，及从忌不从宜之日，则仍注忌。
+                if i not in deIsBadThing or thingLevel != 2:
+                    self.badThing = rfRemove(self.badThing, ['进人口', '安床', '经络', '酝酿', '开市', '立券交易', '纳财', '开仓库', '出货财'])
 
-        # 凡宜宣政事，布政事之日，只注宜宣政事。
-        if '宣政事' in self.goodThing and '布政事' in self.goodThing:
-            self.goodThing.remove('布政事')
-        # 凡宜营建宫室、修宫室之日，只注宜营建宫室。
-        if '营建宫室' in self.goodThing and '修宫室' in self.goodThing:
-            self.goodThing.remove('修宫室')
-        # 凡德合、赦愿、月恩、四相、时德等日，不注忌进人口、安床、经络、酝酿、开市、立券、交易、纳财、开仓库、出货财。如遇德犹忌，及从忌不从宜之日，则仍注忌。
-        temp = False
-        for i in self.goodGodName:
-            if i in ['岁德合', '月德合', '天德合', '天赦', '天愿', '月恩', '四相', '时德']:
-                temp = True
-                break
-        if temp:
-            # 如遇德犹忌，及从忌不从宜之日，则仍注忌。
-            if i not in deIsBadThing or thingLevel != 2:
-                self.badThing = rfRemove(self.badThing, ['进人口', '安床', '经络', '酝酿', '开市', '立券交易', '纳财', '开仓库', '出货财'])
+            # 凡天狗寅日忌祭祀，不注宜求福、祈嗣。
+            if '天狗' in self.goodGodName or '寅' in d:
+                self.badThing = rfAdd(self.badThing, addList=['祭祀'])
+                self.goodThing = rfRemove(self.goodThing, removeList=['求福', '祈嗣'])
+            # 凡卯日忌穿井，不注宜开渠。壬日忌开渠，不注宜穿井。
+            if '卯' in d:
+                self.badThing = rfAdd(self.badThing, addList=['穿井'])
+                self.goodThing = rfRemove(self.goodThing, removeList=['开渠'])
+            if '壬' in d:
+                self.badThing = rfAdd(self.badThing, addList=['开渠'])
+                self.goodThing = rfRemove(self.goodThing, removeList=['穿井'])
+            # 凡巳日忌出行，不注宜出师、遣使。
+            if '巳' in d:
+                self.badThing = rfAdd(self.badThing, addList=['出行'])
+                self.goodThing = rfRemove(self.goodThing, removeList=['出师', '遣使'])
+            # 凡酉日忌宴会，亦不注宜庆赐、赏贺。
+            if '酉' in d:
+                self.badThing = rfAdd(self.badThing, addList=['宴会'])
+                self.goodThing = rfRemove(self.goodThing, removeList=['庆赐', '赏贺'])
+            # 凡丁日忌剃头，亦不注宜整容。
+            if '丁' in d:
+                self.badThing = rfAdd(self.badThing, addList=['剃头'])
+                self.goodThing = rfRemove(self.goodThing, removeList=['整容'])
+            # 凡吉足胜凶，从宜不从忌者，如遇德犹忌之事，则仍注忌。
+            if self.todayLevel == 0 and thingLevel == 0:
+                self.badThing = rfAdd(self.badThing, addList=deIsBadThing)
+            # 凡吉凶相抵，不注宜亦不注忌者，如遇德犹忌之事，则仍注忌。
+            if self.todayLevel == 1:
+                self.badThing = rfAdd(self.badThing, addList=deIsBadThing)
+                # 凡吉凶相抵，不注忌祈福，亦不注忌求嗣。
+                if '祈福' not in self.badThing:
+                    self.badThing = rfRemove(self.badThing, removeList=['求嗣'])
+                # 凡吉凶相抵，不注忌结婚姻，亦不注忌冠带、纳采问名、嫁娶、进人口，如遇德犹忌之日则仍注忌。
+                if '结婚姻' not in self.badThing and not self.isDe:
+                    self.badThing = rfRemove(self.badThing, removeList=['冠带', '纳采问名', '嫁娶', '进人口'])
+                # 凡吉凶相抵，不注忌嫁娶，亦不注忌冠带、结婚姻、纳采问名、进人口、搬移、安床，如遇德犹忌之日，则仍注忌。
+                if '嫁娶' not in self.badThing and not self.isDe:
+                    self.badThing = rfRemove(self.badThing, removeList=['冠带', '纳采问名', '结婚姻', '进人口', '搬移', '安床'])
+            # 遇不将而不注忌嫁娶者，亦仍注忌。【未妥善解决】
+            # 遇亥日、厌对、八专、四忌、四穷而仍注忌嫁娶者，只注所忌之事，其不忌者仍不注忌。【未妥善解决】
+            if '亥' in d:
+                self.badThing = rfAdd(self.badThing, ['嫁娶'])
+            # 凡吉凶相抵，不注忌搬移，亦不注忌安床。不注忌安床，亦不注忌搬移。如遇德犹忌之日，则仍注忌。
+            if self.todayLevel == 1 and not self.isDe:
+                if '搬移' not in self.badThing:
+                    self.badThing = rfRemove(self.badThing, removeList=['安床'])
+                if '安床' not in self.badThing:
+                    self.badThing = rfRemove(self.badThing, removeList=['搬移'])
+                # 凡吉凶相抵，不注忌解除，亦不注忌整容、剃头、整手足甲。如遇德犹忌之日，则仍注忌。
+                if '解除' not in self.badThing:
+                    self.badThing = rfRemove(self.badThing, removeList=['整容', '剃头', '整手足甲'])
+                # 凡吉凶相抵，不注忌修造动土、竖柱上梁，亦不注忌修宫室、缮城郭、筑提防、修仓库、鼓铸、苫盖、修置产室、开渠穿井、安碓硙、补垣塞穴、修饰垣墙、平治道涂、破屋坏垣。如遇德犹忌之日，则仍注忌。
+                if '修造' not in self.badThing or '动土' not in self.badThing or '竖柱上梁' not in self.badThing:
+                    self.badThing = rfRemove(self.badThing,
+                                             removeList=['修宫室', '缮城郭', '整手足甲', '筑提', '修仓库', '鼓铸', '苫盖', '修置产室', '开渠穿井',
+                                                         '安碓硙', '补垣塞穴', '修饰垣墙', '平治道涂', '破屋坏垣'])
+            # 凡吉凶相抵，不注忌开市，亦不注忌立券交易、纳财。不注忌纳财，亦不注忌开市、立券交易。不注忌立券交易，亦不注忌开市、纳财。
+            # 凡吉凶相抵，不注忌开市、立券交易，亦不注忌开仓库、出货财。
+            if self.todayLevel == 1:
+                if '开市' not in self.badThing:
+                    self.badThing = rfRemove(self.badThing, removeList=['立券交易', '纳财', '开仓库', '出货财'])
+                if '纳财' not in self.badThing:
+                    self.badThing = rfRemove(self.badThing, removeList=['立券交易', '开市'])
+                if '立券交易' not in self.badThing:
+                    self.badThing = rfRemove(self.badThing, removeList=['纳财', '开市', '开仓库', '出货财'])
 
-        # 凡天狗寅日忌祭祀，不注宜求福、祈嗣。
-        if '天狗' in self.goodGodName or '寅' in d:
-            self.badThing = rfAdd(self.badThing, addList=['祭祀'])
-            self.goodThing = rfRemove(self.goodThing, removeList=['求福', '祈嗣'])
-        # 凡卯日忌穿井，不注宜开渠。壬日忌开渠，不注宜穿井。
-        if '卯' in d:
-            self.badThing = rfAdd(self.badThing, addList=['穿井'])
-            self.goodThing = rfRemove(self.goodThing, removeList=['开渠'])
-        if '壬' in d:
-            self.badThing = rfAdd(self.badThing, addList=['开渠'])
-            self.goodThing = rfRemove(self.goodThing, removeList=['穿井'])
-        # 凡巳日忌出行，不注宜出师、遣使。
-        if '巳' in d:
-            self.badThing = rfAdd(self.badThing, addList=['出行'])
-            self.goodThing = rfRemove(self.goodThing, removeList=['出师', '遣使'])
-        # 凡酉日忌宴会，亦不注宜庆赐、赏贺。
-        if '酉' in d:
-            self.badThing = rfAdd(self.badThing, addList=['宴会'])
-            self.goodThing = rfRemove(self.goodThing, removeList=['庆赐', '赏贺'])
-        # 凡丁日忌剃头，亦不注宜整容。
-        if '丁' in d:
-            self.badThing = rfAdd(self.badThing, addList=['剃头'])
-            self.goodThing = rfRemove(self.goodThing, removeList=['整容'])
-        # 凡吉足胜凶，从宜不从忌者，如遇德犹忌之事，则仍注忌。
-        if self.todayLevel == 0 and thingLevel == 0:
-            self.badThing = rfAdd(self.badThing, addList=deIsBadThing)
-        # 凡吉凶相抵，不注宜亦不注忌者，如遇德犹忌之事，则仍注忌。
-        if self.todayLevel == 1:
-            self.badThing = rfAdd(self.badThing, addList=deIsBadThing)
-            # 凡吉凶相抵，不注忌祈福，亦不注忌求嗣。
-            if '祈福' not in self.badThing:
-                self.badThing = rfRemove(self.badThing, removeList=['求嗣'])
-            # 凡吉凶相抵，不注忌结婚姻，亦不注忌冠带、纳采问名、嫁娶、进人口，如遇德犹忌之日则仍注忌。
-            if '结婚姻' not in self.badThing and not self.isDe:
-                self.badThing = rfRemove(self.badThing, removeList=['冠带', '纳采问名', '嫁娶', '进人口'])
-            # 凡吉凶相抵，不注忌嫁娶，亦不注忌冠带、结婚姻、纳采问名、进人口、搬移、安床，如遇德犹忌之日，则仍注忌。
-            if '嫁娶' not in self.badThing and not self.isDe:
-                self.badThing = rfRemove(self.badThing, removeList=['冠带', '纳采问名', '结婚姻', '进人口', '搬移', '安床'])
-        # 遇不将而不注忌嫁娶者，亦仍注忌。【未妥善解决】
-        # 遇亥日、厌对、八专、四忌、四穷而仍注忌嫁娶者，只注所忌之事，其不忌者仍不注忌。【未妥善解决】
-        if '亥' in d:
-            self.badThing = rfAdd(self.badThing, ['嫁娶'])
-        # 凡吉凶相抵，不注忌搬移，亦不注忌安床。不注忌安床，亦不注忌搬移。如遇德犹忌之日，则仍注忌。
-        if self.todayLevel == 1 and not self.isDe:
-            if '搬移' not in self.badThing:
-                self.badThing = rfRemove(self.badThing, removeList=['安床'])
-            if '安床' not in self.badThing:
-                self.badThing = rfRemove(self.badThing, removeList=['搬移'])
-            # 凡吉凶相抵，不注忌解除，亦不注忌整容、剃头、整手足甲。如遇德犹忌之日，则仍注忌。
-            if '解除' not in self.badThing:
-                self.badThing = rfRemove(self.badThing, removeList=['整容', '剃头', '整手足甲'])
-            # 凡吉凶相抵，不注忌修造动土、竖柱上梁，亦不注忌修宫室、缮城郭、筑提防、修仓库、鼓铸、苫盖、修置产室、开渠穿井、安碓硙、补垣塞穴、修饰垣墙、平治道涂、破屋坏垣。如遇德犹忌之日，则仍注忌。
-            if '修造' not in self.badThing or '动土' not in self.badThing or '竖柱上梁' not in self.badThing:
-                self.badThing = rfRemove(self.badThing,
-                                         removeList=['修宫室', '缮城郭', '整手足甲', '筑提', '修仓库', '鼓铸', '苫盖', '修置产室', '开渠穿井',
-                                                     '安碓硙', '补垣塞穴', '修饰垣墙', '平治道涂', '破屋坏垣'])
-        # 凡吉凶相抵，不注忌开市，亦不注忌立券交易、纳财。不注忌纳财，亦不注忌开市、立券交易。不注忌立券交易，亦不注忌开市、纳财。
-        # 凡吉凶相抵，不注忌开市、立券交易，亦不注忌开仓库、出货财。
-        if self.todayLevel == 1:
-            if '开市' not in self.badThing:
-                self.badThing = rfRemove(self.badThing, removeList=['立券交易', '纳财', '开仓库', '出货财'])
-            if '纳财' not in self.badThing:
-                self.badThing = rfRemove(self.badThing, removeList=['立券交易', '开市'])
-            if '立券交易' not in self.badThing:
-                self.badThing = rfRemove(self.badThing, removeList=['纳财', '开市', '开仓库', '出货财'])
+            # 如遇专忌之日，则仍注忌。【未妥善解决】
+            # 凡吉凶相抵，不注忌牧养，亦不注忌纳畜。不注忌纳畜，亦不注忌牧养。
+            if self.todayLevel == 1:
+                if '牧养' not in self.badThing:
+                    self.badThing = rfRemove(self.badThing, removeList=['纳畜'])
+                if '纳畜' not in self.badThing:
+                    self.badThing = rfRemove(self.badThing, removeList=['牧养'])
+                # 凡吉凶相抵，有宜安葬不注忌启攒，有宜启攒不注忌安葬。
+                if '安葬' in self.goodThing:
+                    self.badThing = rfRemove(self.badThing, removeList=['启攒'])
+                if '启攒' in self.goodThing:
+                    self.badThing = rfRemove(self.badThing, removeList=['安葬'])
+            # 凡忌诏命公卿、招贤，不注宜施恩、封拜、举正直、袭爵受封。    #本版本无 封拜 袭爵受封
+            if '诏命公卿' in self.badThing or '招贤' in self.badThing:
+                self.goodThing = rfRemove(self.goodThing, removeList=['施恩', '举正直'])
+            # 凡忌施恩、封拜、举正直、袭爵受封，亦不注宜诏命公卿、招贤。
+            if '施恩' in self.badThing or '举正直' in self.badThing:
+                self.goodThing = rfRemove(self.goodThing, removeList=['诏命公卿', '招贤'])
+            # 凡宜宣政事之日遇往亡则改宣为布。
+            if '宣政事' in self.goodThing and '往亡' in self.badGodName:
+                self.goodThing.remove('宣政事')
+                self.goodThing = rfAdd(self.goodThing, addList=['布政事'])
+            # 凡月厌忌行幸、上官，不注宜颁诏、施恩封拜、诏命公卿、招贤、举正直。遇宜宣政事之日，则改宣为布。
+            if '月厌' in self.badGodName:
+                self.goodThing = rfRemove(self.goodThing, removeList=['颁诏', '施恩', '招贤', '举正直','宣政事'])
+                self.goodThing = rfAdd(self.goodThing, addList=['布政事'])
 
-        # 如遇专忌之日，则仍注忌。【未妥善解决】
-        # 凡吉凶相抵，不注忌牧养，亦不注忌纳畜。不注忌纳畜，亦不注忌牧养。
-        if self.todayLevel == 1:
-            if '牧养' not in self.badThing:
-                self.badThing = rfRemove(self.badThing, removeList=['纳畜'])
-            if '纳畜' not in self.badThing:
-                self.badThing = rfRemove(self.badThing, removeList=['牧养'])
-            # 凡吉凶相抵，有宜安葬不注忌启攒，有宜启攒不注忌安葬。
-            if '安葬' in self.goodThing:
-                self.badThing = rfRemove(self.badThing, removeList=['启攒'])
-            if '启攒' in self.goodThing:
-                self.badThing = rfRemove(self.badThing, removeList=['安葬'])
-        # 凡忌诏命公卿、招贤，不注宜施恩、封拜、举正直、袭爵受封。    #本版本无 封拜 袭爵受封
-        if '诏命公卿' in self.badThing or '招贤' in self.badThing:
-            self.goodThing = rfRemove(self.goodThing, removeList=['施恩', '举正直'])
-        # 凡忌施恩、封拜、举正直、袭爵受封，亦不注宜诏命公卿、招贤。
-        if '施恩' in self.badThing or '举正直' in self.badThing:
-            self.goodThing = rfRemove(self.goodThing, removeList=['诏命公卿', '招贤'])
-        # 凡宜宣政事之日遇往亡则改宣为布。
-        if '宣政事' in self.goodThing and '往亡' in self.badGodName:
-            self.goodThing.remove('宣政事')
-            self.goodThing.append('布政事')
-        # 凡月厌忌行幸、上官，不注宜颁诏、施恩封拜、诏命公卿、招贤、举正直。遇宜宣政事之日，则改宣为布。
-        if '月厌' in self.badGodName:
-            self.goodThing = rfRemove(self.goodThing, removeList=['颁诏', '施恩', '招贤', '举正直'])
-            self.goodThing.remove('宣政事')
-            self.goodThing.append('布政事')
         # 为空清理
         if self.badThing == []:
             self.badThing = ['诸事皆宜']
             self.goodThing = ['诸事皆宜']
+        if self.goodThing == []:
+            self.badThing = ['诸事不宜']
+            self.goodThing = ['诸事不宜']
         # 输出排序调整
         self.badThing.sort(key=sortCollation)
         self.goodThing.sort(key=sortCollation)
-        return (self.badGodName, self.goodGodName), (self.goodThing, self.badThing)
+        return (self.goodGodName,self.badGodName), (self.goodThing, self.badThing)
