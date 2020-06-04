@@ -1069,7 +1069,10 @@ class Lunar():
         if self.badThing == []:
             self.badThing = ['诸事皆宜']
             self.goodThing = ['诸事皆宜']
+        if self.goodThing == []:
+            self.badThing = ['诸事不宜']
+            self.goodThing = ['诸事不宜']
         # 输出排序调整
         self.badThing.sort(key=sortCollation)
         self.goodThing.sort(key=sortCollation)
-        return (self.badGodName, self.goodGodName), (self.goodThing, self.badThing)
+        return (self.goodGodName,self.badGodName), (self.goodThing, self.badThing)
