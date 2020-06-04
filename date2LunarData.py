@@ -36,11 +36,11 @@ dic={
     '九宫飞星':a.get_the9FlyStar(),
     '吉神方位':a.get_luckyGodsDirection(),
     '今日胎神':a.get_fetalGod(),
-    '神煞宜忌':a.get_AngelDemon(),
-    '今日吉神':a.get_AngelDemon()[0][0],
-    '今日凶煞':a.get_AngelDemon()[0][1],
-    '宜':a.get_AngelDemon()[1][0],
-    '忌':a.get_AngelDemon()[1][1],
+    '神煞宜忌':a.angelDemon,
+    '今日吉神':a.goodGodName,
+    '今日凶煞':a.badGodName,
+    '宜':a.goodThing,
+    '忌':a.badThing,
     '时辰经络':a.meridians
 }
 # i=1
