@@ -302,18 +302,22 @@ class Lunar():
     def get_today12DayOfficer(self):
         '''
         chinese12DayGods=['青龙','明堂','天刑','朱雀','金贵','天德','白虎','玉堂','天牢','玄武','司命','勾陈']
-        青龙定位口诀：子午寻申位，丑未戌上亲；寅申居子中，卯酉起于寅；辰戌龙位上，巳亥午中寻。
-        [申戌子寅辰午]
-        十二神凶吉口诀：道远几时通达，路遥何日还乡 辶为吉神(0,1,4,5,7,11)为黄道吉日
+
         '''
         # thisMonthStartGodNum = (self.lunarMonth -1 + 2) % 12
         # print(str(self.lunarMonth)+'=========='+str(thisMonthStartGodNum))
         thisMonthStartGodNum = (self.monthEarthNum) % 12
         # print(str(self.monthEarthNum) + '==========' + str(thisMonthStartGodNum))
         apartNum = self.dayEarthNum - thisMonthStartGodNum
-        self.today12DayGod = chinese12DayGods[apartNum % 12]
-        dayName = '黄道日' if apartNum in (0, 1, 4, 5, 7, 11) else '黑道日'
         self.today12DayOfficer = chinese12DayOfficers[apartNum % 12]
+        # 青龙定位口诀：子午寻申位，丑未戌上亲；寅申居子中，卯酉起于寅；辰戌龙位上，巳亥午中寻。
+        # [申戌子寅辰午]
+        # 十二神凶吉口诀：道远几时通达，路遥何日还乡
+        # 辶为吉神(0, 1, 4, 5, 7, 11)
+        # 为黄道吉日
+        eclipticGodNum = (self.dayEarthNum - [8, 10, 0, 2, 4, 6, 8, 10, 0, 2, 4, 6][self.monthEarthNum]) % 12
+        self.today12DayGod = chinese12DayGods[eclipticGodNum % 12]
+        dayName = '黄道日' if eclipticGodNum in (0, 1, 4, 5, 7, 11) else '黑道日'
         return self.today12DayOfficer, self.today12DayGod, dayName
 
     # 八字与五行
