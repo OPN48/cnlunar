@@ -46,12 +46,12 @@ dic={
 i=1
 c=0
 now = datetime.datetime(2019, 1, 1, 23, 30)
-while i<= 367:
+while i <= 367:
     a = lunar.Lunar(now)
     print(now)
     print(a.angelDemon)
-    now+=datetime.timedelta(days=1)
-    i+=1
+    now += datetime.timedelta(days=1)
+    i += 1
 # for i in dic:
 #     midstr='\t'* (2- len(i) // 2)+':'+'\t'
 #     print(i,midstr,dic[i])
