@@ -3,7 +3,7 @@ import datetime
 from . import lunar
 
 # 测试数据
-now = datetime.datetime(2020,6,18,12,30)
+now = datetime.datetime(2020,6,10,12,30)
 
 a=lunar.Lunar(now)
 dic={
