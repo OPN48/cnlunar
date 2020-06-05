@@ -1,4 +1,4 @@
-# pyGregorian2LunarCalendar
+# pyLunarCalendar
 前言：
 由于三体运动（主要地球、太阳、月球）无法准确预测，目前二十四节气依然还是靠天文台观测，Yovey使用传说中[Y*D+C]-L方法实际有很多天数不准，def getSolarTerms(_date)12个if嵌套判断让代码变得十分冗余，由简书网友“大咖_247c”首先发现计算不准问题……
 【方案过程】
