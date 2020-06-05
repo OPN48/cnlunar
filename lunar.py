@@ -19,7 +19,7 @@ from tools import sortCollation, rfRemove, rfAdd
 class Lunar():
     def __init__(self, date):
         self.date = date
-        self.twohourNum = (self.date.hour + 1) // 2 % 12
+        self.twohourNum = (self.date.hour + 1) // 2
         self._upper_year = ''
         self.isLunarLeapMonth = False
         (self.lunarYear, self.lunarMonth, self.lunarDay) = self.get_lunarDateNum()
@@ -41,7 +41,7 @@ class Lunar():
 
         self.today28Star = self.get_the28Stars()
         self.angelDemon = self.get_AngelDemon()
-        self.meridians = meridiansName[self.twohourNum]
+        self.meridians = meridiansName[self.twohourNum % 12]
 
     def get_lunarYearCN(self):
         for i in str(self.lunarYear):
@@ -232,7 +232,7 @@ class Lunar():
         return (the60HeavenlyEarth + the60HeavenlyEarth)[begin:begin + 13]
 
     def get_twohour8Char(self):
-        return self.twohour8CharList[self.twohourNum]
+        return self.twohour8CharList[self.twohourNum % 12]
 
     def get_the8char(self):
         return self.get_year8Char(), self.get_month8Char(), self.get_day8Char()
