@@ -52,16 +52,17 @@ def getLunar(now):
     return dic
 # i=1
 # c=0
-# now = datetime.datetime(1996, 1, 4, 12, 30)
-# while i <= 40:
+# now = datetime.datetime(2020, 2, 4, 12, 30)
+# while i <= 366:
 #     a = lunar.Lunar(now)
-#     print(now)
-#     # if '土王用事' in a.badGodName:
-#     #     c+=1
-#     #     print('c=%s' % c)
-#     #     print(a.badGodName)
+#
+#     if '土王用事' in a.badGodName:
+#         print(now)
+#         c+=1
+#         print('c=%s' % c)
+#         print(a.badGodName)
 #     now += datetime.timedelta(days=1)
 #     i += 1
 
-getLunar(datetime.datetime(1996,2,3,22,30))
+getLunar(datetime.datetime(2020,11,7,22,30))
 

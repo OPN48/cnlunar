@@ -584,7 +584,7 @@ class Lunar():
         tmd = (tomorrow.month, tomorrow.day)
         t4l = [self.thisYearSolarTermsDic[i] for i in ['春分', '夏至', '秋分', '冬至']]
         t4j = [self.thisYearSolarTermsDic[i] for i in ['立春', '立夏', '立秋', '立冬']]
-        twys = t4j[len(list(filter(lambda y: y < tmd , t4j)))]
+        twys = t4j[len(list(filter(lambda y: y < tmd, t4j)))%4]
         s = self.today28Star
         # o = self.today12DayOfficer
         d = self.day8Char
