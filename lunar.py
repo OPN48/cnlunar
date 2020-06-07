@@ -194,13 +194,13 @@ class Lunar():
             todaySolarTerm = solarTermsNameList[solarTermsDateList.index(findDate)]
         else:
             todaySolarTerm = '无'
+        nextNum = self.getNextNum(findDate, solarTermsDateList)
         # 次年节气
-        if findDate[0]==solarTermsDateList[-1][0] and findDate[1] > solarTermsDateList[-1][1]:
+        if findDate[0]==solarTermsDateList[-1][0] and findDate[1] >= solarTermsDateList[-1][1]:
             year+=1
             solarTermsDateList = self.getSolarTermsDateList(year)
         else:
             pass
-        nextNum = self.getNextNum(findDate, solarTermsDateList)
         self.nextSolarTerm = solarTermsNameList[nextNum]
         self.nextSolarTermDate = solarTermsDateList[nextNum]
         self.nextSolarTermYear = year

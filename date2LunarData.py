@@ -58,5 +58,5 @@ def getLunar(now):
 #     now += datetime.timedelta(days=365.25)
 #     i += 1
 
-getLunar(datetime.datetime(1996,12,23,23,30))
+getLunar(datetime.datetime(1996,12,21,22,30))
 
