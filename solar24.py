@@ -9,7 +9,7 @@ from .tools import abListMerge
 def unZipSolarTermsList(data,rangeEndNum=24,charCountLen=2):
     list2 = []
     for i in range(1,rangeEndNum+1):
-        right=charCountLen*(rangeEndNum-i)
+        right = charCountLen * (rangeEndNum-i)
         if type(data).__name__=='str':
             data= int(data, 16)
         x=data >> right

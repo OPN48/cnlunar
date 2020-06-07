@@ -14,7 +14,7 @@ def getLunar(now):
         '今日节日': (a.get_legalHolidays(), a.get_otherHolidays(), a.get_otherLunarHolidays()),
         '八字':' '.join([a.year8Char,a.month8Char,a.day8Char,a.twohour8Char]),
         '今日节气':a.todaySolarTerms,
-        '下一节气':(a.nextSolarTerm,a.thisYearSolarTermsDic[a.nextSolarTerm]),
+        '下一节气':(a.nextSolarTerm,a.nextSolarTermDate,a.nextSolarTermYear),
         '今年节气表':a.thisYearSolarTermsDic,
         '季节': a.lunarSeason,
 
@@ -52,13 +52,16 @@ def getLunar(now):
     return dic
 # i=1
 # c=0
-# now = datetime.datetime(2019, 1, 1, 23, 30)
-# while i <= 367:
+# now = datetime.datetime(1996, 1, 4, 12, 30)
+# while i <= 40:
 #     a = lunar.Lunar(now)
 #     print(now)
-#     print(a.angelDemon)
+#     # if '土王用事' in a.badGodName:
+#     #     c+=1
+#     #     print('c=%s' % c)
+#     #     print(a.badGodName)
 #     now += datetime.timedelta(days=1)
 #     i += 1
 
-getLunar(datetime.datetime(1996,12,21,23,30))
+getLunar(datetime.datetime(1996,2,3,22,30))
 
