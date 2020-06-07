@@ -584,8 +584,9 @@ class Lunar():
         tmd = (tomorrow.month, tomorrow.day)
         t4l = [self.thisYearSolarTermsDic[i] for i in ['春分', '夏至', '秋分', '冬至']]
         t4j = [self.thisYearSolarTermsDic[i] for i in ['立春', '立夏', '立秋', '立冬']]
+        twys = t4j[len(list(filter(lambda y: y < tmd , t4j)))]
         s = self.today28Star
-        o = self.today12DayOfficer
+        # o = self.today12DayOfficer
         d = self.day8Char
         den = self.dayEarthNum
         dhen = self.dayHeavenlyEarthNum
@@ -875,6 +876,7 @@ class Lunar():
             # 《历例》曰:士符者,正月丑，二月已,三月酉,四月寅,五月午,六月戌,七月卯,八月未,九月亥,十月辰,十一月申,十二月子。
             ('土符', '申子丑巳酉寅午戌卯未亥辰'[men], d, [], ['营建', '修宫室', '缮城郭', '筑堤防', '修造', '修仓库', '修置产室', '开渠', '穿井', '安碓硙', '补垣', '修饰垣墙', '平治道涂', '破屋坏垣', '栽种','破土']),
             ('土府', '子丑寅卯辰巳午未申酉戌亥'[men], d, [], ['营建', '修宫室', '缮城郭', '筑堤防', '修造', '修仓库', '修置产室', '开渠', '穿井', '安碓硙', '补垣', '修饰垣墙', '平治道涂', '破屋坏垣', '栽种','破土']),
+            ('土王用事', (datetime(self.nextSolarTermYear,twys[0],twys[1])-self.date).days, range(0,18), [], ['营建', '修宫室', '缮城郭', '筑堤防', '修造', '修仓库', '修置产室', '开渠', '穿井', '安碓硙', '补垣', '修饰垣墙', '平治道涂', '破屋坏垣', '栽种', '破土']),
             ('血支', '亥子丑寅卯辰巳午未申酉戌'[men], d, [], ['针刺']),
              # 《广圣历》曰:九焦者,月中杀神也。其日忌炉冶、铸造、种植、修筑园圃。《历例》曰:正月在辰逆行四季,五月在卯逆行四仲,九月在寅逆行四孟。
             ('游祸', '亥申巳寅亥申巳寅亥申巳寅'[men], d, [], ['祈福', '求嗣', '解除', '求医疗病']),
