@@ -37,7 +37,7 @@ class Lunar():
         self.todaySolarTerms = self.get_todaySolarTerms()
         self.starZodiac = self.get_starZodiac()
         self.todayEastZodiac = self.get_eastZodiac()
-        self.thisYearSolarTermsDic = dict(zip(solarTermsNameList, self.solarTermsDateList))
+        self.thisYearSolarTermsDic = dict(zip(solarTermsNameList, self.thisYearSolarTermsDateList))
 
         self.today28Star = self.get_the28Stars()
         self.angelDemon = self.get_AngelDemon()
@@ -168,30 +168,42 @@ class Lunar():
             return self.lunarYear, self.lunarMonth, self.lunarDay
 
     # # # 24节气部分
-    def getSolarTermsDateList(self):
-        solarTermsList = getTheYearAllSolarTermsList(self.date.year)
-        self.solarTermsDateList = []
+    def getSolarTermsDateList(self,year):
+        solarTermsList = getTheYearAllSolarTermsList(year)
+        solarTermsDateList = []
         for i in range(0, len(solarTermsList)):
             day = solarTermsList[i]
             month = i // 2 + 1
-            self.solarTermsDateList.append((month, day))
-        return self.solarTermsDateList
+            solarTermsDateList.append((month, day))
+        return solarTermsDateList
 
     def getNextNum(self, findDate, solarTermsDateList):
-        return len(list(filter(lambda y: y <= findDate, solarTermsDateList))) % 24
+        nextNum=len(list(filter(lambda y: y <= findDate, solarTermsDateList))) % 24
+        return nextNum
 
     def get_todaySolarTerms(self):
         '''
         :return:节气
         '''
-        solarTermsDateList = self.getSolarTermsDateList()
+        year = self.date.year
+        solarTermsDateList = self.getSolarTermsDateList(year)
+        # 今年节气表
+        self.thisYearSolarTermsDateList = solarTermsDateList
         findDate = (self.date.month, self.date.day)
-        nextNum = self.getNextNum(findDate, solarTermsDateList)
-        self.nextSolarTerm = solarTermsNameList[nextNum]
         if findDate in solarTermsDateList:
             todaySolarTerm = solarTermsNameList[solarTermsDateList.index(findDate)]
         else:
             todaySolarTerm = '无'
+        # 次年节气
+        if findDate[0]==solarTermsDateList[-1][0] and findDate[1] >= solarTermsDateList[-1][1]:
+            year+=1
+            solarTermsDateList = self.getSolarTermsDateList(year)
+        else:
+            pass
+        nextNum = self.getNextNum(findDate, solarTermsDateList)
+        self.nextSolarTerm = solarTermsNameList[nextNum]
+        self.nextSolarTermDate = solarTermsDateList[nextNum]
+        self.nextSolarTermYear = year
         return todaySolarTerm
 
     # 星次
@@ -207,7 +219,7 @@ class Lunar():
     # 月八字与节气相关
     def get_month8Char(self):
         findDate = (self.date.month, self.date.day)
-        solarTermsDateList = self.getSolarTermsDateList()
+        solarTermsDateList = self.getSolarTermsDateList(self.date.year)
         nextNum = self.getNextNum(findDate, solarTermsDateList)
         # 2019年正月为丙寅月
         if nextNum == 0 and self.date.month == 12:
@@ -610,9 +622,9 @@ class Lunar():
                 gbDic['badThing'] += day8CharThing[i][1]
         # 由于正月建寅，men参数使用排序是从子开始，所以对照书籍需要将循环八字列向右移两位，也就是映射正月的是在第三个字
         angel = [
-            ('岁德', '甲庚丙壬戊甲庚丙壬戊'[yhn], d, ['修造', '嫁娶', '纳采', '移徙', '入宅'], []),
+            ('岁德', '甲庚丙壬戊甲庚丙壬戊'[yhn], d, ['修造', '嫁娶', '纳采', '搬移', '入宅'], []),
             # 岁德、岁德合：年天干对日天干['修造','动土','嫁娶','纳采','移徙','入宅','百事皆宜'] 天干相合+5  20190206
-            ('岁德合', '己乙辛丁癸己乙辛丁癸'[yhn], d, ['修造', '赴任', '嫁娶', '纳采', '移徙', '入宅', '出行'], []),  # 修营、起土，上官。嫁娶、远行，参谒
+            ('岁德合', '己乙辛丁癸己乙辛丁癸'[yhn], d, ['修造', '赴任', '嫁娶', '纳采', '搬移', '入宅', '出行'], []),  # 修营、起土，上官。嫁娶、远行，参谒
             ('月德', '壬庚丙甲壬庚丙甲壬庚丙甲'[men], d[0],
              ['祭祀', '祈福', '求嗣', '上册', '上表章', '颁诏', '覃恩', '施恩', '招贤', '举正直', '恤孤茕', '宣政事', '雪冤', '庆赐', '宴会', '出行',
               '安抚边境', '选将', '出师', '上官', '临政', '结婚姻', '纳采', '嫁娶', '搬移', '解除', '求医疗病', '裁制', '营建', '缮城郭', '修造', '竖柱上梁',
@@ -717,7 +729,7 @@ class Lunar():
             ('兵吉', d[1],['寅卯辰巳','丑寅卯辰','子丑寅卯','亥子丑寅','戌亥子丑','酉戌亥子','申酉戌亥','未申酉戌','午未申酉','巳午未申','辰巳午未','卯辰巳午'][men], ['安抚边境', '选将', '出师'], []),
         ]
         demon = [
-            ('岁破', den == (yen + 6) % 12, [True], [], ['修造', '移徙', '嫁娶', '出行']),
+            ('岁破', den == (yen + 6) % 12, [True], [], ['修造', '搬移', '嫁娶', '出行']),
             # 《广圣历》曰：“岁破者，太岁所冲之辰也。其地不可兴造、移徙，嫁娶、远行，犯者主损财物及害家长，惟战伐向之吉。
             ('天罡', '卯戌巳子未寅酉辰亥午丑申'[men], d, [], ['安葬']),
             ('河魁', '酉辰亥午丑申卯戌巳子未寅'[men], d, [], ['安葬']),
@@ -807,9 +819,9 @@ class Lunar():
             ('破败', '辰午申戌子寅辰午申戌子寅'[men], d, [], []),
             ('殃败', '巳辰卯寅丑子亥戌酉申未午'[men], d, [], []),
             ('雷公', '巳申寅亥巳申寅亥巳申寅亥'[men], d, [], []),
-            ('飞廉', '申酉戌巳午未寅卯辰亥子丑'[men], d, [], ['纳畜', '修造', '移徙', '嫁娶']),
+            ('飞廉', '申酉戌巳午未寅卯辰亥子丑'[men], d, [], ['纳畜', '修造', '搬移', '嫁娶']),
             ('大煞', '申酉戌巳午未寅卯辰亥子丑'[men], d, [], ['安抚边境', '选将', '出师']),
-            # 《神枢经》曰：“飞廉者，岁之廉察使君之象，亦名大煞。所理之不可兴工、动土，移徙，嫁娶《广圣历》曰：“子年在申，丑年在酉，寅年在戌，卯年在巳，辰年在午，巳年在未，午年在寅，未年在卯，申 年在辰，酉年在亥，戌年在子，亥年在丑也。”
+            # 《神枢经》曰：“飞廉者，岁之廉察使君之象，亦名大煞。所理之不可兴工、动土，搬移，嫁娶《广圣历》曰：“子年在申，丑年在酉，寅年在戌，卯年在巳，辰年在午，巳年在未，午年在寅，未年在卯，申 年在辰，酉年在亥，戌年在子，亥年在丑也。”
             ('枯鱼', '申巳辰丑戌未卯子酉午寅亥'[men], d, [], ['栽种']),
             ('九空', '申巳辰丑戌未卯子酉午寅亥'[men], d, [], ['进人口', '修仓库', '开市', '立券交易', '纳财', '开仓']),
             ('八座', '酉戌亥子丑寅卯辰巳午未申'[men], d, [], []),
@@ -844,8 +856,8 @@ class Lunar():
             # 天转有四日，分别是春季的乙卯日，夏季的丙午日，秋季的辛酉日，冬季的壬子日。
             # 地转也有四日，分别是春季的辛卯日，夏季的戊午日，秋季的癸酉日，冬季的丙子日。
             # “春季乙辛到兔位，夏天丙戊马上求；秋来辛癸听鸡叫，冬寒丙壬鼠洞留”。
-            ('天转', '乙卯丙午辛酉壬子'[sn * 2:sn * 2 + 2], d, [], ['修造', '搬徙', '嫁娶']),
-            ('地转', '辛卯戊午癸酉丙子'[sn * 2:sn * 2 + 2], d, [], ['修造', '搬徙', '嫁娶']),
+            ('天转', '乙卯丙午辛酉壬子'[sn * 2:sn * 2 + 2], d, [], ['修造', '搬移', '嫁娶']),
+            ('地转', '辛卯戊午癸酉丙子'[sn * 2:sn * 2 + 2], d, [], ['修造', '搬移', '嫁娶']),
             ('月建转杀', '卯午酉子'[sn], d, [], ['修造']),
             ('荒芜', d[1], '巳酉丑申子辰亥卯未寅午戌'[sn * 3:sn * 3 + 3], [], []),
 
