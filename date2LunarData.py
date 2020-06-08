@@ -56,7 +56,7 @@ def getLunar(now,godType='8char'):
 #     now += datetime.timedelta(days=1)
 #     i += 1
 print('\n八字月柱与八字日柱算神煞版本')
-getLunar(datetime.datetime(2020,11,7,22,30))
+getLunar(datetime.datetime(2020,11,1,22,30))
 print('\n农历月份与八字日柱算神煞版本')
-getLunar(datetime.datetime(2020,11,7,22,30),godType='lunar')
+getLunar(datetime.datetime(2020,11,1,22,30),godType='lunar')
 

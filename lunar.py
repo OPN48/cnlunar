@@ -598,7 +598,7 @@ class Lunar():
         ldn = self.lunarDay
         lmn = self.lunarMonth
         if self.godType == 'lunar':
-            # 使用农历月份与八字日柱算神煞（辨方书文字）
+            # 使用农历月份与八字日柱算神煞（辨方书文字） 农历(1-12)，-1改编号，[0-11]，+2位移，% 12 防止溢出
             men = (lmn - 1 + 2) % 12
         else:
             # 使用八字月柱与八字日柱算神煞（辨方书配图和部分文字）
@@ -628,6 +628,8 @@ class Lunar():
             if i in d:
                 gbDic['goodThing'] += day8CharThing[i][0]
                 gbDic['badThing'] += day8CharThing[i][1]
+
+
         # 由于正月建寅，men参数使用排序是从子开始，所以对照书籍需要将循环八字列向右移两位，也就是映射正月的是在第三个字
         angel = [
             ('岁德', '甲庚丙壬戊甲庚丙壬戊'[yhn], d, ['修造', '嫁娶', '纳采', '搬移', '入宅'], []),
