@@ -60,7 +60,7 @@ def getLunar(now, godType='8char'):
 #     i += 1
 print('\n八字月柱与八字日柱算神煞版本')
 getLunar(datetime.datetime(2019, 2, 4, 22, 30))
-print('\n农历月份与八字日柱算神煞版本')
+print('\n农历月份与八字日柱算神煞版本，月神随月建顺行者，算出来2019年2月4日是危日，虽然与书中卷九相符，但与市面上其他日历不符，不推荐此算法，推荐用默认月柱日柱算法')
 getLunar(datetime.datetime(2019, 2, 4, 22, 30), godType='lunar')
 
 # import json
