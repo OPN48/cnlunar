@@ -317,9 +317,17 @@ class Lunar():
         chinese12DayGods=['青龙','明堂','天刑','朱雀','金贵','天德','白虎','玉堂','天牢','玄武','司命','勾陈']
 
         '''
+        if self.godType == 'lunar':
+            # 使用农历月份与八字日柱算神煞（辨方书文字） 农历(1-12)，-1改编号，[0-11]，+2位移，% 12 防止溢出
+            lmn = self.lunarMonth
+            men = (lmn - 1 + 2) % 12
+        else:
+            # 使用八字月柱与八字日柱算神煞（辨方书配图和部分文字）
+            men = self.monthEarthNum
+
         # thisMonthStartGodNum = (self.lunarMonth -1 + 2) % 12
         # print(str(self.lunarMonth)+'=========='+str(thisMonthStartGodNum))
-        thisMonthStartGodNum = (self.monthEarthNum) % 12
+        thisMonthStartGodNum = (men) % 12
         # print(str(self.monthEarthNum) + '==========' + str(thisMonthStartGodNum))
         apartNum = self.dayEarthNum - thisMonthStartGodNum
         self.today12DayOfficer = chinese12DayOfficers[apartNum % 12]
@@ -328,7 +336,7 @@ class Lunar():
         # 十二神凶吉口诀：道远几时通达，路遥何日还乡
         # 辶为吉神(0, 1, 4, 5, 7, 11)
         # 为黄道吉日
-        eclipticGodNum = (self.dayEarthNum - [8, 10, 0, 2, 4, 6, 8, 10, 0, 2, 4, 6][self.monthEarthNum]) % 12
+        eclipticGodNum = (self.dayEarthNum - [8, 10, 0, 2, 4, 6, 8, 10, 0, 2, 4, 6][men]) % 12
         self.today12DayGod = chinese12DayGods[eclipticGodNum % 12]
         dayName = '黄道日' if eclipticGodNum in (0, 1, 4, 5, 7, 11) else '黑道日'
         return self.today12DayOfficer, self.today12DayGod, dayName
