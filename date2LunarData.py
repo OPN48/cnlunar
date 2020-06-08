@@ -44,6 +44,10 @@ def getLunar(now, godType='8char'):
         '忌': a.badThing,
         '时辰经络': a.meridians
     }
+    for i in dic:
+        midstr = '\t' * (2 - len(i) // 2) + ':' + '\t'
+        print(i, midstr, dic[i])
+    return dic
     return dic
 
 
@@ -55,9 +59,9 @@ def getLunar(now, godType='8char'):
 #     now += datetime.timedelta(days=1)
 #     i += 1
 print('\n八字月柱与八字日柱算神煞版本')
-getLunar(datetime.datetime(2020, 11, 1, 22, 30))
+getLunar(datetime.datetime(2019, 2, 4, 22, 30))
 print('\n农历月份与八字日柱算神煞版本')
-getLunar(datetime.datetime(2020, 11, 1, 22, 30), godType='lunar')
+getLunar(datetime.datetime(2019, 2, 4, 22, 30), godType='lunar')
 
 # import json
 # class DateEncoder(json.JSONEncoder):
