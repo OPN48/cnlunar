@@ -3,8 +3,8 @@ import datetime
 from . import lunar
 
 # 测试数据
-def getLunar(now):
-    a=lunar.Lunar(now)
+def getLunar(now,godType='8char'):
+    a=lunar.Lunar(now,godType = godType)
     dic={
         '日期':a.date,
         '农历数字':(a.lunarYear, a.lunarMonth, a.lunarDay,'闰' if a.isLunarLeapMonth else ''),
@@ -53,16 +53,12 @@ def getLunar(now):
 # i=1
 # c=0
 # now = datetime.datetime(2020, 2, 4, 12, 30)
-# while i <= 366:
-#     a = lunar.Lunar(now)
-#
-#     if '土王用事' in a.badGodName:
-#         print(now)
-#         c+=1
-#         print('c=%s' % c)
-#         print(a.badGodName)
+# while i <= 3660:
+#     a = lunar.Lunar(now,godType='lunar')
 #     now += datetime.timedelta(days=1)
 #     i += 1
-
+print('\n八字月柱与八字日柱算神煞版本')
 getLunar(datetime.datetime(2020,11,7,22,30))
+print('\n农历月份与八字日柱算神煞版本')
+getLunar(datetime.datetime(2020,11,7,22,30),godType='lunar')
 

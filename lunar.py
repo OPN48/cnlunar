@@ -17,7 +17,8 @@ from .holidays import otherLunarHolidaysList, otherHolidaysList, legalsolarTerms
 from .solar24 import getTheYearAllSolarTermsList
 
 class Lunar():
-    def __init__(self, date):
+    def __init__(self, date, godType='8char'):
+        self.godType = godType
         self.date = date
         self.twohourNum = (self.date.hour + 1) // 2
         self._upper_year = ''
@@ -594,9 +595,15 @@ class Lunar():
         # st=self.seasonType
         yhn = self.yearHeavenNum
         yen = self.yearEarthNum
-        men = self.monthEarthNum
         ldn = self.lunarDay
         lmn = self.lunarMonth
+        if self.godType == 'lunar':
+            # 使用农历月份与八字日柱算神煞（辨方书文字）
+            men = (lmn - 1 + 2) % 12
+        else:
+            # 使用八字月柱与八字日柱算神煞（辨方书配图和部分文字）
+            men = self.monthEarthNum
+
         # item参数规则，（name,当日判断结果,判断规则,宜事,忌事）
 
         day8CharThing = {
