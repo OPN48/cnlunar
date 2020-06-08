@@ -1,5 +1,18 @@
 # pyLunarCalendar
-前言：
+项目优点：
+1、不使用寿星通式[Y*D+C]-L，而使用香港天文台数据（阴阳合历，节气准农历日期才能准）
+
+2、无数据库，依赖库少，运行快速，提供内容丰富
+
+3、主要内容来自于《钦定协纪辨方书》，每一个神煞宜忌都有依据，遵循宜忌等第表，包含民用、御用事宜，且支持港式（通书配图）八字月柱算法-默认，通书原文文字农历月份算法，具体看date2LunarData.py
+
+4、不盈利，开源免费，长期有人维护
+
+5、民俗社会科学项目，不搞封建迷信，宜忌意义在于民间是将红白事合理分开，避免今日您宴请宾客，邻居办白事情况出现，引起邻里纠纷社会分裂。
+
+特别鸣谢@DarkmoonRabbit(https://github.com/DarkmoonRabbit)
+
+项目概述：
 由于三体运动（主要地球、太阳、月球）无法准确预测，目前二十四节气依然还是靠天文台观测，Yovey使用传说中[Y*D+C]-L方法实际有很多天数不准，def getSolarTerms(_date)12个if嵌套判断让代码变得十分冗余，由简书网友“大咖_247c”首先发现计算不准问题……
 【方案过程】
 ![image.png](https://upload-images.jianshu.io/upload_images/2369108-a121d5e561adc30b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
@@ -19,7 +32,7 @@ powered by Late Lee, http://www.latelee.org/python/python-yangli-to-nongli.html#
 other author:Chen Jian, http://www.cnblogs.com/chjbbs/p/5704326.html
 数据来源: http://data.weather.gov.hk/gts/time/conversion1_text_c.htm
 
-[【GITHUB/cuba3】:pyGregorian2LunarCalendar项目地址>>https://github.com/cuba3/pyGregorian2LunarCalendar](https://github.com/cuba3/pyGregorian2LunarCalendar)
+[【GITHUB/cuba3】:pyGregorian2LunarCalendar项目地址>>https://github.com/OPN48/pyLunarCalendar](https://github.com/OPN48/pyLunarCalendar])
 
 跟进Chen Jian的设计思路，增加了一层向量压缩。
 因为24节气每个月新历月固定有两个，所以list保持顺序，月份就不用存了，一定是1、1、2、2、3、3……
