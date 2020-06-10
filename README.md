@@ -18,7 +18,7 @@
 import datetime
 import lunar
 a = lunar.Lunar(datetime.datetime(2019, 2, 4, 22, 30))
-dic-{
+dic = {
     '日期': a.date,
     '农历数字': (a.lunarYear, a.lunarMonth, a.lunarDay, '闰' if a.isLunarLeapMonth else ''),
     '农历': '%s %s[%s]年 %s%s' % (a.lunarYearCn, a.year8Char, a.chineseYearZodiac, a.lunarMonthCn, a.lunarDayCn),
