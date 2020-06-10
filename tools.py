@@ -1,6 +1,6 @@
 # 工具拓展模块
 # author: cuba3
-# github: https://github.com/cuba3/pyGregorian2LunarCalendar
+# github: https://github.com/cuba3/pyLunarCalendar
 
 # 去除空行
 from config import encryptionVectorList, thingsSort

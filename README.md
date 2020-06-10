@@ -13,6 +13,7 @@
 特别鸣谢@DarkmoonRabbit(https://github.com/DarkmoonRabbit)
 
 <h2>快速上手</h2>
+
 ```
 import datetime
 import lunar
@@ -29,22 +30,18 @@ dic-{
     '下一节气': (a.nextSolarTerm, a.nextSolarTermDate, a.nextSolarTermYear),
     '今年节气表': a.thisYearSolarTermsDic,
     '季节': a.lunarSeason,
-
     '今日时辰': a.twohour8CharList,
     '时辰凶吉': a.get_twohourLuckyList(),
     '生肖冲煞': a.chineseZodiacClash,
     '星座': a.starZodiac,
     '星次': a.todayEastZodiac,
-
     '彭祖百忌': a.get_pengTaboo(),
     '彭祖百忌精简': a.get_pengTaboo(long=4, delimit='<br>'),
     '十二神': a.get_today12DayOfficer(),
     '廿八宿': a.get_the28Stars(),
-
     '今日三合': a.zodiacMark3List,
     '今日六合': a.zodiacMark6,
     '今日五行': a.get_today5Elements(),
-
     '纳音': a.get_nayin(),
     '九宫飞星': a.get_the9FlyStar(),
     '吉神方位': a.get_luckyGodsDirection(),
