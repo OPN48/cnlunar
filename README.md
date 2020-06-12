@@ -1,5 +1,61 @@
 # pyLunarCalendar
-前言：
+<h2>项目优点</h2>
+1、不使用寿星通式[Y*D+C]-L，而使用香港天文台数据（阴阳合历，节气准农历日期才能准）
+
+2、无数据库，依赖库少，运行快速，提供内容丰富
+
+3、主要内容来自于《钦定协纪辨方书》，每一个神煞宜忌都有依据，遵循宜忌等第表，包含民用、御用事宜，且支持港式（通书配图）八字月柱算法-默认，通书原文文字农历月份算法，具体看date2LunarData.py
+
+4、不盈利，开源免费，长期有人维护
+
+5、民俗社会科学项目，不搞封建迷信，宜忌意义在于民间是将红白事合理分开，避免今日您宴请宾客，邻居办白事情况出现，引起邻里纠纷社会分裂。
+
+特别鸣谢@DarkmoonRabbit(https://github.com/DarkmoonRabbit)
+
+<h2>快速上手</h2>
+
+```
+import datetime
+import lunar
+a = lunar.Lunar(datetime.datetime(2019, 2, 4, 22, 30))
+dic = {
+    '日期': a.date,
+    '农历数字': (a.lunarYear, a.lunarMonth, a.lunarDay, '闰' if a.isLunarLeapMonth else ''),
+    '农历': '%s %s[%s]年 %s%s' % (a.lunarYearCn, a.year8Char, a.chineseYearZodiac, a.lunarMonthCn, a.lunarDayCn),
+    '星期': a.weekDayCn,
+    # 未增加除夕
+    '今日节日': (a.get_legalHolidays(), a.get_otherHolidays(), a.get_otherLunarHolidays()),
+    '八字': ' '.join([a.year8Char, a.month8Char, a.day8Char, a.twohour8Char]),
+    '今日节气': a.todaySolarTerms,
+    '下一节气': (a.nextSolarTerm, a.nextSolarTermDate, a.nextSolarTermYear),
+    '今年节气表': a.thisYearSolarTermsDic,
+    '季节': a.lunarSeason,
+    '今日时辰': a.twohour8CharList,
+    '时辰凶吉': a.get_twohourLuckyList(),
+    '生肖冲煞': a.chineseZodiacClash,
+    '星座': a.starZodiac,
+    '星次': a.todayEastZodiac,
+    '彭祖百忌': a.get_pengTaboo(),
+    '彭祖百忌精简': a.get_pengTaboo(long=4, delimit='<br>'),
+    '十二神': a.get_today12DayOfficer(),
+    '廿八宿': a.get_the28Stars(),
+    '今日三合': a.zodiacMark3List,
+    '今日六合': a.zodiacMark6,
+    '今日五行': a.get_today5Elements(),
+    '纳音': a.get_nayin(),
+    '九宫飞星': a.get_the9FlyStar(),
+    '吉神方位': a.get_luckyGodsDirection(),
+    '今日胎神': a.get_fetalGod(),
+    '神煞宜忌': a.angelDemon,
+    '今日吉神': a.goodGodName,
+    '今日凶煞': a.badGodName,
+    '宜': a.goodThing,
+    '忌': a.badThing,
+    '时辰经络': a.meridians
+}
+```
+
+<h2>项目概述：</h2>
 由于三体运动（主要地球、太阳、月球）无法准确预测，目前二十四节气依然还是靠天文台观测，Yovey使用传说中[Y*D+C]-L方法实际有很多天数不准，def getSolarTerms(_date)12个if嵌套判断让代码变得十分冗余，由简书网友“大咖_247c”首先发现计算不准问题……
 【方案过程】
 ![image.png](https://upload-images.jianshu.io/upload_images/2369108-a121d5e561adc30b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
@@ -19,7 +75,7 @@ powered by Late Lee, http://www.latelee.org/python/python-yangli-to-nongli.html#
 other author:Chen Jian, http://www.cnblogs.com/chjbbs/p/5704326.html
 数据来源: http://data.weather.gov.hk/gts/time/conversion1_text_c.htm
 
-[【GITHUB/cuba3】:pyGregorian2LunarCalendar项目地址>>https://github.com/cuba3/pyGregorian2LunarCalendar](https://github.com/cuba3/pyGregorian2LunarCalendar)
+[【GITHUB/cuba3】:pyLunarCalendar项目地址>>https://github.com/OPN48/pyLunarCalendar](https://github.com/OPN48/pyLunarCalendar])
 
 跟进Chen Jian的设计思路，增加了一层向量压缩。
 因为24节气每个月新历月固定有两个，所以list保持顺序，月份就不用存了，一定是1、1、2、2、3、3……
@@ -76,7 +132,6 @@ solarTermsData=[
     0x15, 0x100110500, 0x55110510501, 0x155551554505,0x555555555515]
 ```
 4、根据《四库全书 - 协纪辨方书》添加了部分的吉神凶煞、八字，修正了部分八字月柱算法，关于值神方面的算法没有采用农历月算，而是根据农历八字月柱为依据，不同算法之间有细微区别。主要参考了老黄历、聚宝堂日历等，待持续优化
-
 铺注条例：
 凡铺注《万年历》、《通书》，先依用事次第察其所宜忌之日，于某日下注宜某事，某日下注忌某事，次按宜忌，较量其凶吉之轻重，以定去取。
 凡宜宣政事，布政事之日，只注宜宣政事。
