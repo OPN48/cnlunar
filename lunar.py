@@ -131,41 +131,43 @@ class Lunar():
         if (_span_days >= 0):
             """ 新年后推算日期，差日依序减月份天数，直到不足一个月，剪的次数为月数，剩余部分为日数 """
             """ 先获取闰月 """
-            _month_days, _leap_month, _leap_day = self.getMonthLeapMonthLeapDays()
-            while _span_days >= _month_days:
+            _monthDaysDefault, _leap_month, _leap_day = self.getMonthLeapMonthLeapDays()
+            _monthDays = int(_monthDaysDefault)
+            while _span_days >= _monthDays:
                 """ 获取当前月份天数，从差日中扣除 """
-                _span_days -= _month_days
+                _span_days -= _monthDays
                 if (self.lunarMonth == _leap_month):
                     """ 如果当月还是闰月 """
-                    _month_days = _leap_day
-                    if (_span_days < _month_days):
+                    _monthDays = _leap_day
+                    if (_span_days < _monthDays):
                         """ 指定日期在闰月中 ???"""
                         # self.lunarMonth = _leap_month
                         self.isLunarLeapMonth = True
                         break
                     """ 否则扣除闰月天数，月份加一 """
-                    _span_days -= _month_days
+                    _span_days -= _monthDays
                 self.lunarMonth += 1
-                _month_days = self.getMonthLeapMonthLeapDays()[0]
+                _monthDays = int(_monthDaysDefault)
             self.lunarDay += _span_days
             return self.lunarYear, self.lunarMonth, self.lunarDay
         else:
             """ 新年前倒推去年日期 """
             self.lunarMonth = 12
             self.lunarYear -= 1
-            _month_days, _leap_month, _leap_day = self.getMonthLeapMonthLeapDays()
-            while abs(_span_days) > _month_days:
-                _span_days += _month_days
+            _monthDaysDefault, _leap_month, _leap_day = self.getMonthLeapMonthLeapDays()
+            _monthDays = int(_monthDaysDefault)
+            while abs(_span_days) > _monthDays:
+                _span_days += _monthDays
                 self.lunarMonth -= 1
                 if (self.lunarMonth == _leap_month):
-                    _month_days = _leap_day
-                    if (abs(_span_days) <= _month_days):  # 指定日期在闰月中
+                    _monthDays = _leap_day
+                    if (abs(_span_days) <= _monthDays):  # 指定日期在闰月中
                         self.isLunarLeapMonth = True
                         # self.lunarMonth = self.lunarMonth | (_leap_month << 4)
                         break
-                    _span_days += _month_days
-                _month_days = self.getMonthLeapMonthLeapDays()[0]
-            self.lunarDay += (_month_days + _span_days)  # 从月份总数中倒扣 得到天数
+                    _span_days += _monthDays
+                _monthDays = int(_monthDaysDefault)
+            self.lunarDay += (_monthDays + _span_days)  # 从月份总数中倒扣 得到天数
             return self.lunarYear, self.lunarMonth, self.lunarDay
 
     # # # 24节气部分
