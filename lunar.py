@@ -147,7 +147,8 @@ class Lunar():
                     """ 否则扣除闰月天数，月份加一 """
                     _span_days -= _monthDays
                 self.lunarMonth += 1
-                _monthDays = int(_monthDaysDefault)
+                # 上一版本优化有误
+                _monthDays = self.getMonthLeapMonthLeapDays()[0]
             self.lunarDay += _span_days
             return self.lunarYear, self.lunarMonth, self.lunarDay
         else:
@@ -166,7 +167,8 @@ class Lunar():
                         # self.lunarMonth = self.lunarMonth | (_leap_month << 4)
                         break
                     _span_days += _monthDays
-                _monthDays = int(_monthDaysDefault)
+                # 上一版本优化有误
+                _monthDays = self.getMonthLeapMonthLeapDays()[0]
             self.lunarDay += (_monthDays + _span_days)  # 从月份总数中倒扣 得到天数
             return self.lunarYear, self.lunarMonth, self.lunarDay
 
