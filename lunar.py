@@ -1007,13 +1007,13 @@ class Lunar():
             # 凡天狗寅日忌祭祀，不注宜求福、祈嗣。
             if '天狗' in self.goodGodName or '寅' in d:
                 self.badThing = rfAdd(self.badThing, addList=['祭祀'])
-                self.goodThing = rfRemove(self.goodThing, addList=['祭祀'])
+                self.goodThing = rfRemove(self.goodThing, removeList=['祭祀'])
 
                 self.goodThing = rfRemove(self.goodThing, removeList=['求福', '祈嗣'])
             # 凡卯日忌穿井，不注宜开渠。壬日忌开渠，不注宜穿井。
             if '卯' in d:
                 self.badThing = rfAdd(self.badThing, addList=['穿井'])
-                self.goodThing = rfRemove(self.goodThing, addList=['穿井'])
+                self.goodThing = rfRemove(self.goodThing, removeList=['穿井'])
 
                 self.goodThing = rfRemove(self.goodThing, removeList=['开渠'])
             if '壬' in d:
