@@ -1007,25 +1007,37 @@ class Lunar():
             # 凡天狗寅日忌祭祀，不注宜求福、祈嗣。
             if '天狗' in self.goodGodName or '寅' in d:
                 self.badThing = rfAdd(self.badThing, addList=['祭祀'])
+                self.goodThing = rfRemove(self.goodThing, addList=['祭祀'])
+
                 self.goodThing = rfRemove(self.goodThing, removeList=['求福', '祈嗣'])
             # 凡卯日忌穿井，不注宜开渠。壬日忌开渠，不注宜穿井。
             if '卯' in d:
                 self.badThing = rfAdd(self.badThing, addList=['穿井'])
+                self.goodThing = rfRemove(self.goodThing, addList=['穿井'])
+
                 self.goodThing = rfRemove(self.goodThing, removeList=['开渠'])
             if '壬' in d:
                 self.badThing = rfAdd(self.badThing, addList=['开渠'])
+                self.goodThing = rfRemove(self.goodThing, removeList=['开渠'])
+
                 self.goodThing = rfRemove(self.goodThing, removeList=['穿井'])
             # 凡巳日忌出行，不注宜出师、遣使。
             if '巳' in d:
                 self.badThing = rfAdd(self.badThing, addList=['出行'])
+                self.goodThing = rfRemove(self.goodThing, removeList=['出行'])
+
                 self.goodThing = rfRemove(self.goodThing, removeList=['出师', '遣使'])
             # 凡酉日忌宴会，亦不注宜庆赐、赏贺。
             if '酉' in d:
                 self.badThing = rfAdd(self.badThing, addList=['宴会'])
+                self.goodThing = rfRemove(self.goodThing, removeList=['宴会'])
+
                 self.goodThing = rfRemove(self.goodThing, removeList=['庆赐', '赏贺'])
             # 凡丁日忌剃头，亦不注宜整容。
             if '丁' in d:
                 self.badThing = rfAdd(self.badThing, addList=['剃头'])
+                self.goodThing = rfRemove(self.goodThing, removeList=['剃头'])
+
                 self.goodThing = rfRemove(self.goodThing, removeList=['整容'])
             # 凡吉足胜凶，从宜不从忌者，如遇德犹忌之事，则仍注忌。
             if self.todayLevel == 0 and thingLevel == 0:
@@ -1125,6 +1137,14 @@ class Lunar():
             self.badThing = ['诸事不忌']
         if self.goodThing == []:
             self.goodThing = ['诸事不宜']
+
+        # 书中未明注忌不注宜
+        rmThing=[]
+        for thing in self.badThing:
+            if thing in self.goodThing:
+                rmThing.append(thing)
+        self.goodThing = rfRemove(self.goodThing, removeList=rmThing)
+
         # 输出排序调整
         self.badThing.sort(key=sortCollation)
         self.goodThing.sort(key=sortCollation)
