@@ -2,9 +2,9 @@
 # coding=UTF-8
 # 数据爬虫模块
 # author: cuba3
-# github: https://github.com/cuba3/pyGregorian2LunarCalendar
-from .solar24 import zipSolarTermsList
-from .tools import not_empty
+# github: https://github.com/OPN48/pyLunarCalendar
+from solar24 import zipSolarTermsList
+from tools import not_empty
 
 # 爬虫获取香港天文台数据
 def hkweather(year):
