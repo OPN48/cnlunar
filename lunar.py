@@ -63,7 +63,8 @@ class Lunar():
             self.lunarMonthLong = False
         else:
             self.lunarMonthLong = True
-        return lunarMonth + '大' if self.lunarMonthLong else '小'
+        s = '大' if self.lunarMonthLong else '小'
+        return lunarMonth + s
 
     def get_lunarCn(self):
         return self.get_lunarYearCN(), self.get_lunarMonthCN(), lunarDayNameList[(self.lunarDay - 1) % 30]
@@ -672,7 +673,7 @@ class Lunar():
             gbDic['badThing'] = rfAdd(gbDic['badThing'], ['整手足甲'])
         # 每月十二日 十五日 忌 整容剃头
         if ldn in [12, 15]:
-            gbDic['badThing'] = rfAdd(gbDic['badThing'], ['整容剃头'])
+            gbDic['badThing'] = rfAdd(gbDic['badThing'], ['整容', '剃头'])
         # 每月十五日 朔弦望月 忌 求医疗病
         if ldn in [15] or self.phaseOfMoon != '':
             gbDic['badThing'] = rfAdd(gbDic['badThing'], ['求医疗病'])
