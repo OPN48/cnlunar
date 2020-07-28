@@ -63,7 +63,8 @@ class Lunar():
             self.lunarMonthLong = False
         else:
             self.lunarMonthLong = True
-        return lunarMonth + '大' if self.lunarMonthLong else '小'
+        s = '大' if self.lunarMonthLong else '小'
+        return lunarMonth + s
 
     def get_lunarCn(self):
         return self.get_lunarYearCN(), self.get_lunarMonthCN(), lunarDayNameList[(self.lunarDay - 1) % 30]
