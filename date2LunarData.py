@@ -40,6 +40,7 @@ def getLunar(now, godType='8char'):
         '神煞宜忌': a.angelDemon,
         '今日吉神': a.goodGodName,
         '今日凶煞': a.badGodName,
+        '宜忌等第': a.todayLevelName,
         '宜': a.goodThing,
         '忌': a.badThing,
         '时辰经络': a.meridians
@@ -58,7 +59,7 @@ def getLunar(now, godType='8char'):
 #     now += datetime.timedelta(days=1)
 #     i += 1
 print('\n八字月柱与八字日柱算神煞版本')
-getLunar(datetime.datetime(2021, 2, 20, 10, 30))
+getLunar(datetime.datetime(2021, 1, 20, 10, 30))
 # print('\n农历月份与八字日柱算神煞版本，月神随月建顺行者，算出来2019年2月4日是危日，虽然与书中卷九相符，但与市面上其他日历不符，不推荐此算法，推荐用默认月柱日柱算法')
 # getLunar(datetime.datetime(2019, 2, 4, 22, 30), godType='lunar')
 
