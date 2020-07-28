@@ -25,7 +25,9 @@ class Lunar():
         self.isLunarLeapMonth = False
         (self.lunarYear, self.lunarMonth, self.lunarDay) = self.get_lunarDateNum()
         (self.lunarYearCn, self.lunarMonthCn, self.lunarDayCn) = self.get_lunarCn()
+        self.phaseOfMoon = self.getPhaseOfMoon()
 
+        self.todaySolarTerms = self.get_todaySolarTerms()
         (self.year8Char, self.month8Char, self.day8Char) = self.get_the8char()
         self.get_earthNum(), self.get_heavenNum(), self.get_season()
         self.twohour8CharList = self.get_twohour8CharList()
@@ -35,12 +37,12 @@ class Lunar():
         self.chineseYearZodiac = self.get_chineseYearZodiac()
         self.chineseZodiacClash = self.get_chineseZodiacClash()
         self.weekDayCn = self.get_weekDayCn()
-        self.todaySolarTerms = self.get_todaySolarTerms()
         self.starZodiac = self.get_starZodiac()
         self.todayEastZodiac = self.get_eastZodiac()
         self.thisYearSolarTermsDic = dict(zip(solarTermsNameList, self.thisYearSolarTermsDateList))
 
         self.today28Star = self.get_the28Stars()
+        self.content = ''
         self.angelDemon = self.get_AngelDemon()
         self.meridians = meridiansName[self.twohourNum % 12]
 
@@ -58,12 +60,26 @@ class Lunar():
             lunarMonth = "闰" + lunarMonth
             thisLunarMonthDays = self.monthDaysList[2]
         if thisLunarMonthDays < 30:
-            return lunarMonth + '小'
+            self.lunarMonthLong = False
         else:
-            return lunarMonth + '大'
+            self.lunarMonthLong = True
+        return lunarMonth + '大' if self.lunarMonthLong else '小'
 
     def get_lunarCn(self):
         return self.get_lunarYearCN(), self.get_lunarMonthCN(), lunarDayNameList[(self.lunarDay - 1) % 30]
+
+    # 月相
+    def getPhaseOfMoon(self):
+        if self.lunarDay - int(self.lunarMonthLong) == 15:
+            return '望'
+        elif self.lunarDay == 1:
+            return '朔'
+        elif self.lunarDay in range(7, 9):
+            return '上弦'
+        elif self.lunarDay in range(22, 24):
+            return '下弦'
+        else:
+            return ''
 
     # 生肖
     def get_chineseYearZodiac(self):
@@ -171,7 +187,7 @@ class Lunar():
             return self.lunarYear, self.lunarMonth, self.lunarDay
 
     # # # 24节气部分
-    def getSolarTermsDateList(self,year):
+    def getSolarTermsDateList(self, year):
         solarTermsList = getTheYearAllSolarTermsList(year)
         solarTermsDateList = []
         for i in range(0, len(solarTermsList)):
@@ -181,8 +197,8 @@ class Lunar():
         return solarTermsDateList
 
     def getNextNum(self, findDate, solarTermsDateList):
-        nextNum=len(list(filter(lambda y: y <= findDate, solarTermsDateList))) % 24
-        return nextNum
+        nextSolarNum = len(list(filter(lambda y: y <= findDate, solarTermsDateList))) % 24
+        return nextSolarNum
 
     def get_todaySolarTerms(self):
         '''
@@ -190,22 +206,21 @@ class Lunar():
         '''
         year = self.date.year
         solarTermsDateList = self.getSolarTermsDateList(year)
-        # 今年节气表
         self.thisYearSolarTermsDateList = solarTermsDateList
         findDate = (self.date.month, self.date.day)
+        self.nextSolarNum = self.getNextNum(findDate, solarTermsDateList)
         if findDate in solarTermsDateList:
             todaySolarTerm = solarTermsNameList[solarTermsDateList.index(findDate)]
         else:
             todaySolarTerm = '无'
-        nextNum = self.getNextNum(findDate, solarTermsDateList)
         # 次年节气
-        if findDate[0]==solarTermsDateList[-1][0] and findDate[1] >= solarTermsDateList[-1][1]:
-            year+=1
+        if findDate[0] == solarTermsDateList[-1][0] and findDate[1] >= solarTermsDateList[-1][1]:
+            year += 1
             solarTermsDateList = self.getSolarTermsDateList(year)
         else:
             pass
-        self.nextSolarTerm = solarTermsNameList[nextNum]
-        self.nextSolarTermDate = solarTermsDateList[nextNum]
+        self.nextSolarTerm = solarTermsNameList[self.nextSolarNum]
+        self.nextSolarTermDate = solarTermsDateList[self.nextSolarNum]
         self.nextSolarTermYear = year
         return todaySolarTerm
 
@@ -221,9 +236,10 @@ class Lunar():
 
     # 月八字与节气相关
     def get_month8Char(self):
-        findDate = (self.date.month, self.date.day)
-        solarTermsDateList = self.getSolarTermsDateList(self.date.year)
-        nextNum = self.getNextNum(findDate, solarTermsDateList)
+        #
+        # findDate = (self.date.month, self.date.day)
+        # solarTermsDateList = self.getSolarTermsDateList(self.date.year)
+        nextNum = self.nextSolarNum
         # 2019年正月为丙寅月
         if nextNum == 0 and self.date.month == 12:
             nextNum = 24
@@ -495,9 +511,9 @@ class Lunar():
                                 break
         # 今日宜忌等第
         levelDic = {0: '上', 1: '上次', 2: '中', 3: '中次', 4: '下', 5: '下下', -1: '无'}
-        self.todayLevel=l
+        self.todayLevel = l
         self.todayLevelName = levelDic[l]
-        thingLevelDic = {0:'从宜不从忌',1:'从宜亦从忌',2:'从忌不从宜',3:'诸事皆忌'}
+        thingLevelDic = {0: '从宜不从忌', 1: '从宜亦从忌', 2: '从忌不从宜', 3: '诸事皆忌'}
         self.isDe = False
         for i in self.goodGodName:
             if i in ['岁德', '岁德合', '月德', '月德合', '天德', '天德合']:
@@ -505,7 +521,7 @@ class Lunar():
                 break
         # 下下：凶叠大凶，遇德亦诸事皆忌；卯酉月 灾煞遇 月破、月厌  月厌遇灾煞、月破
         if l == 5:
-            thingLevel=3
+            thingLevel = 3
         # 下：凶又逢凶，遇德从忌不从宜，不遇诸事皆忌；
         elif l == 4:
             if self.isDe:
@@ -568,23 +584,24 @@ class Lunar():
             '定': (['冠带'], []),
             '执': (['捕捉'], []),
             '破': (['求医疗病'], []),
-            '危': (['安抚边境', '选将', '安床', '畋猎', '取鱼'], []),
+            '危': (['安抚边境', '选将', '安床'], []),
             '成': (['入学', '安抚边境', '搬移', '筑堤防', '开市'], []),
-            '收': (['进人口', '纳财', '捕捉', '畋猎', '取鱼', '纳畜'],
+            '收': (['进人口', '纳财', '捕捉', '纳畜'],
                   ['祈福', '求嗣', '上册', '上表章', '颁诏', '施恩', '招贤', '举正直', '宣政事', '布政事', '庆赐', '宴会', '冠带', '出行', '安抚边境', '选将',
                    '出师', '上官', '临政', '结婚姻', '纳采', '嫁娶', '搬移', '安床', '解除', '求医疗病', '裁制', '营建', '修宫室', '缮城郭', '筑堤防', '修造',
                    '竖柱上梁', '鼓铸', '经络', '酝酿', '开市', '立券交易', '开仓', '修置产室', '开渠', '穿井', '破土', '安葬', '启攒']),
             '开': (
-            ['祭祀', '祈福', '求嗣', '上册', '上表章', '颁诏', '覃恩', '施恩', '招贤', '举正直', '恤孤茕', '宣政事', '雪冤', '庆赐', '宴会', '入学', '出行',
-             '上官', '临政', '搬移', '解除', '求医疗病', '裁制', '修宫室', '缮城郭', '修造', '修仓库', '开市', '修置产室', '开渠', '穿井', '安碓硙', '栽种',
-             '牧养'], []),
+                ['祭祀', '祈福', '求嗣', '上册', '上表章', '颁诏', '覃恩', '施恩', '招贤', '举正直', '恤孤茕', '宣政事', '雪冤', '庆赐', '宴会', '入学',
+                 '出行',
+                 '上官', '临政', '搬移', '解除', '求医疗病', '裁制', '修宫室', '缮城郭', '修造', '修仓库', '开市', '修置产室', '开渠', '穿井', '安碓硙', '栽种',
+                 '牧养'], []),
             '闭': (['筑堤防', '塞穴', '补垣'],
                   ['上册', '上表章', '颁诏', '施恩', '招贤', '举正直', '宣政事', '布政事', '庆赐', '宴会', '出行', '出师', '上官', '临政', '结婚姻', '纳采',
                    '嫁娶', '进人口', '搬移', '安床', '求医疗病', '疗目', '营建', '修宫室', '修造', '竖柱上梁', '开市', '开仓', '修置产室', '开渠', '穿井']),
         }
         gbDic = {'goodName': [], 'badName': [], 'goodThing': officerThings[self.today12DayOfficer][0],
                  'badThing': officerThings[self.today12DayOfficer][1]}
-
+        # 神煞宜忌准备
         bujiang = ['壬寅壬辰辛丑辛卯辛巳庚寅庚辰丁丑丁卯丁巳戊寅戊辰', '辛丑辛卯庚子庚寅庚辰丁丑丁卯丙子丙寅丙辰戊子戊寅戊辰', '辛亥辛丑辛卯庚子庚寅丁亥丁丑丁卯丙子丙寅戊子戊寅',
                    '庚戌庚子庚寅丁亥丁丑丙戌丙子丙寅乙亥乙丑戊戌戊子戊寅', '丁酉丁亥丁丑丙戌丙子乙酉乙亥乙丑甲戌甲子戊戌戊子', '丁酉丁亥丙申丙戌丙子乙酉乙亥甲申甲戌甲子戊申戊戌戊子',
                    '丙申丙戌乙未乙酉乙亥甲申甲戌癸未癸酉癸亥戊申戊戌', '乙未乙酉甲午甲申甲戌癸未癸酉壬午壬申壬戌戊午戊申戊戌', '乙巳乙未乙酉甲午甲申癸巳癸未癸酉壬午壬申戊午戊申',
@@ -595,9 +612,9 @@ class Lunar():
         tmd = (tomorrow.month, tomorrow.day)
         t4l = [self.thisYearSolarTermsDic[i] for i in ['春分', '夏至', '秋分', '冬至']]
         t4j = [self.thisYearSolarTermsDic[i] for i in ['立春', '立夏', '立秋', '立冬']]
-        twys = t4j[len(list(filter(lambda y: y < tmd, t4j)))%4]
+        twys = t4j[len(list(filter(lambda y: y < tmd, t4j))) % 4]
         s = self.today28Star
-        # o = self.today12DayOfficer
+        o = self.today12DayOfficer
         d = self.day8Char
         den = self.dayEarthNum
         dhen = self.dayHeavenlyEarthNum
@@ -629,16 +646,36 @@ class Lunar():
             '卯': ([], ['穿井']),
             '酉': ([], ['宴会']),
             '巳': ([], ['出行']),
-            '午': (['伐木'], ['苫盖']),
+            '午': ([], ['苫盖']),
             '未': ([], ['求医疗病']),
-            '申': (['伐木'], ['安床']),
+            '申': ([], ['安床']),
             '亥': (['沐浴'], ['嫁娶'])  # 亥子日宜沐浴
         }
         for i in day8CharThing:
             if i in d:
                 gbDic['goodThing'] += day8CharThing[i][0]
                 gbDic['badThing'] += day8CharThing[i][1]
-
+        # 插入卷十一拆解后遗留内容
+        # 节气间差类
+        # [('小寒', 0), ('大寒', 1), ('立春', 2), ('雨水', 3), ('惊蛰', 4), ('春分', 5), ('清明', 6), ('谷雨', 7), ('立夏', 8), ('小满', 9), ('芒种', 10), ('夏至', 11), ('小暑', 12), ('大暑', 13), ('立秋', 14), ('处暑', 15), ('白露', 16), ('秋分', 17), ('寒露', 18), ('霜降', 19), ('立冬', 20), ('小雪', 21), ('大雪', 22), ('冬至', 23)]
+        # 雨水后立夏前执日、危日、收日 宜 取鱼
+        if self.nextSolarNum in range(4, 9) and o in ['执', '危', '收']:
+            gbDic['goodThing'] = rfAdd(gbDic['goodThing'], ['取鱼'])
+        # 霜降后立春前执日、危日、收日 宜 畋猎
+        if self.nextSolarNum in range(20, 24) and self.nextSolarNum in range(0, 3) and o in ['执', '危', '收']:
+            gbDic['goodThing'] = rfAdd(gbDic['goodThing'], ['畋猎'])
+        # 立冬后立春前危日 午日 申日 宜 伐木
+        if self.nextSolarNum in range(21, 24) and self.nextSolarNum in range(0, 3) and (o in ['危'] or d in ['午', '申']):
+            gbDic['goodThing'] = rfAdd(gbDic['goodThing'], ['伐木'])
+        #   每月一日 六日 十五 十九日 二十一日 二十三日 忌 整手足甲
+        if ldn in [1, 6, 15, 19, 21, 23]:
+            gbDic['badThing'] = rfAdd(gbDic['badThing'], ['整手足甲'])
+        # 每月十二日 十五日 忌 整容剃头
+        if ldn in [12, 15]:
+            gbDic['badThing'] = rfAdd(gbDic['badThing'], ['整容剃头'])
+        # 每月十五日 朔弦望月 忌 求医疗病
+        if ldn in [15] or self.phaseOfMoon != '':
+            gbDic['badThing'] = rfAdd(gbDic['badThing'], ['求医疗病'])
 
         # 由于正月建寅，men参数使用排序是从子开始，所以对照书籍需要将循环八字列向右移两位，也就是映射正月的是在第三个字
         angel = [
@@ -668,7 +705,9 @@ class Lunar():
             ('三合', (den - men) % 4 == 0, [True],
              ['庆赐', '宴会', '结婚姻', '纳采', '嫁娶', '进人口', '裁制', '修宫室', '缮城郭', '修造', '竖柱上梁', '修仓库', '经络', '酝酿', '立券交易', '纳财',
               '安碓硙', '纳畜'], []),  # 三合数在地支上相差4个顺位
-            ('四相', d[0], ('丙丁', '戊己', '壬癸', '甲乙')[sn],['祭祀', '祈福', '求嗣', '施恩', '举正直', '庆赐', '宴会', '出行', '上官', '临政', '结婚姻', '纳采', '搬移', '解除', '求医疗病', '裁制', '修宫室','缮城郭', '修造', '竖柱上梁', '纳财', '开仓', '栽种', '牧养'], []),
+            ('四相', d[0], ('丙丁', '戊己', '壬癸', '甲乙')[sn],
+             ['祭祀', '祈福', '求嗣', '施恩', '举正直', '庆赐', '宴会', '出行', '上官', '临政', '结婚姻', '纳采', '搬移', '解除', '求医疗病', '裁制', '修宫室',
+              '缮城郭', '修造', '竖柱上梁', '纳财', '开仓', '栽种', '牧养'], []),
             # 《总要历》曰：“四相者，四时王相之辰也。其日宜修营、起工、养育，生财、栽植、种莳、移徙、远行，曰：“春丙丁，夏戊己，秋壬癸，冬甲乙。
             ('五合', d[1], '寅卯', ['宴会', '结婚姻', '立券交易'], []),
             ('五富', '巳申亥寅巳申亥寅巳申亥寅'[men], d, ['经络', '酝酿', '开市', '立券交易', '纳财', '开仓', '栽种', '牧养', '纳畜'], []),
@@ -676,7 +715,9 @@ class Lunar():
             ('六仪', '午巳辰卯寅丑子亥戌酉申未'[men], d, ['临政'], []),  # 厌对招摇
 
             ('不将', d, bujiang[men], ['嫁娶'], []),
-            ('时德', '午辰子寅'[sn], d[1],['祭祀', '祈福', '求嗣', '施恩', '举正直', '庆赐', '宴会', '出行', '上官', '临政', '结婚姻', '纳采', '搬移', '解除', '求医疗病', '裁制', '修宫室','缮城郭', '修造', '竖柱上梁', '纳财', '开仓', '栽种', '牧养'], []),  # 时德:春午 夏辰 秋子 冬寅 20190204
+            ('时德', '午辰子寅'[sn], d[1],
+             ['祭祀', '祈福', '求嗣', '施恩', '举正直', '庆赐', '宴会', '出行', '上官', '临政', '结婚姻', '纳采', '搬移', '解除', '求医疗病', '裁制', '修宫室',
+              '缮城郭', '修造', '竖柱上梁', '纳财', '开仓', '栽种', '牧养'], []),  # 时德:春午 夏辰 秋子 冬寅 20190204
             ('大葬', d, '壬申癸酉壬午甲申乙酉丙申丁酉壬寅丙午己酉庚申辛酉', ['安葬'], []),
             ('鸣吠', d, '庚午壬申癸酉壬午甲申乙酉己酉丙申丁酉壬寅丙午庚寅庚申辛酉', ['破土', '安葬'], []),
             ('小葬', d, '庚午壬辰甲辰乙巳甲寅丙辰庚寅', ['安葬'], []),
@@ -684,7 +725,8 @@ class Lunar():
             ('鸣吠对', d, '丙寅丁卯丙子辛卯甲午庚子癸卯壬子甲寅乙卯', ['破土', '启攒'], []),  # （改）
             ('不守塚', d, '庚午辛未壬申癸酉戊寅己卯壬午癸未甲申乙酉丁未甲午乙未丙申丁酉壬寅癸卯丙午戊申己酉庚申辛酉', ['破土'], []),
             # 《钦定协纪辨方书 卷五》《历例》 王日、官日、守日、相日、民日
-            ('王日', '寅巳申亥'[sn], d[1],['颁诏', '覃恩', '施恩', '招贤', '举正直', '恤孤茕', '宣政事', '雪冤', '庆赐', '宴会', '出行', '安抚边境', '选将', '上官', '临政', '裁制'], []),
+            ('王日', '寅巳申亥'[sn], d[1],
+             ['颁诏', '覃恩', '施恩', '招贤', '举正直', '恤孤茕', '宣政事', '雪冤', '庆赐', '宴会', '出行', '安抚边境', '选将', '上官', '临政', '裁制'], []),
             ('官日', '卯午酉子'[sn], d[1], ['上官', '临政'], []),
             ('守日', '酉子卯午'[sn], d[1], ['安抚边境', '上官', '临政'], []),
             ('相日', '巳申亥寅'[sn], d[1], ['上官', '临政'], []),
@@ -746,7 +788,9 @@ class Lunar():
             ('小时', '子丑寅卯辰巳午未申酉戌亥'[men], d, [], []),
             ('兵福', '子丑寅卯辰巳午未申酉戌亥'[men], d, ['安抚边境', '选将', '出师'], []),
             ('兵宝', '丑寅卯辰巳午未申酉戌亥子'[men], d, ['安抚边境', '选将', '出师'], []),
-            ('兵吉', d[1],['寅卯辰巳','丑寅卯辰','子丑寅卯','亥子丑寅','戌亥子丑','酉戌亥子','申酉戌亥','未申酉戌','午未申酉','巳午未申','辰巳午未','卯辰巳午'][men], ['安抚边境', '选将', '出师'], []),
+            ('兵吉', d[1],
+             ['寅卯辰巳', '丑寅卯辰', '子丑寅卯', '亥子丑寅', '戌亥子丑', '酉戌亥子', '申酉戌亥', '未申酉戌', '午未申酉', '巳午未申', '辰巳午未', '卯辰巳午'][men],
+             ['安抚边境', '选将', '出师'], []),
         ]
         demon = [
             ('岁破', den == (yen + 6) % 12, [True], [], ['修造', '搬移', '嫁娶', '出行']),
@@ -823,7 +867,10 @@ class Lunar():
             ('天狗', '寅卯辰巳午未申酉戌亥子丑'[men], d, [], ['祭祀']),
             ('天狗下食', '戌亥子丑寅卯辰巳午未申酉'[men], d, [], ['祭祀']),
             ('天贼', '卯寅丑子亥戌酉申未午巳辰'[men], d, [], ['出行', '修仓库', '开仓']),
-            ('地囊', d, ['辛未辛酉','乙酉乙未','庚子庚午','癸未癸丑','甲子甲寅','己卯己丑','戊辰戊午','癸未癸巳','丙寅丙申','丁卯丁巳','戊辰戊子','庚戌庚子',][men], [], ['营建', '修宫室', '缮城郭', '筑堤防', '修造', '修仓库', '修置产室', '开渠', '穿井', '安碓硙', '补垣', '修饰垣墙', '平治道涂', '破屋坏垣', '栽种', '破土']),
+            ('地囊', d,
+             ['辛未辛酉', '乙酉乙未', '庚子庚午', '癸未癸丑', '甲子甲寅', '己卯己丑', '戊辰戊午', '癸未癸巳', '丙寅丙申', '丁卯丁巳', '戊辰戊子', '庚戌庚子', ][men],
+             [], ['营建', '修宫室', '缮城郭', '筑堤防', '修造', '修仓库', '修置产室', '开渠', '穿井', '安碓硙', '补垣', '修饰垣墙', '平治道涂', '破屋坏垣', '栽种',
+                  '破土']),
             ('地火', '子亥戌酉申未午巳辰卯寅丑'[men], d, [], ['栽种']),
             ('独火', '未午巳辰卯寅丑子亥戌酉申'[men], d, [], ['修造']),
             ('受死', '卯酉戌辰亥巳子午丑未寅申'[men], d, [], ['畋猎']),
@@ -893,11 +940,17 @@ class Lunar():
             # 《枢要历》曰:五虛者,四时绝辰也。其日忌开仓、营种莳、出财宝、放债负。《历例》曰:五虚者,春巳酉丑,夏申子辰,秋亥卯未,冬寅午戌也。
             ('咸池', '酉午卯子酉午卯子酉午卯子'[men], d, [], ['嫁娶', '取鱼', '乘船渡水']),  # 《历例》曰:咸池者,正月起卯,逆行四仲;
             # 《历例》曰:士符者,正月丑，二月已,三月酉,四月寅,五月午,六月戌,七月卯,八月未,九月亥,十月辰,十一月申,十二月子。
-            ('土符', '申子丑巳酉寅午戌卯未亥辰'[men], d, [], ['营建', '修宫室', '缮城郭', '筑堤防', '修造', '修仓库', '修置产室', '开渠', '穿井', '安碓硙', '补垣', '修饰垣墙', '平治道涂', '破屋坏垣', '栽种','破土']),
-            ('土府', '子丑寅卯辰巳午未申酉戌亥'[men], d, [], ['营建', '修宫室', '缮城郭', '筑堤防', '修造', '修仓库', '修置产室', '开渠', '穿井', '安碓硙', '补垣', '修饰垣墙', '平治道涂', '破屋坏垣', '栽种','破土']),
-            ('土王用事', (datetime(self.nextSolarTermYear,twys[0],twys[1])-self.date).days, range(0,18), [], ['营建', '修宫室', '缮城郭', '筑堤防', '修造', '修仓库', '修置产室', '开渠', '穿井', '安碓硙', '补垣', '修饰垣墙', '平治道涂', '破屋坏垣', '栽种', '破土']),
+            ('土符', '申子丑巳酉寅午戌卯未亥辰'[men], d, [],
+             ['营建', '修宫室', '缮城郭', '筑堤防', '修造', '修仓库', '修置产室', '开渠', '穿井', '安碓硙', '补垣', '修饰垣墙', '平治道涂', '破屋坏垣', '栽种',
+              '破土']),
+            ('土府', '子丑寅卯辰巳午未申酉戌亥'[men], d, [],
+             ['营建', '修宫室', '缮城郭', '筑堤防', '修造', '修仓库', '修置产室', '开渠', '穿井', '安碓硙', '补垣', '修饰垣墙', '平治道涂', '破屋坏垣', '栽种',
+              '破土']),
+            ('土王用事', (datetime(self.nextSolarTermYear, twys[0], twys[1]) - self.date).days, range(0, 18), [],
+             ['营建', '修宫室', '缮城郭', '筑堤防', '修造', '修仓库', '修置产室', '开渠', '穿井', '安碓硙', '补垣', '修饰垣墙', '平治道涂', '破屋坏垣', '栽种',
+              '破土']),
             ('血支', '亥子丑寅卯辰巳午未申酉戌'[men], d, [], ['针刺']),
-             # 《广圣历》曰:九焦者,月中杀神也。其日忌炉冶、铸造、种植、修筑园圃。《历例》曰:正月在辰逆行四季,五月在卯逆行四仲,九月在寅逆行四孟。
+            # 《广圣历》曰:九焦者,月中杀神也。其日忌炉冶、铸造、种植、修筑园圃。《历例》曰:正月在辰逆行四季,五月在卯逆行四仲,九月在寅逆行四孟。
             ('游祸', '亥申巳寅亥申巳寅亥申巳寅'[men], d, [], ['祈福', '求嗣', '解除', '求医疗病']),
             # 官历宜服药?  《神枢经》曰:游祸者,月中恶神也。其日忌服药请医、祀神致祭。李鼎祚曰:游祸者,正月起已逆行四孟。
             ('归忌', '寅子丑寅子丑寅子丑寅子丑'[men], d, [], ['搬移', '远回']),
@@ -920,7 +973,7 @@ class Lunar():
         # 配合angel、demon的数据结构的吉神凶神筛选
         def getTodayGoodBadThing(dic):
             for i in [(angel, 'goodName', 'goodThing', 'badThing'), (demon, 'badName', 'goodThing', 'badThing')]:
-                godDb, godNameKey, goodThingKey, badThingKey= i[0], i[1], i[2],i[3]
+                godDb, godNameKey, goodThingKey, badThingKey = i[0], i[1], i[2], i[3]
                 for godItem in godDb:
                     # print(x, x[1] , x[2]) 输出当日判断结果x[1]，看x[1]是否落在判断范围x[2]里面
                     if godItem[1] in godItem[2]:
@@ -944,16 +997,19 @@ class Lunar():
                 dic['goodThing'].remove(removeThing)
                 dic['badThing'].remove(removeThing)
             return dic
+
         # 从忌不从宜
         def badOppressGood(dic):
             for removeThing in list(set(dic['goodThing']).intersection(set(dic['badThing']))):
                 dic['goodThing'].remove(removeThing)
             return dic
+
         # 从宜不从忌
         def goodOppressBad(dic):
             for removeThing in list(set(dic['goodThing']).intersection(set(dic['badThing']))):
                 dic['badThing'].remove(removeThing)
             return dic
+
         # 诸事不宜
         def nothingGood(dic):
             dic['goodThing'] = ['诸事不宜']
@@ -1109,15 +1165,15 @@ class Lunar():
                 self.goodThing = rfAdd(self.goodThing, addList=['布政事'])
             # 凡月厌忌行幸、上官，不注宜颁诏、施恩封拜、诏命公卿、招贤、举正直。遇宜宣政事之日，则改宣为布。
             if '月厌' in self.badGodName:
-                self.goodThing = rfRemove(self.goodThing, removeList=['颁诏', '施恩', '招贤', '举正直','宣政事'])
+                self.goodThing = rfRemove(self.goodThing, removeList=['颁诏', '施恩', '招贤', '举正直', '宣政事'])
                 self.goodThing = rfAdd(self.goodThing, addList=['布政事'])
-            # 凡土府、土符、地囊，只注忌补垣，亦不注宜塞穴。
+                # 凡土府、土符、地囊，只注忌补垣，亦不注宜塞穴。
                 self.badThing = rfAdd(self.badThing, addList=['补垣'])
                 if '土府' in self.badGodName or '土符' in self.badGodName or '地囊' in self.badGodName:
                     self.goodThing = rfRemove(self.goodThing, removeList=['塞穴'])
             # 凡开日，不注宜破土、安葬、启攒，亦不注忌。遇忌则注。
             if '开' in self.today12DayOfficer:
-                self.goodThing = rfRemove(self.goodThing, removeList=['破土','安葬','启攒'])
+                self.goodThing = rfRemove(self.goodThing, removeList=['破土', '安葬', '启攒'])
             # 凡四忌、四穷只忌安葬。如遇鸣吠、鸣吠对亦不注宜破土、启攒。
             if '四忌' in self.badGodName or '四忌' in self.badGodName:
                 self.badThing = rfAdd(self.badThing, addList=['安葬'])
@@ -1127,10 +1183,21 @@ class Lunar():
             # 凡天吏、大时不以死败论者，遇四废、岁薄、逐阵仍以死败论。
             # 凡岁薄、逐阵日所宜事，照月厌所忌删，所忌仍从本日。、
             # 二月甲戌、四月丙申、六月甲子、七月戊申、八月庚辰、九月辛卯、十月甲子、十二月甲子，德和与赦、愿所汇之辰，诸事不忌。
-            if ['空','甲戌','空','丙申','空','甲子','戊申','庚辰','辛卯','甲子','空','甲子'][lmn-1] in d:
+            if ['空', '甲戌', '空', '丙申', '空', '甲子', '戊申', '庚辰', '辛卯', '甲子', '空', '甲子'][lmn - 1] in d:
                 self.badThing = ['诸事不忌']
-            if len(set(self.goodGodName).intersection(set(['岁德合', '月德合', '天德合']))) and len(set(self.goodGodName).intersection(set(['天赦', '天愿']))):
+            if len(set(self.goodGodName).intersection(set(['岁德合', '月德合', '天德合']))) and len(
+                    set(self.goodGodName).intersection(set(['天赦', '天愿']))):
                 self.badThing = ['诸事不忌']
+
+            # 书中未明注忌不注宜
+        rmThing = []
+        for thing in self.badThing:
+            if thing in self.goodThing:
+                rmThing.append(thing)
+        if len(rmThing) == 1 and '诸事' in rmThing[0]:
+            pass
+        else:
+            self.goodThing = rfRemove(self.goodThing, removeList=rmThing)
 
         # 为空清理
         if self.badThing == []:
@@ -1138,14 +1205,7 @@ class Lunar():
         if self.goodThing == []:
             self.goodThing = ['诸事不宜']
 
-        # 书中未明注忌不注宜
-        rmThing=[]
-        for thing in self.badThing:
-            if thing in self.goodThing:
-                rmThing.append(thing)
-        self.goodThing = rfRemove(self.goodThing, removeList=rmThing)
-
         # 输出排序调整
         self.badThing.sort(key=sortCollation)
         self.goodThing.sort(key=sortCollation)
-        return (self.goodGodName,self.badGodName), (self.goodThing, self.badThing)
+        return (self.goodGodName, self.badGodName), (self.goodThing, self.badThing)

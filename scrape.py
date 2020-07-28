@@ -2,7 +2,7 @@
 # coding=UTF-8
 # Êý¾ÝÅÀ³æÄ£¿é
 # author: cuba3
-# github: https://github.com/cuba3/pyGregorian2LunarCalendar
+# github: https://github.com/OPN48/pyLunarCalendar
 from solar24 import zipSolarTermsList
 from tools import not_empty
 
