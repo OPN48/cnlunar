@@ -12,6 +12,10 @@
 
 特别鸣谢@DarkmoonRabbit(https://github.com/DarkmoonRabbit)
 
+相关产品：
+翻黄历 https://www.fanhuangli.com/
+
+万年历-最新专业桌面老黄‪历 https://apps.apple.com/cn/app/id1555822960
 <h2>快速上手</h2>
 
 ```
