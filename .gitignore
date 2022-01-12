@@ -1,4 +1,6 @@
 *.xml
 *.pyc
+/dist
+/cnlunar.egg-info
 /.idea/
 *.DS_Store

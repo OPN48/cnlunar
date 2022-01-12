@@ -23,6 +23,7 @@ $ pip3 install cnlunar
 <h2>快速上手</h2>
 
 ```
+import datetime
 import cnlunar
 
 # a = cnlunar.Lunar() # 为空为当前时间

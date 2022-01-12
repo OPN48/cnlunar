@@ -1,6 +1,5 @@
 import datetime
 import cnlunar
-# 测试数据
 print('a = cnlunar.Lunar(datetime.datetime(2021, 2, 7, 10, 30), godType=\'8char\')')
 print('\n八字月柱与八字日柱算神煞版本')
 a = cnlunar.Lunar(datetime.datetime(2021, 2, 7, 10, 30), godType='8char')
