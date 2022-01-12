@@ -1,4 +1,4 @@
-# pyLunarCalendar
+# cnlunar
 <h2>项目优点</h2>
 1、不使用寿星通式[Y*D+C]-L，而使用香港天文台数据（阴阳合历，节气准农历日期才能准）
 
@@ -17,11 +17,16 @@
 
 万年历-最新专业桌面老黄‪历 https://apps.apple.com/cn/app/id1555822960
 <h2>快速上手</h2>
+```
+$ pip3 install cnlunar
+```
 
 ```
-import datetime
-import lunar
-a = lunar.Lunar(datetime.datetime(2019, 2, 4, 22, 30))
+import cnlunar
+
+# a = cnlunar.Lunar() # 为空为当前时间
+
+a = cnlunar.Lunar(datetime.datetime(2019, 2, 4, 22, 30))
 dic = {
     '日期': a.date,
     '农历数字': (a.lunarYear, a.lunarMonth, a.lunarDay, '闰' if a.isLunarLeapMonth else ''),

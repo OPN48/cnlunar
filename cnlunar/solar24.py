@@ -1,9 +1,9 @@
 # 24节气模块\节气数据16进制加解密
 # author: cuba3
-# github: https://github.com/cuba3/pyGregorian2LunarCalendar
+# github: https://github.com/OPN48/pyLunarCalendar
 
-from config import solarTermsData, START_YEAR
-from tools import abListMerge
+from cnlunar.config import solarTermsData, START_YEAR
+from cnlunar.tools import abListMerge
 
 # 解压缩16进制用
 def unZipSolarTermsList(data,rangeEndNum=24,charCountLen=2):

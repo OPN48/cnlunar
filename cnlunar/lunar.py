@@ -1,7 +1,6 @@
-# pyGregorian2LunarCalendar
 # coding=UTF-8
 # 1901~2100年农历数据表
-# author: cuba3, github: https://github.com/cuba3/pyGregorian2LunarCalendar
+# author: cuba3, github: https://github.com/opn48/pylunar
 # base code by Yovey , https://www.jianshu.com/p/8dc0d7ba2c2a
 # powered by Late Lee, http://www.latelee.org/python/python-yangli-to-nongli.html#comment-78
 # other author:Chen Jian, http://www.cnblogs.com/chjbbs/p/5704326.html
@@ -9,15 +8,15 @@
 
 
 from datetime import datetime, timedelta
-from config import *
-from holidays import otherLunarHolidaysList, otherHolidaysList, legalsolarTermsHolidayDic, legalHolidaysDic, \
+from cnlunar.config import *
+from cnlunar.holidays import otherLunarHolidaysList, otherHolidaysList, legalsolarTermsHolidayDic, legalHolidaysDic, \
     legalLunarHolidaysDic
-from solar24 import getTheYearAllSolarTermsList
-from tools import sortCollation, rfRemove, rfAdd
+from cnlunar.solar24 import getTheYearAllSolarTermsList
+from cnlunar.tools import sortCollation, rfRemove, rfAdd
 
 
 class Lunar():
-    def __init__(self, date, godType='8char'):
+    def __init__(self, date=datetime.now(), godType='8char'):
         self.godType = godType
         self.date = date
         self.twohourNum = (self.date.hour + 1) // 2
@@ -336,7 +335,7 @@ class Lunar():
         chinese12DayGods=['青龙','明堂','天刑','朱雀','金贵','天德','白虎','玉堂','天牢','玄武','司命','勾陈']
 
         '''
-        if self.godType == 'lunar':
+        if self.godType == 'cnlunar':
             # 使用农历月份与八字日柱算神煞（辨方书文字） 农历(1-12)，-1改编号，[0-11]，+2位移，% 12 防止溢出
             lmn = self.lunarMonth
             men = (lmn - 1 + 2) % 12
@@ -626,7 +625,7 @@ class Lunar():
         yen = self.yearEarthNum
         ldn = self.lunarDay
         lmn = self.lunarMonth
-        if self.godType == 'lunar':
+        if self.godType == 'cnlunar':
             # 使用农历月份与八字日柱算神煞（辨方书文字） 农历(1-12)，-1改编号，[0-11]，+2位移，% 12 防止溢出
             men = (lmn - 1 + 2) % 12
         else:

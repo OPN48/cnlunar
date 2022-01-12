@@ -3,7 +3,7 @@
 # github: https://github.com/OPN48/pyLunarCalendar
 
 # 去除空行
-from config import encryptionVectorList, thingsSort
+from cnlunar.config import encryptionVectorList, thingsSort
 
 def rfRemove(l=[],removeList=[]):
     for removeThing in list(set(l).intersection(set(removeList))):
