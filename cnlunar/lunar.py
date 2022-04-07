@@ -15,7 +15,7 @@ from cnlunar.solar24 import getTheYearAllSolarTermsList
 from cnlunar.tools import sortCollation, rfRemove, rfAdd
 
 
-class Lunar():
+class Lunar:
     def __init__(self, date=datetime.now(), godType='8char'):
         self.godType = godType
         self.date = date
@@ -38,7 +38,7 @@ class Lunar():
         self.weekDayCn = self.get_weekDayCn()
         self.starZodiac = self.get_starZodiac()
         self.todayEastZodiac = self.get_eastZodiac()
-        self.thisYearSolarTermsDic = dict(zip(solarTermsNameList, self.thisYearSolarTermsDateList))
+        self.thisYearSolarTermsDic = dict(zip(SOLAR_TERMS_NAME_LIST, self.thisYearSolarTermsDateList))
 
         self.today28Star = self.get_the28Stars()
         self.content = ''
@@ -115,16 +115,16 @@ class Lunar():
         # if (_cn_year < START_YEAR):
         #     return 30
         leap_month, leap_day, month_day = 0, 0, 0  # 闰几月，该月多少天 传入月份多少天
-        tmp = lunarMonthData[self.lunarYear - START_YEAR]  # 获取16进制数据12-1月份农历日数 0=29天 1=30天
+        tmp = lunarMonthData[self.lunarYear - START_YEAR]  # 获取16进制数据 12-1月份农历日数 0=29天 1=30天
         # 表示获取当前月份的布尔值:指定二进制1（假定真），向左移动月数-1，与当年全年月度数据合并取出2进制位作为判断
         if tmp & (1 << (self.lunarMonth - 1)):
             month_day = 30
         else:
             month_day = 29
         # 闰月
-        leap_month = (tmp >> month_NUM_BIT) & 0xf
+        leap_month = (tmp >> LEAPMONTH_NUM_BIT) & 0xf
         if leap_month:
-            if (tmp & (1 << month_DAY_BIT)):
+            if (tmp & (1 << MONTH_DAY_BIT)):
                 leap_day = 30
             else:
                 leap_day = 29
@@ -210,7 +210,7 @@ class Lunar():
         findDate = (self.date.month, self.date.day)
         self.nextSolarNum = self.getNextNum(findDate, solarTermsDateList)
         if findDate in solarTermsDateList:
-            todaySolarTerm = solarTermsNameList[solarTermsDateList.index(findDate)]
+            todaySolarTerm = SOLAR_TERMS_NAME_LIST[solarTermsDateList.index(findDate)]
         else:
             todaySolarTerm = '无'
         # 次年节气
@@ -219,14 +219,14 @@ class Lunar():
             solarTermsDateList = self.getSolarTermsDateList(year)
         else:
             pass
-        self.nextSolarTerm = solarTermsNameList[self.nextSolarNum]
+        self.nextSolarTerm = SOLAR_TERMS_NAME_LIST[self.nextSolarNum]
         self.nextSolarTermDate = solarTermsDateList[self.nextSolarNum]
         self.nextSolarTermYear = year
         return todaySolarTerm
 
     # 星次
     def get_eastZodiac(self):
-        todayEastZodiac = eastZodiacList[(solarTermsNameList.index(self.nextSolarTerm) - 1) % 24 // 2]
+        todayEastZodiac = EAST_ZODIAC_LIST[(SOLAR_TERMS_NAME_LIST.index(self.nextSolarTerm) - 1) % 24 // 2]
         return todayEastZodiac
 
     # # # 八字部分
@@ -288,7 +288,7 @@ class Lunar():
 
     # 星座
     def get_starZodiac(self):
-        return starZodiacName[len(list(filter(lambda y: y <= (self.date.month, self.date.day), starZodiacDate))) % 12]
+        return STAR_ZODIAC_NAME[len(list(filter(lambda y: y <= (self.date.month, self.date.day), STAR_ZODIAC_DATE))) % 12]
 
     # 节日
     def get_legalHolidays(self):
@@ -572,41 +572,9 @@ class Lunar():
         月恩:正月逢丙是月恩，二月见丁三庚真，四月己上五月戊，六辛七壬八癸成，九月庚上十月乙，冬月甲上腊月辛。
         天恩:四季何时是天恩，甲子乙丑丙寅建。丁卯戊辰兼己卯，庚辰辛巳壬午言，癸未隔求己酉日，庚戌辛亥亦同联，壬子癸丑无差误，此是天恩吉日传
         '''
-        officerThings = {
-            '建': (['施恩', '招贤', '举正直', '出行', '上官', '临政'], []),
-            '除': (['解除', '沐浴', '整容', '剃头', '整手足甲', '求医疗病', '扫舍宇'], []),
-            '满': (['进人口', '裁制', '竖柱上梁', '经络', '开市', '立券交易', '纳财', '开仓', '塞穴', '补垣'],
-                  ['施恩', '招贤', '举正直', '上官', '临政', '结婚姻', '纳采', '求医疗病']),
-            '平': (['修饰垣墙', '平治道涂'],
-                  ['祈福', '求嗣', '上册', '上表章', '颁诏', '施恩', '招贤', '举正直', '宣政事', '布政事', '庆赐', '宴会', '冠带', '出行', '安抚边境', '选将',
-                   '出师', '上官', '临政', '结婚姻', '纳采', '嫁娶', '进人口', '搬移', '安床', '解除', '求医疗病', '裁制', '营建', '修宫室', '缮城郭',
-                   '筑堤防', '修造', '竖柱上梁', '修仓库', '鼓铸', '经络', '酝酿', '开市', '立券交易', '纳财', '开仓', '修置产室', '开渠', '穿井', '栽种',
-                   '牧养', '纳畜', '破土', '安葬', '启攒']),
-            '定': (['冠带'], []),
-            '执': (['捕捉'], []),
-            '破': (['求医疗病'], []),
-            '危': (['安抚边境', '选将', '安床'], []),
-            '成': (['入学', '安抚边境', '搬移', '筑堤防', '开市'], []),
-            '收': (['进人口', '纳财', '捕捉', '纳畜'],
-                  ['祈福', '求嗣', '上册', '上表章', '颁诏', '施恩', '招贤', '举正直', '宣政事', '布政事', '庆赐', '宴会', '冠带', '出行', '安抚边境', '选将',
-                   '出师', '上官', '临政', '结婚姻', '纳采', '嫁娶', '搬移', '安床', '解除', '求医疗病', '裁制', '营建', '修宫室', '缮城郭', '筑堤防', '修造',
-                   '竖柱上梁', '鼓铸', '经络', '酝酿', '开市', '立券交易', '开仓', '修置产室', '开渠', '穿井', '破土', '安葬', '启攒']),
-            '开': (
-                ['祭祀', '祈福', '求嗣', '上册', '上表章', '颁诏', '覃恩', '施恩', '招贤', '举正直', '恤孤茕', '宣政事', '雪冤', '庆赐', '宴会', '入学',
-                 '出行',
-                 '上官', '临政', '搬移', '解除', '求医疗病', '裁制', '修宫室', '缮城郭', '修造', '修仓库', '开市', '修置产室', '开渠', '穿井', '安碓硙', '栽种',
-                 '牧养'], []),
-            '闭': (['筑堤防', '塞穴', '补垣'],
-                  ['上册', '上表章', '颁诏', '施恩', '招贤', '举正直', '宣政事', '布政事', '庆赐', '宴会', '出行', '出师', '上官', '临政', '结婚姻', '纳采',
-                   '嫁娶', '进人口', '搬移', '安床', '求医疗病', '疗目', '营建', '修宫室', '修造', '竖柱上梁', '开市', '开仓', '修置产室', '开渠', '穿井']),
-        }
+
         gbDic = {'goodName': [], 'badName': [], 'goodThing': officerThings[self.today12DayOfficer][0],
                  'badThing': officerThings[self.today12DayOfficer][1]}
-        # 神煞宜忌准备
-        bujiang = ['壬寅壬辰辛丑辛卯辛巳庚寅庚辰丁丑丁卯丁巳戊寅戊辰', '辛丑辛卯庚子庚寅庚辰丁丑丁卯丙子丙寅丙辰戊子戊寅戊辰', '辛亥辛丑辛卯庚子庚寅丁亥丁丑丁卯丙子丙寅戊子戊寅',
-                   '庚戌庚子庚寅丁亥丁丑丙戌丙子丙寅乙亥乙丑戊戌戊子戊寅', '丁酉丁亥丁丑丙戌丙子乙酉乙亥乙丑甲戌甲子戊戌戊子', '丁酉丁亥丙申丙戌丙子乙酉乙亥甲申甲戌甲子戊申戊戌戊子',
-                   '丙申丙戌乙未乙酉乙亥甲申甲戌癸未癸酉癸亥戊申戊戌', '乙未乙酉甲午甲申甲戌癸未癸酉壬午壬申壬戌戊午戊申戊戌', '乙巳乙未乙酉甲午甲申癸巳癸未癸酉壬午壬申戊午戊申',
-                   '甲辰甲午甲申癸巳癸未壬辰壬午壬申辛巳辛未戊辰戊午戊申', '癸卯癸巳癸未壬辰壬午辛卯辛巳辛未庚辰庚午戊辰戊午', '癸卯癸巳壬寅壬辰壬午辛卯辛巳庚寅庚辰庚午戊寅戊辰戊午']
         mrY13 = [(1, 13), (2, 11), (3, 9), (4, 7), (5, 5), (6, 2), (7, 1), (7, 29), (8, 27), (9, 25), (10, 23),
                  (11, 21), (12, 19)]
         tomorrow = self.date + timedelta(days=1)
@@ -633,25 +601,6 @@ class Lunar():
             men = self.monthEarthNum
 
         # item参数规则，（name,当日判断结果,判断规则,宜事,忌事）
-
-        day8CharThing = {
-            '甲': ([], ['开仓']),
-            '乙': ([], ['栽种']),
-            '丁': ([], ['整容', '剃头']),
-            '庚': ([], ['经络']),
-            '辛': ([], ['酝酿']),
-            '壬': ([], ['开渠', '穿井']),
-            '子': (['沐浴'], []),  # 亥子日宜沐浴
-            '丑': ([], ['冠带']),
-            '寅': ([], ['祭祀']),
-            '卯': ([], ['穿井']),
-            '酉': ([], ['宴会']),
-            '巳': ([], ['出行']),
-            '午': ([], ['苫盖']),
-            '未': ([], ['求医疗病']),
-            '申': ([], ['安床']),
-            '亥': (['沐浴'], ['嫁娶'])  # 亥子日宜沐浴
-        }
         for i in day8CharThing:
             if i in d:
                 gbDic['goodThing'] += day8CharThing[i][0]
