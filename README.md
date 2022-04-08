@@ -238,6 +238,7 @@ print(a.lunarYear, a.lunarMonth, a.lunarDay)
 <h2>（五）无数据库农历算法实现</h2>
 <h3>1．配置模块实现</h3>
 在开发过程中，我们将一些常量从项目中逐步移出到配置文件config.py，并添加适当的注释描述。这样有助于项目代码的“解耦”，方便在开发过程中调试，对后续其他开发者在对项目二次开发时也较为友好。部分配置代码如下：
+
 ```
 MONTH_DAY_BIT = 12
 LEAPMONTH_NUM_BIT = 13
@@ -249,9 +250,9 @@ ENC_VECTOR_LIST = [4,19,3,18,4,19,4,19,4,20,4,20,6,22,6,22,6,22,7,22,6,21,6,21]
 SOLAR_TERMS_DATA_LIST = [
  0x6aaaa6aa9a5a,0xaaaaaabaaa6a,0xaaabbabbafaa,0x5aa665a65aab,0x6aaaa6aa9a5a, # 1901 ~ 1905
 0xaaaaaaaaaa6a,0xaaabbabbafaa,0x5aa665a65aab,0x6aaaa6aa9a5a,0xaaaaaaaaaa6a,
-    ……
 ]
 ```
+
 在其他目录结构中，使用from cnlunar.config import *，来引入常量配置，比如在对农历闰月数据获取中，我们通过这样的代码组合实现读取压缩数据：
 ```
 from cnlunar.config import *
