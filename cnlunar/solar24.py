@@ -2,7 +2,7 @@
 # author: cuba3
 # github: https://github.com/OPN48/pyLunarCalendar
 
-from cnlunar.config import solarTermsData, START_YEAR
+from cnlunar.config import SOLAR_TERMS_DATA_LIST, START_YEAR
 from cnlunar.tools import abListMerge
 
 # 解压缩16进制用
@@ -27,5 +27,5 @@ def zipSolarTermsList(inputList,charCountLen=2):
     return hex(data),len(tempList)
 
 def getTheYearAllSolarTermsList(year):
-    return unZipSolarTermsList(solarTermsData[year-START_YEAR])
+    return unZipSolarTermsList(SOLAR_TERMS_DATA_LIST[year - START_YEAR])
 

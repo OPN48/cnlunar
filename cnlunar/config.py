@@ -55,13 +55,13 @@ upperNum = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九'
 weekDay = ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日']
 
 # 1901-2100年二十节气最小数序列 向量压缩法
-encryptionVectorList = [4, 19, 3, 18, 4, 19, 4, 19, 4, 20, 4, 20, 6, 22, 6, 22, 6, 22, 7, 22, 6, 21, 6, 21]
+ENC_VECTOR_LIST = [4, 19, 3, 18, 4, 19, 4, 19, 4, 20, 4, 20, 6, 22, 6, 22, 6, 22, 7, 22, 6, 21, 6, 21]
 # 1901-2100年二十节气数据 每个元素的存储格式如下：
 # https://www.hko.gov.hk/sc/gts/time/conversion.htm
 # 1-24
 # 节气所在天（减去节气最小数）
 # 1901-2100年香港天文台公布二十四节气按年存储16进制，1个16进制为4个2进制
-solarTermsData = [
+SOLAR_TERMS_DATA_LIST = [
     0x6aaaa6aa9a5a, 0xaaaaaabaaa6a, 0xaaabbabbafaa, 0x5aa665a65aab, 0x6aaaa6aa9a5a,  # 1901 ~ 1905
     0xaaaaaaaaaa6a, 0xaaabbabbafaa, 0x5aa665a65aab, 0x6aaaa6aa9a5a, 0xaaaaaaaaaa6a,
     0xaaabbabbafaa, 0x5aa665a65aab, 0x6aaaa6aa9a56, 0xaaaaaaaa9a5a, 0xaaabaabaaeaa,

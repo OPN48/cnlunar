@@ -114,7 +114,7 @@ class Lunar:
         # 输入年小于1900年直接输出天数为30？？？？这个可能有点问题
         # if (_cn_year < START_YEAR):
         #     return 30
-        leap_month, leap_day, month_day = 0, 0, 0  # 闰几月，该月多少天 传入月份多少天
+        leapMonth, leap_day, month_day = 0, 0, 0  # 闰几月，该月多少天 传入月份多少天
         tmp = lunarMonthData[self.lunarYear - START_YEAR]  # 获取16进制数据 12-1月份农历日数 0=29天 1=30天
         # 表示获取当前月份的布尔值:指定二进制1（假定真），向左移动月数-1，与当年全年月度数据合并取出2进制位作为判断
         if tmp & (1 << (self.lunarMonth - 1)):
@@ -122,14 +122,14 @@ class Lunar:
         else:
             month_day = 29
         # 闰月
-        leap_month = (tmp >> LEAPMONTH_NUM_BIT) & 0xf
-        if leap_month:
+        leapMonth = (tmp >> LEAPMONTH_NUM_BIT) & 0xf
+        if leapMonth:
             if (tmp & (1 << MONTH_DAY_BIT)):
                 leap_day = 30
             else:
                 leap_day = 29
-        self.monthDaysList = [month_day, leap_month, leap_day]
-        return month_day, leap_month, leap_day
+        self.monthDaysList = [month_day, leapMonth, leap_day]
+        return month_day, leapMonth, leap_day
 
     # # # 基础 # # #
     def get_lunarDateNum(self):

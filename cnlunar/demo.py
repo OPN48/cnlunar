@@ -50,8 +50,8 @@ for i in dic:
 
 # i=1
 # c=0
-# now = datetime.datetime(2020, 2, 4, 12, 30)
-# while i <= 3660:
+# now = datetime.datetime(2022, 2, 4, 12, 30)
+# while i <= 36600:
 #     a = cnlunar.Lunar(now,godType='cnlunar')
 #     now += datetime.timedelta(days=1)
 #     i += 1
