@@ -18,6 +18,9 @@
 
 万年历-最新专业桌面老黄‪历 https://apps.apple.com/cn/app/id1555822960
 
+其他与本项目关联项目：
+Crazydear 的 https://github.com/Crazydear/Android-Project/tree/main/cnLunar
+
 ```
 $ pip3 install cnlunar
 ```
