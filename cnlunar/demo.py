@@ -1,7 +1,8 @@
 import datetime, cnlunar
 print('a = cnlunar.Lunar(datetime.datetime(2021, 2, 7, 10, 30), godType=\'8char\')')
 print('\n八字月柱与八字日柱算神煞版本')
-a = cnlunar.Lunar(datetime.datetime(2021, 2, 7, 10, 30), godType='8char')
+a = cnlunar.Lunar(datetime.datetime(2022, 2, 3, 10, 30), godType='8char')
+# a = cnlunar.Lunar(datetime.datetime(2022, 2, 3, 10, 30), godType='8char', year8Char='beginningOfSpring')
 dic = {
     '日期': a.date,
     '农历数字': (a.lunarYear, a.lunarMonth, a.lunarDay, '闰' if a.isLunarLeapMonth else ''),

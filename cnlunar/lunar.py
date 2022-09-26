@@ -16,8 +16,9 @@ from cnlunar.tools import sortCollation, rfRemove, rfAdd
 
 
 class Lunar:
-    def __init__(self, date=datetime.now(), godType='8char'):
+    def __init__(self, date, godType='8char', year8Char='year'):
         self.godType = godType
+        self.year8Char = year8Char
         self.date = date
         self.twohourNum = (self.date.hour + 1) // 2
         self._upper_year = ''
@@ -231,7 +232,9 @@ class Lunar:
 
     # # # 八字部分
     def get_year8Char(self):
-        str = the10HeavenlyStems[(self.lunarYear - 4) % 10] + the12EarthlyBranches[(self.lunarYear - 4) % 12]
+        # 立春年干争议算法
+        _x = (self.nextSolarNum < 3) if self.year8Char == 'beginningOfSpring' else 0
+        str = the60HeavenlyEarth[(self.lunarYear - 4) % 60 - _x]
         return str
 
     # 月八字与节气相关
