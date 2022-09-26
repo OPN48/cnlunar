@@ -19,6 +19,7 @@ class Lunar:
     def __init__(self, date, godType='8char', year8Char='year'):
         self.godType = godType
         self.year8Char = year8Char
+
         self.date = date
         self.twohourNum = (self.date.hour + 1) // 2
         self._upper_year = ''
@@ -28,6 +29,9 @@ class Lunar:
         self.phaseOfMoon = self.getPhaseOfMoon()
 
         self.todaySolarTerms = self.get_todaySolarTerms()
+        # 立春干支参数
+        self._x = 1 if self.year8Char == 'beginningOfSpring' and self.nextSolarTermYear == self.lunarYear and self.nextSolarNum < 3 else 0
+
         (self.year8Char, self.month8Char, self.day8Char) = self.get_the8char()
         self.get_earthNum(), self.get_heavenNum(), self.get_season()
         self.twohour8CharList = self.get_twohour8CharList()
@@ -84,7 +88,7 @@ class Lunar:
 
     # 生肖
     def get_chineseYearZodiac(self):
-        return chineseZodiacNameList[(self.lunarYear - 4) % 12]
+        return chineseZodiacNameList[(self.lunarYear - 4) % 12 - self._x]
 
     def get_chineseZodiacClash(self):
         zodiacNum = self.dayEarthNum
@@ -199,6 +203,7 @@ class Lunar:
 
     def getNextNum(self, findDate, solarTermsDateList):
         nextSolarNum = len(list(filter(lambda y: y <= findDate, solarTermsDateList))) % 24
+
         return nextSolarNum
 
     def get_todaySolarTerms(self):
@@ -233,8 +238,7 @@ class Lunar:
     # # # 八字部分
     def get_year8Char(self):
         # 立春年干争议算法
-        _x = (self.nextSolarNum < 3) if self.year8Char == 'beginningOfSpring' else 0
-        str = the60HeavenlyEarth[(self.lunarYear - 4) % 60 - _x]
+        str = the60HeavenlyEarth[(self.lunarYear - 4) % 60 - self._x]
         return str
 
     # 月八字与节气相关
