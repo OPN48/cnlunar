@@ -4,3 +4,6 @@
 /cnlunar.egg-info
 /.idea/
 *.DS_Store
+/setup.py
+/*.toml
+/pyproject.toml
