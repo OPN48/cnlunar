@@ -295,7 +295,7 @@ leapMonth = (tmp >> LEAPMONTH_NUM_BIT) & 0xf
 
 [3] 岑智明. 二十四节气[J/OL]. 香港联合国教科文之友,,2017,4月号第二期. http://friends.unesco.hk/en/2017Apr/zh/A4.html
 
-[4](清)允禄 等. 四库全书 - 钦定协纪辨方书[M]. 世界知识出版社,2011-3
+[4] (清)允禄 等. 四库全书 - 钦定协纪辨方书[M]. 世界知识出版社,2011-3
 
 [5]香港天文台.公历与农历对照表[OL],2020-2-10. https://www.hko.gov.hk/sc/gts/time/conversion.htm
 
