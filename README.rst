@@ -4,7 +4,8 @@
 
     # a = cnlunar.Lunar() # 为空为当前时间
 
-    a = cnlunar.Lunar(datetime.datetime(2019, 2, 4, 22, 30))
+    a = cnlunar.Lunar(datetime.datetime(2022, 11, 14, 10, 30), godType='8char')  # 常规算法
+    # a = cnlunar.Lunar(datetime.datetime(2022, 2, 3, 10, 30), godType='8char', year8Char='beginningOfSpring')  # 八字立春切换算法
 
     '日期': a.date,
 
