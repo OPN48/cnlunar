@@ -1,8 +1,14 @@
 import datetime, cnlunar
-print('a = cnlunar.Lunar(datetime.datetime(2021, 2, 7, 10, 30), godType=\'8char\')')
+# print('a = cnlunar.Lunar(datetime.datetime(2021, 2, 7, 10, 30), godType=\'8char\')')
 print('\n八字月柱与八字日柱算神煞版本')
-a = cnlunar.Lunar(datetime.datetime(1985, 10, 8, 10, 30), godType='8char')  # 常规算法
-# a = cnlunar.Lunar(datetime.datetime(2022, 2, 3, 10, 30), godType='8char', year8Char='beginningOfSpring')  # 八字立春切换算法
+# 常规算法 demo 应输出 壬寅
+a = cnlunar.Lunar(datetime.datetime(2022, 2, 3, 10, 30), godType='8char')
+# 八字立春切换算法  demo 应输出 辛丑
+# a = cnlunar.Lunar(datetime.datetime(2022, 2, 3, 10, 30), godType='8char', year8Char='beginningOfSpring')
+# 常规算法 (2024, 2, 4, 10, 30) demo 应输出 癸卯
+# a = cnlunar.Lunar(datetime.datetime(2024, 2, 4, 10, 30), godType='8char')
+# 八字立春切换算法  (2024, 2, 4, 10, 30) demo 应输出 甲辰
+# a = cnlunar.Lunar(datetime.datetime(2024, 2, 4, 10, 30), godType='8char', year8Char='beginningOfSpring')  # 八字立春切换算法
 dic = {
     '日期': a.date,
     '农历数字': (a.lunarYear, a.lunarMonth, a.lunarDay, '闰' if a.isLunarLeapMonth else ''),

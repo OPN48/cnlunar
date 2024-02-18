@@ -30,7 +30,9 @@ class Lunar:
 
         self.todaySolarTerms = self.get_todaySolarTerms()
         # 立春干支参数
-        self._x = 1 if self.year8Char == 'beginningOfSpring' and self.nextSolarTermYear == self.lunarYear and self.nextSolarNum < 3 else 0
+
+        self._x = self.getBeginningOfSpringX()
+        # print('x=',int(self._x))
 
         (self.year8Char, self.month8Char, self.day8Char) = self.get_the8char()
         self.get_earthNum(), self.get_heavenNum(), self.get_season()
@@ -49,6 +51,13 @@ class Lunar:
         self.content = ''
         self.angelDemon = self.get_AngelDemon()
         self.meridians = meridiansName[self.twohourNum % 12]
+
+    def getBeginningOfSpringX(self):
+        # print(self.nextSolarTermYear, self.lunarYear, self.nextSolarNum, self.lunarYear - self.nextSolarTermYear)
+        if self.year8Char != 'beginningOfSpring':
+            return 0
+        return (self.nextSolarNum < 3) - (self.lunarMonth > 6)
+
 
     def get_lunarYearCN(self):
         for i in str(self.lunarYear):
