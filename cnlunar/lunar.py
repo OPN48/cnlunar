@@ -32,7 +32,7 @@ class Lunar:
         # 立春干支参数
 
         self._x = self.getBeginningOfSpringX()
-        # print('x=',int(self._x))
+        # print('x=', int(self._x))
 
         (self.year8Char, self.month8Char, self.day8Char) = self.get_the8char()
         self.get_earthNum(), self.get_heavenNum(), self.get_season()
@@ -54,9 +54,34 @@ class Lunar:
 
     def getBeginningOfSpringX(self):
         # print(self.nextSolarTermYear, self.lunarYear, self.nextSolarNum, self.lunarYear - self.nextSolarTermYear)
+        isBeforBeginningOfSpring = self.nextSolarNum < 3
+        # print('是否在立春前', isBeforBeginningOfSpring, self.nextSolarNum)
+        # print('spanDays', self.spanDays)
+        isBeforLunarYear = self.spanDays < 0
+        # print('是过农历年', isBeforLunarYear)
+        _x = 0
         if self.year8Char != 'beginningOfSpring':
-            return 0
-        return (self.nextSolarNum < 3) - (self.lunarMonth > 6)
+            return _x
+        # 现在节气在立春之前 且 已过完农历年(农历小于3月作为测试判断)，年柱需要减1
+        if isBeforLunarYear:
+            # print('还没过农历年')
+            if not isBeforBeginningOfSpring:
+            #     print('立春前')
+            #     _x = 0
+            # else:
+            #     print('立春后')
+                _x = -1
+        else:
+            # print('过农历年了')
+            if isBeforBeginningOfSpring:
+                # print('立春前')
+                _x = 1
+        #     else:
+        #         print('立春后')
+        #         _x = 0
+        # print(_x)
+        return _x
+
 
 
     def get_lunarYearCN(self):
@@ -156,8 +181,10 @@ class Lunar:
         """
         self.lunarYear, self.lunarMonth, self.lunarDay = self.date.year, 1, 1
         _code_year = lunarNewYearList[self.lunarYear - START_YEAR]
+
         """ 获取当前日期与当年春节的差日 """
         _span_days = (self.date - datetime(self.lunarYear, ((_code_year >> 5) & 0x3), ((_code_year >> 0) & 0x1f))).days
+        self.spanDays = _span_days
         if (_span_days >= 0):
             """ 新年后推算日期，差日依序减月份天数，直到不足一个月，剪的次数为月数，剩余部分为日数 """
             """ 先获取闰月 """

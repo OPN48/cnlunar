@@ -1,8 +1,12 @@
 import datetime, cnlunar
 # print('a = cnlunar.Lunar(datetime.datetime(2021, 2, 7, 10, 30), godType=\'8char\')')
 print('\n八字月柱与八字日柱算神煞版本')
+
 # 常规算法 demo 应输出 壬寅
 a = cnlunar.Lunar(datetime.datetime(2022, 2, 3, 10, 30), godType='8char')
+# 八字立春切换算法 1986, 11, 1, 7, 0   demo 应输出  丙寅
+# a = cnlunar.Lunar(datetime.datetime(1986, 11, 1, 7, 0), godType='8char')
+# a = cnlunar.Lunar(datetime.datetime(1986, 11, 1, 7, 0), godType='8char', year8Char='beginningOfSpring')
 # 八字立春切换算法  demo 应输出 辛丑
 # a = cnlunar.Lunar(datetime.datetime(2022, 2, 3, 10, 30), godType='8char', year8Char='beginningOfSpring')
 # 常规算法 (2024, 2, 4, 10, 30) demo 应输出 癸卯
