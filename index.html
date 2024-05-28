@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>农历查询</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+  body{box-sizing:border-box;margin:0;padding:0;font-size:15px}
+  h1{text-align:center}.form-label{max-width:600px;width:100%;margin:0 auto}
+  desc {background: #ffffd7;color: #92926c;display: block;border-radius: 15px;padding: 0.5rem 1rem;box-sizing: border-box;margin: 1rem 1rem;font-size: 0.8em;line-height: 1.5;border: solid 1px #ffe1cc;}
+  label{color:#989898;font-size:.9em}
+  select{padding:.4rem .5rem;line-height:1.75;margin:.5rem auto;box-sizing:border-box;border:solid 1px #c4c4c4;border-radius:6px;color:#383838}
+  input{display:block;padding:.1rem .5rem;line-height:1.75;margin:.5rem auto;max-width:600px;width:100%;box-sizing:border-box;border:solid 1px #c4c4c4;border-radius:6px;color:#383838}
+  :focus-visible{outline:#1698ee auto 1px}
+  button{line-height:1.75;border-radius:6px;color:#3d3d3d;border:solid 1px #c2c2c2;background:#fff;padding:3px 10px;margin:.5rem auto;display:block;min-width:100px;max-width:100%;box-sizing:border-box}
+  button:active{background:#aed4ffa1;border:solid 1px #68c0f7;color:#2a8ec9}
+  #result{max-width:600px;width:100%;margin:1rem auto;line-height:1.75;border-radius:4px;border:solid 1px #d1d1d1;padding:.5rem;box-sizing:border-box;color:#585858;visibility: hidden;white-space: pre-wrap;}
+  </style>
+</head>
+<body>
+  <h1>农历查询</h1>
+  <div class="form-label">
+    <label for="typeSelector">类型:</label>
+    <select id="typeSelector">
+      <option value="1" selected>八字月柱与八字日柱算神煞版本</option>
+      <option value="2">八字立春切换算法</option>
+    </select>
+  </div>
+  <input type="datetime-local" id="datePicker" />
+  <button onclick="queryLunarInfo()">查询</button>
+  <div id="result"></div>
+  <desc>1. 基于《钦定协纪辨方书》，每一个神煞宜忌都有依据，遵循宜忌等第表，包含民用、御用事宜，且支持港式（通书配图）八字月柱算法-默认，通书原文文字农历月份算法<br/>2.使用香港天文台数据（阴阳合历，节气准农历日期）</desc>
+  <script>
+    function queryLunarInfo() {
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerText = '';
+      const datePicker = document.getElementById('datePicker');
+      const selectedDate = new Date(datePicker.value);
+      const dateString = `${selectedDate.getFullYear()}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}-${selectedDate.getHours()}_${selectedDate.getMinutes()}`;
+      const type = document.getElementById('typeSelector').value;
+
+      fetch(`/lunar_info?date=${encodeURIComponent(dateString)}&type=${encodeURIComponent(type)}`)
+        .then(response => {
+          if (!response.ok) throw new Error(response.statusText);
+          return response.json();
+        })
+        .then(data => {
+          displayResult(data);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          displayResult({"code":-1,"msg":"查询失败"});
+        });
+    }
+
+    function displayResult(data) {
+      const resultDiv = document.getElementById('result');
+      resultDiv.style.visibility = 'visible';
+      if(data.code !== 0){
+        resultDiv.innerText = data.msg;
+        return;
+      }
+      let result = '';
+      for(let [key, value] of Object.entries(data.data)) {
+        if(Array.isArray(value)){
+          result += `<dl><dt>${key}：</dt><dd>`;
+          value.forEach(item => {
+            result += `<div>${item}</div>`;
+          });
+          result += `</dd></dl>`;
+        }else{
+          result += `<dl><dt>${key}：</dt><dd>${value ?? '无'}</dd></dl>`;
+        }
+      }
+      resultDiv.innerHTML = result;
+      /* resultDiv.innerHTML = JSON.stringify(data.data, null, 2); */
+    }
+  </script>
+</body>
+
+</html>

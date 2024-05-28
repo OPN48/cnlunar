@@ -1,0 +1,12 @@
+version: '3'
+services:
+  cnlunar:
+    # image: cnlunar
+    build: .
+    container_name: cnlunar
+    hostname: cnlunar
+    networks:
+      - bridge
+    ports:
+      - "5000:5000/tcp"
+    restart: unless-stopped
