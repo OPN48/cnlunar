@@ -4,9 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>农历查询</title>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <style>
-  body{box-sizing:border-box;margin:0;padding:0;font-size:15px}
+  <!-- 引入fetch polyfill，仅在不支持fetch的浏览器中加载 -->
+  <script src="https://cdn.polyfill.io/v3/polyfill.min.js?features=fetch"></script>
+ <style>
+  body{box-sizing:border-box;margin:0;padding:0;font-size:16px}
   h1{text-align:center}.form-label{max-width:600px;width:100%;margin:0 auto}
   desc {background: #ffffd7;color: #92926c;display: block;border-radius: 15px;padding: 0.5rem 1rem;box-sizing: border-box;margin: 1rem 1rem;font-size: 0.8em;line-height: 1.5;border: solid 1px #ffe1cc;}
   label{color:#989898;font-size:.9em}
@@ -14,8 +15,17 @@
   input{display:block;padding:.1rem .5rem;line-height:1.75;margin:.5rem auto;max-width:600px;width:100%;box-sizing:border-box;border:solid 1px #c4c4c4;border-radius:6px;color:#383838}
   :focus-visible{outline:#1698ee auto 1px}
   button{line-height:1.75;border-radius:6px;color:#3d3d3d;border:solid 1px #c2c2c2;background:#fff;padding:3px 10px;margin:.5rem auto;display:block;min-width:100px;max-width:100%;box-sizing:border-box}
+  .btn-action{display: flex;flex-direction: row;justify-content: space-around;align-items: stretch;}
+  button.primary{background:#68c0f7;border:solid 1px #68c0f7;color:#fff}
   button:active{background:#aed4ffa1;border:solid 1px #68c0f7;color:#2a8ec9}
   #result{max-width:600px;width:100%;margin:1rem auto;line-height:1.75;border-radius:4px;border:solid 1px #d1d1d1;padding:.5rem;box-sizing:border-box;color:#585858;visibility: hidden;white-space: pre-wrap;}
+  dd{overflow: auto;}
+  .table{display: table;margin: 0.5em auto;box-sizing: border-box;border: solid 1px #ccc;min-width: 100%;}
+  .table-caption{display: table-caption;box-sizing: border-box;border: solid 1px #ccc;text-align: center;background: antiquewhite;font-weight: bold;}
+  .table-row{display: table-row;box-sizing: border-box;}
+  .table-cell{display: table-cell;box-sizing: border-box;border-collapse: separate;border-spacing: 0px 5px;white-space: nowrap;min-width: 2rem;padding: 0.1rem 0.2rem;text-align: center;vertical-align: middle;}
+  .table-row:nth-last-child(n+2)>.table-cell{border-bottom: solid 1px #ccc;}
+  .table-cell:nth-last-child(n+2){border-right: solid 1px #ccc;}
   </style>
 </head>
 <body>
@@ -28,10 +38,25 @@
     </select>
   </div>
   <input type="datetime-local" id="datePicker" />
-  <button onclick="queryLunarInfo()">查询</button>
+  <div class="btn-action">
+    <button id="prevDay" onclick="changeDate(-1);queryLunarInfo();">上一天</button>
+    <button class="primary" onclick="queryLunarInfo()">查询</button>
+    <button id="nextDay" onclick="changeDate(1);queryLunarInfo();">下一天</button>
+  </div>
   <div id="result"></div>
   <desc>1. 基于《钦定协纪辨方书》，每一个神煞宜忌都有依据，遵循宜忌等第表，包含民用、御用事宜，且支持港式（通书配图）八字月柱算法-默认，通书原文文字农历月份算法<br/>2.使用香港天文台数据（阴阳合历，节气准农历日期）</desc>
   <script>
+    changeDate(0);
+    function changeDate(ac = 0){
+      const datePicker = document.getElementById('datePicker');
+      const selectedDate = datePicker.value ? new Date(datePicker.value): new Date();
+      selectedDate.setDate(selectedDate.getDate() + ac);
+      const isoDateTime = new Date(selectedDate - selectedDate.getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 16);
+        datePicker.value = isoDateTime;
+    }
+      
     function queryLunarInfo() {
       const resultDiv = document.getElementById('result');
       resultDiv.innerText = '';
@@ -54,6 +79,11 @@
         });
     }
 
+    function isFlat(arr) {
+      return Array.isArray(arr) && arr.every(item => typeof item !== 'object' || item === null);
+    }
+
+    var lunar_result = {}
     function displayResult(data) {
       const resultDiv = document.getElementById('result');
       resultDiv.style.visibility = 'visible';
@@ -62,15 +92,73 @@
         return;
       }
       let result = '';
+      lunar_result = data.data;
       for(let [key, value] of Object.entries(data.data)) {
-        if(Array.isArray(value)){
-          result += `<dl><dt>${key}：</dt><dd>`;
-          value.forEach(item => {
-            result += `<div>${item}</div>`;
-          });
-          result += `</dd></dl>`;
+        if(Array.isArray(value) || typeof value === 'object'){
+          switch(key){
+            case "今日时辰":
+              result += `<dl data-key="${key}"><dt>${key}：</dt><dd><div class="table"><div class="table-row">`;
+              value.forEach(item => {
+                result += `<div class="table-cell">${item}</div>`;
+              });
+              result += `</div><div class="table-row">`;
+              data.data['时辰凶吉'].forEach(item => {
+                result += `<div class="table-cell">${item}</div>`;
+              });
+              result += `</div></div></dd></dl>`;
+              break;
+            case "时辰凶吉":break;
+            case "下一节气":
+              result += `<dl data-key="${key}"><dt>${key}：</dt><dd>${value[0]}(${value[2]}-${value[1][0]}-${value[1][1]})</dd></dl>`;
+              break;
+            case "今年节气表": 
+              result += `<dl data-key="${key}"><dt>${key}：</dt><dd><div class="table">`;
+              let i_arr = Object.keys(value);
+              let i_item = Object.values(value);
+              for (let i = 0; i < i_arr.length; i += 6) {
+                result += `<div class="table-row"><div class="table-cell">${i_arr[i]}</div><div class="table-cell">${i_arr[i+1]}</div><div class="table-cell">${i_arr[i+2]}</div><div class="table-cell">${i_arr[i+3]}</div><div class="table-cell">${i_arr[i+4]}</div><div class="table-cell">${i_arr[i+5]}</div></div>`;
+                result += `<div class="table-row"><div class="table-cell">${i_item[i][0]}.${i_item[i][1]}</div><div class="table-cell">${i_item[i+1][0]}.${i_item[i+1][1]}</div><div class="table-cell">${i_item[i+2][0]}.${i_item[i+2][1]}</div><div class="table-cell">${i_item[i+3][0]}.${i_item[i+3][1]}</div><div class="table-cell">${i_item[i+4][0]}.${i_item[i+4][1]}</div><div class="table-cell">${i_item[i+5][0]}.${i_item[i+5][1]}</div></div>`;
+              }
+              result += `</table></dd></dl>`;
+              break;
+            case "今日五行":
+              result += `<dl data-key="${key}"><dt>${key}：</dt><dd><div class="table">`;
+              for (let i = 0; i < value.length; i += 3) {
+                result += `<div class="table-row"><div class="table-cell">${value[i]}</div><div class="table-cell">${value[i+1]}</div><div class="table-cell">${value[i+2]}</div></div>`;
+              }
+              result += `</div></dd></dl>`;
+              break;
+            case "神煞宜忌":
+              result += `<dl data-key="${key}"><dt>${key}：</dt><dd style="overflow:unset;">`;
+              let info = [["神煞", ["吉神", "凶煞"]],["宜忌", ["宜", "忌"]]];
+              value.forEach((item,i) => {
+                result += `<div class="table"><div class="table-caption">${info[i][0] ?? ''}</div>`;
+                item.forEach((item2,i2) => {
+                    result += `<div class="table-row"><div class="table-cell">${info[i][1][i2] ?? ''}</div><div class="table-cell" style="white-space: normal;text-align: left;">${item2}</div></div>`;
+                  });
+                result += `</div>`;
+              });
+              result += `</dd></dl>`;
+              break;
+            default:
+              result += `<dl data-key="${key}"><dt>${key}：</dt><dd>`;
+              if(isFlat(value)){
+                value.forEach((item,i) => {
+                  result += `${item}`;
+                  if(item && i < value.length - 1){
+                    result += '、';
+                  }
+                });
+              }else{
+                value.forEach(item => {
+                  result += `<div>${item}</div>`;
+                });
+              }
+              result += `</dd></dl>`;
+              break;
+          }
         }else{
-          result += `<dl><dt>${key}：</dt><dd>${value ?? '无'}</dd></dl>`;
+          result += `<dl data-key="${key}"><dt>${key}：</dt><dd>${value ?? '无'}</dd></dl>`;
         }
       }
       resultDiv.innerHTML = result;

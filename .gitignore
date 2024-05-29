@@ -8,3 +8,4 @@
 /setup.py
 /*.toml
 /pyproject.toml
+gitignore
