@@ -12,17 +12,14 @@
 
 特别鸣谢 @DarkmoonRabbit (https://github.com/DarkmoonRabbit)
 
-使用本开源项目的相关产品：
-
-翻黄历 https://www.fanhuangli.com/
-
-万年历-最新专业桌面老黄‪历 https://apps.apple.com/cn/app/id1555822960
-
 其他与本项目关联项目：
-@Crazydear 的版本 https://github.com/Crazydear/Android-Project/tree/main/cnLunar
-
+@m11v 的 Dart/Flutter版本 https://github.com/m11v/chinese_lunar_calendar
+@Crazydear 的kotlin版本 https://github.com/Crazydear/Android-Project/tree/main/cnLunar
 @jymusic0663 的 flask 版本 https://github.com/jymusic0663/cnlunar/
 
+使用本开源项目的相关产品：
+翻黄历 https://www.fanhuangli.com/
+万年历-最新专业桌面老黄‪历 https://apps.apple.com/cn/app/id1555822960
 其他优秀的无依赖农历项目：
 @6tail 的 https://github.com/6tail/lunar-python
 ```
