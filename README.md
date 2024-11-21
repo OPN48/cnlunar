@@ -10,7 +10,9 @@
 
 5、民俗社会科学项目，不搞封建迷信，宜忌意义在于民间是将红白事合理分开，避免今日您宴请宾客，邻居办白事情况出现，引起邻里纠纷社会分裂。
 
-特别鸣谢 @DarkmoonRabbit (https://github.com/DarkmoonRabbit)
+特别鸣谢 contributor
+@DarkmoonRabbit (https://github.com/DarkmoonRabbit)
+@JeremyYoungCai (https://github.com/JeremyYoungCai) issues/37
 
 其他与本项目关联项目：
 
