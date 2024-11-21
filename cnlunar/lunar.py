@@ -1035,6 +1035,7 @@ class Lunar:
                 if i in deIsBadThingDic:
                     deIsBadThing += deIsBadThingDic[i]
         deIsBadThing = list(set(deIsBadThing))
+
         if thingLevel != 3:
             # 凡宜宣政事，布政事之日，只注宜宣政事。
             if '宣政事' in self.goodThing and '布政事' in self.goodThing:
@@ -1043,15 +1044,23 @@ class Lunar:
             if '营建宫室' in self.goodThing and '修宫室' in self.goodThing:
                 self.goodThing.remove('修宫室')
             # 凡德合、赦愿、月恩、四相、时德等日，不注忌进人口、安床、经络、酝酿、开市、立券、交易、纳财、开仓库、出货财。如遇德犹忌，及从忌不从宜之日，则仍注忌。
-            temp = False
+            # contributor @JeremyYoungCai
+            # 此处有误， deIsBadThing内容是【遇德犹忌】的事，这时候i是【值神】
+            # 修改 https://github.com/OPN48/cnlunar/issues/37
+            isDeSheEnSixiang = False
             for i in self.goodGodName:
                 if i in ['岁德合', '月德合', '天德合', '天赦', '天愿', '月恩', '四相', '时德']:
-                    temp = True
+                    isDeSheEnSixiang = True
                     break
-            if temp:
-                # 如遇德犹忌，及从忌不从宜之日，则仍注忌。
-                if i not in deIsBadThing or thingLevel != 2:
-                    self.badThing = rfRemove(self.badThing, ['进人口', '安床', '经络', '酝酿', '开市', '立券交易', '纳财', '开仓库', '出货财'])
+            # 以上判断 凡德合、赦愿、月恩、四相、时德等日，isDeSheEnSixiang = True
+            if isDeSheEnSixiang and thingLevel != 2:
+                # 不注忌 但条件是 非 从忌不从宜之日，所以 thingLevel != 2
+                self.badThing = rfRemove(self.badThing, ['进人口', '安床', '经络', '酝酿', '开市', '立券交易', '纳财', '开仓库', '出货财'])
+                self.badThing = rfAdd(self.badThing, addList=deIsBadThing)
+            # 如遇德犹忌，及从忌不从宜之日，则仍注忌。
+            # 此处忽略，在上层判断加上and，
+            # if thingLevel == 2:
+            #     pass # 仍注忌 ---->  不对badThing进行操作
 
             # 凡天狗寅日忌祭祀，不注宜求福、祈嗣。
             if '天狗' in self.goodGodName or '寅' in d:
