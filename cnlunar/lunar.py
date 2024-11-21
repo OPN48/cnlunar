@@ -1177,7 +1177,9 @@ class Lunar:
             if '开' in self.today12DayOfficer:
                 self.goodThing = rfRemove(self.goodThing, removeList=['破土', '安葬', '启攒'])
             # 凡四忌、四穷只忌安葬。如遇鸣吠、鸣吠对亦不注宜破土、启攒。
-            if '四忌' in self.badGodName or '四忌' in self.badGodName:
+            # contributor @JeremyYoungCai
+            # 修改 https://github.com/OPN48/cnlunar/issues/37
+            if '四忌' in self.badGodName or '四穷' in self.badGodName:
                 self.badThing = rfAdd(self.badThing, addList=['安葬'])
                 self.goodThing = rfRemove(self.goodThing, removeList=['破土', '启攒'])
             if '鸣吠' in self.badGodName or '鸣吠对' in self.badGodName:
