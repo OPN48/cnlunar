@@ -62,20 +62,24 @@ for i in dic:
 # i=1
 # c=0
 # now = datetime.datetime(2022, 2, 4, 12, 30)
-# while i <= 500:
+# while i <= 1000:
 #
 #     a = cnlunar.Lunar(now,godType='cnlunar')
 #     now += datetime.timedelta(days=1)
 #     i += 1
 #     # print(now)
 #     n = cnlunar.Lunar(now, godType='8char')
-#     print(n.angelDemon)
+#     # print(n.angelDemon)
 #     if '取鱼' in n.goodThing:
-#         print('是1', n.today12DayOfficer)
+#         c += 1
+#         print('is goodthing', now,c)
+
+# --------------issues test edn--------------
 
 # print('\n农历月份与八字日柱算神煞版本，月神随月建顺行者，算出来2019年2月4日是危日，虽然与书中卷九相符，但与市面上其他日历不符，不推荐此算法，推荐用默认月柱日柱算法')
 # getLunar(datetime.datetime(2019, 2, 4, 22, 30), godType='cnlunar')
 
+# --------------json test--------------
 # import json
 # class DateEncoder(json.JSONEncoder):
 #     def default(self, obj):
@@ -85,3 +89,4 @@ for i in dic:
 #             return json.JSONEncoder.default(self,obj)
 # dic = getLunar(datetime.datetime(2020,11,1,22,30))
 # outptJson = json.dumps(dic, cls=DateEncoder)
+# --------------json test end--------------
