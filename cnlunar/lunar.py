@@ -616,8 +616,17 @@ class Lunar:
         天恩:四季何时是天恩，甲子乙丑丙寅建。丁卯戊辰兼己卯，庚辰辛巳壬午言，癸未隔求己酉日，庚戌辛亥亦同联，壬子癸丑无差误，此是天恩吉日传
         '''
 
-        gbDic = {'goodName': [], 'badName': [], 'goodThing': officerThings[self.today12DayOfficer][0],
-                 'badThing': officerThings[self.today12DayOfficer][1]}
+        gbDic = {'goodName': [],
+                 'badName': [],
+                 'goodThing': list(officerThings[self.today12DayOfficer][0]),
+                 'badThing': list(officerThings[self.today12DayOfficer][1])
+                 }
+        # @xclsky1 issues 39 https://github.com/OPN48/cnlunar/issues/39
+        # if '取鱼' in gbDic['badThing']:
+        #     print('是1', self.today12DayOfficer)
+        #     print('宜', gbDic['goodThing'])
+        #     print('忌', gbDic['badThing'])
+
         mrY13 = [(1, 13), (2, 11), (3, 9), (4, 7), (5, 5), (6, 2), (7, 1), (7, 29), (8, 27), (9, 25), (10, 23),
                  (11, 21), (12, 19)]
         tomorrow = self.date + timedelta(days=1)
@@ -648,12 +657,29 @@ class Lunar:
             if i in d:
                 gbDic['goodThing'] += day8CharThing[i][0]
                 gbDic['badThing'] += day8CharThing[i][1]
+                # @xclsky1 issues 39 https://github.com/OPN48/cnlunar/issues/39
+                # if '取鱼' in gbDic['badThing']:
+                #     print('是2', self.today12DayOfficer)
+                #     print('宜', gbDic['goodThing'])
+                #     print('忌', gbDic['badThing'])
+                #     break
+
         # 插入卷十一拆解后遗留内容
         # 节气间差类
         # [('小寒', 0), ('大寒', 1), ('立春', 2), ('雨水', 3), ('惊蛰', 4), ('春分', 5), ('清明', 6), ('谷雨', 7), ('立夏', 8), ('小满', 9), ('芒种', 10), ('夏至', 11), ('小暑', 12), ('大暑', 13), ('立秋', 14), ('处暑', 15), ('白露', 16), ('秋分', 17), ('寒露', 18), ('霜降', 19), ('立冬', 20), ('小雪', 21), ('大雪', 22), ('冬至', 23)]
         # 雨水后立夏前执日、危日、收日 宜 取鱼
+
         if self.nextSolarNum in range(4, 9) and o in ['执', '危', '收']:
+            # print(self.date, self.nextSolarNum, o)
+            # @xclsky1 issues 39 https://github.com/OPN48/cnlunar/issues/39
+            # if '取鱼' in gbDic['badThing']:
+            #     print('是3', self.today12DayOfficer)
+            #     print('宜', gbDic['goodThing'])
+            #     print('忌', gbDic['badThing'])
+                # print(self.badGodName)
+                # print(self.goodGodName)
             gbDic['goodThing'] = rfAdd(gbDic['goodThing'], ['取鱼'])
+            # print(gbDic['goodThing'])
         # 霜降后立春前执日、危日、收日 宜 畋猎
         if self.nextSolarNum in range(20, 24) and self.nextSolarNum in range(0, 3) and o in ['执', '危', '收']:
             gbDic['goodThing'] = rfAdd(gbDic['goodThing'], ['畋猎'])
