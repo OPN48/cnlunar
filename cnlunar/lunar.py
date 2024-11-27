@@ -655,8 +655,8 @@ class Lunar:
         # item参数规则，（name,当日判断结果,判断规则,宜事,忌事）
         for i in day8CharThing:
             if i in d:
-                gbDic['goodThing'] += day8CharThing[i][0]
-                gbDic['badThing'] += day8CharThing[i][1]
+                gbDic['goodThing'] += list(day8CharThing[i][0])
+                gbDic['badThing'] += list(day8CharThing[i][1])
                 # @xclsky1 issues 39 https://github.com/OPN48/cnlunar/issues/39
                 # if '取鱼' in gbDic['badThing']:
                 #     print('是2', self.today12DayOfficer)
