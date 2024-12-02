@@ -1089,7 +1089,8 @@ class Lunar:
             #     pass # 仍注忌 ---->  不对badThing进行操作
 
             # 凡天狗寅日忌祭祀，不注宜求福、祈嗣。
-            if '天狗' in self.goodGodName or '寅' in d:
+            # @kingsoen https://github.com/OPN48/cnlunar/issues/40
+            if '天狗' in self.badGodName or '寅' in d:
                 self.badThing = rfAdd(self.badThing, addList=['祭祀'])
                 self.goodThing = rfRemove(self.goodThing, removeList=['祭祀'])
 
@@ -1208,7 +1209,9 @@ class Lunar:
             if '四忌' in self.badGodName or '四穷' in self.badGodName:
                 self.badThing = rfAdd(self.badThing, addList=['安葬'])
                 self.goodThing = rfRemove(self.goodThing, removeList=['破土', '启攒'])
-            if '鸣吠' in self.badGodName or '鸣吠对' in self.badGodName:
+            # @kingsoen https://github.com/OPN48/cnlunar/issues/40
+            # 关联修改
+            if '鸣吠' in self.goodGodName or '鸣吠对' in self.goodGodName:
                 self.goodThing = rfRemove(self.goodThing, removeList=['破土', '启攒'])
             # 凡天吏、大时不以死败论者，遇四废、岁薄、逐阵仍以死败论。
             # 凡岁薄、逐阵日所宜事，照月厌所忌删，所忌仍从本日。、

@@ -16,6 +16,8 @@
 
 @JeremyYoungCai (https://github.com/JeremyYoungCai) issues/37
 
+@kingsoen (https://github.com/kingsoen) issues/40
+
 其他与本项目关联项目：
 
 @m11v 的 Dart/Flutter版本 https://github.com/m11v/chinese_lunar_calendar
