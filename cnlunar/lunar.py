@@ -681,10 +681,10 @@ class Lunar:
             gbDic['goodThing'] = rfAdd(gbDic['goodThing'], ['取鱼'])
             # print(gbDic['goodThing'])
         # 霜降后立春前执日、危日、收日 宜 畋猎
-        if self.nextSolarNum in range(20, 24) and self.nextSolarNum in range(0, 3) and o in ['执', '危', '收']:
+        if (self.nextSolarNum in range(20, 24) or self.nextSolarNum in range(0, 3)) and o in ['执', '危', '收']:
             gbDic['goodThing'] = rfAdd(gbDic['goodThing'], ['畋猎'])
         # 立冬后立春前危日 午日 申日 宜 伐木
-        if self.nextSolarNum in range(21, 24) and self.nextSolarNum in range(0, 3) and (o in ['危'] or d in ['午', '申']):
+        if (self.nextSolarNum in range(21, 24) or self.nextSolarNum in range(0, 3)) and (o in ['危'] or d in ['午', '申']):
             gbDic['goodThing'] = rfAdd(gbDic['goodThing'], ['伐木'])
         #   每月一日 六日 十五 十九日 二十一日 二十三日 忌 整手足甲
         if ldn in [1, 6, 15, 19, 21, 23]:
