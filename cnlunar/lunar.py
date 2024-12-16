@@ -616,8 +616,17 @@ class Lunar:
         天恩:四季何时是天恩，甲子乙丑丙寅建。丁卯戊辰兼己卯，庚辰辛巳壬午言，癸未隔求己酉日，庚戌辛亥亦同联，壬子癸丑无差误，此是天恩吉日传
         '''
 
-        gbDic = {'goodName': [], 'badName': [], 'goodThing': officerThings[self.today12DayOfficer][0],
-                 'badThing': officerThings[self.today12DayOfficer][1]}
+        gbDic = {'goodName': [],
+                 'badName': [],
+                 'goodThing': list(officerThings[self.today12DayOfficer][0]),
+                 'badThing': list(officerThings[self.today12DayOfficer][1])
+                 }
+        # @xclsky1 issues 39 https://github.com/OPN48/cnlunar/issues/39
+        # if '取鱼' in gbDic['badThing']:
+        #     print('是1', self.today12DayOfficer)
+        #     print('宜', gbDic['goodThing'])
+        #     print('忌', gbDic['badThing'])
+
         mrY13 = [(1, 13), (2, 11), (3, 9), (4, 7), (5, 5), (6, 2), (7, 1), (7, 29), (8, 27), (9, 25), (10, 23),
                  (11, 21), (12, 19)]
         tomorrow = self.date + timedelta(days=1)
@@ -646,19 +655,36 @@ class Lunar:
         # item参数规则，（name,当日判断结果,判断规则,宜事,忌事）
         for i in day8CharThing:
             if i in d:
-                gbDic['goodThing'] += day8CharThing[i][0]
-                gbDic['badThing'] += day8CharThing[i][1]
+                gbDic['goodThing'] += list(day8CharThing[i][0])
+                gbDic['badThing'] += list(day8CharThing[i][1])
+                # @xclsky1 issues 39 https://github.com/OPN48/cnlunar/issues/39
+                # if '取鱼' in gbDic['badThing']:
+                #     print('是2', self.today12DayOfficer)
+                #     print('宜', gbDic['goodThing'])
+                #     print('忌', gbDic['badThing'])
+                #     break
+
         # 插入卷十一拆解后遗留内容
         # 节气间差类
         # [('小寒', 0), ('大寒', 1), ('立春', 2), ('雨水', 3), ('惊蛰', 4), ('春分', 5), ('清明', 6), ('谷雨', 7), ('立夏', 8), ('小满', 9), ('芒种', 10), ('夏至', 11), ('小暑', 12), ('大暑', 13), ('立秋', 14), ('处暑', 15), ('白露', 16), ('秋分', 17), ('寒露', 18), ('霜降', 19), ('立冬', 20), ('小雪', 21), ('大雪', 22), ('冬至', 23)]
         # 雨水后立夏前执日、危日、收日 宜 取鱼
+
         if self.nextSolarNum in range(4, 9) and o in ['执', '危', '收']:
+            # print(self.date, self.nextSolarNum, o)
+            # @xclsky1 issues 39 https://github.com/OPN48/cnlunar/issues/39
+            # if '取鱼' in gbDic['badThing']:
+            #     print('是3', self.today12DayOfficer)
+            #     print('宜', gbDic['goodThing'])
+            #     print('忌', gbDic['badThing'])
+                # print(self.badGodName)
+                # print(self.goodGodName)
             gbDic['goodThing'] = rfAdd(gbDic['goodThing'], ['取鱼'])
+            # print(gbDic['goodThing'])
         # 霜降后立春前执日、危日、收日 宜 畋猎
-        if self.nextSolarNum in range(20, 24) and self.nextSolarNum in range(0, 3) and o in ['执', '危', '收']:
+        if (self.nextSolarNum in range(20, 24) or self.nextSolarNum in range(0, 3)) and o in ['执', '危', '收']:
             gbDic['goodThing'] = rfAdd(gbDic['goodThing'], ['畋猎'])
         # 立冬后立春前危日 午日 申日 宜 伐木
-        if self.nextSolarNum in range(21, 24) and self.nextSolarNum in range(0, 3) and (o in ['危'] or d in ['午', '申']):
+        if (self.nextSolarNum in range(21, 24) or self.nextSolarNum in range(0, 3)) and (o in ['危'] or d in ['午', '申']):
             gbDic['goodThing'] = rfAdd(gbDic['goodThing'], ['伐木'])
         #   每月一日 六日 十五 十九日 二十一日 二十三日 忌 整手足甲
         if ldn in [1, 6, 15, 19, 21, 23]:
@@ -1035,6 +1061,7 @@ class Lunar:
                 if i in deIsBadThingDic:
                     deIsBadThing += deIsBadThingDic[i]
         deIsBadThing = list(set(deIsBadThing))
+
         if thingLevel != 3:
             # 凡宜宣政事，布政事之日，只注宜宣政事。
             if '宣政事' in self.goodThing and '布政事' in self.goodThing:
@@ -1043,18 +1070,27 @@ class Lunar:
             if '营建宫室' in self.goodThing and '修宫室' in self.goodThing:
                 self.goodThing.remove('修宫室')
             # 凡德合、赦愿、月恩、四相、时德等日，不注忌进人口、安床、经络、酝酿、开市、立券、交易、纳财、开仓库、出货财。如遇德犹忌，及从忌不从宜之日，则仍注忌。
-            temp = False
+            # contributor @JeremyYoungCai
+            # 此处有误， deIsBadThing内容是【遇德犹忌】的事，这时候i是【值神】
+            # 修改 https://github.com/OPN48/cnlunar/issues/37
+            isDeSheEnSixiang = False
             for i in self.goodGodName:
                 if i in ['岁德合', '月德合', '天德合', '天赦', '天愿', '月恩', '四相', '时德']:
-                    temp = True
+                    isDeSheEnSixiang = True
                     break
-            if temp:
-                # 如遇德犹忌，及从忌不从宜之日，则仍注忌。
-                if i not in deIsBadThing or thingLevel != 2:
-                    self.badThing = rfRemove(self.badThing, ['进人口', '安床', '经络', '酝酿', '开市', '立券交易', '纳财', '开仓库', '出货财'])
+            # 以上判断 凡德合、赦愿、月恩、四相、时德等日，isDeSheEnSixiang = True
+            if isDeSheEnSixiang and thingLevel != 2:
+                # 不注忌 但条件是 非 从忌不从宜之日，所以 thingLevel != 2
+                self.badThing = rfRemove(self.badThing, ['进人口', '安床', '经络', '酝酿', '开市', '立券交易', '纳财', '开仓库', '出货财'])
+                self.badThing = rfAdd(self.badThing, addList=deIsBadThing)
+            # 如遇德犹忌，及从忌不从宜之日，则仍注忌。
+            # 此处忽略，在上层判断加上and，
+            # if thingLevel == 2:
+            #     pass # 仍注忌 ---->  不对badThing进行操作
 
             # 凡天狗寅日忌祭祀，不注宜求福、祈嗣。
-            if '天狗' in self.goodGodName or '寅' in d:
+            # @kingsoen https://github.com/OPN48/cnlunar/issues/40
+            if '天狗' in self.badGodName or '寅' in d:
                 self.badThing = rfAdd(self.badThing, addList=['祭祀'])
                 self.goodThing = rfRemove(self.goodThing, removeList=['祭祀'])
 
@@ -1168,10 +1204,14 @@ class Lunar:
             if '开' in self.today12DayOfficer:
                 self.goodThing = rfRemove(self.goodThing, removeList=['破土', '安葬', '启攒'])
             # 凡四忌、四穷只忌安葬。如遇鸣吠、鸣吠对亦不注宜破土、启攒。
-            if '四忌' in self.badGodName or '四忌' in self.badGodName:
+            # contributor @JeremyYoungCai
+            # 修改 https://github.com/OPN48/cnlunar/issues/37
+            if '四忌' in self.badGodName or '四穷' in self.badGodName:
                 self.badThing = rfAdd(self.badThing, addList=['安葬'])
                 self.goodThing = rfRemove(self.goodThing, removeList=['破土', '启攒'])
-            if '鸣吠' in self.badGodName or '鸣吠对' in self.badGodName:
+            # @kingsoen https://github.com/OPN48/cnlunar/issues/40
+            # 关联修改
+            if '鸣吠' in self.goodGodName or '鸣吠对' in self.goodGodName:
                 self.goodThing = rfRemove(self.goodThing, removeList=['破土', '启攒'])
             # 凡天吏、大时不以死败论者，遇四废、岁薄、逐阵仍以死败论。
             # 凡岁薄、逐阵日所宜事，照月厌所忌删，所忌仍从本日。、
