@@ -28,6 +28,7 @@
 
 @jymusic0663 的 flask 版本 https://github.com/jymusic0663/cnlunar/
 
+@Sonic853 的 C# VRChat 版本 https://github.com/Sonic853/UdonCnLunar
 使用本开源项目的相关产品：
 
 翻黄历 https://www.fanhuangli.com/
