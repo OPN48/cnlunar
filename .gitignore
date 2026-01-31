@@ -6,5 +6,3 @@
 /.idea/
 *.DS_Store
 /setup.py
-/*.toml
-/pyproject.toml

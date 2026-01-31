@@ -1,0 +1,22 @@
+[build-system]
+requires = [
+    "setuptools>=40",
+    "wheel"
+
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cnlunar"  # 你的项目名称（和 PyPI 上的包名一致）
+version = "0.2.1"  # 项目版本号
+authors = [
+  { name = "opn48", email = "cuba3@163.com" }  # 作者信息（可选）
+]
+# 核心：补充项目描述，解决 No project description provided 问题
+description = "农历，中国农历历法项目，无需数据库环境，以《钦定协纪辨方书》为核心的python3 农历、黄历、二十四节气、节假日、星次、每日凶煞、每日值神、农历建除十二神、农历每日宜忌、彭祖百忌、每日五行、二十八星宿、天干地支、农历生辰八字、时辰凶吉等开源项目。"  # 填写你的项目实际功能描述，不能为空字符串
+# 可选：更详细的项目长描述（通常对应 README.md，PyPI 上会展示）
+long_description = file: "README.md"
+long_description_content_type = "text/markdown"
+# 可选：项目主页、关键词等
+homepage = "https://github.com/opn48/cnlunar"
+keywords = ["lunar", "chinese lunar",  "cnlunar",  "chinese-lunar-calendar",  "lunarcalendar", "calendar"]
