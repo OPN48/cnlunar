@@ -29,6 +29,7 @@
 @jymusic0663 的 flask 版本 https://github.com/jymusic0663/cnlunar/
 
 @Sonic853 的 C# VRChat 版本 https://github.com/Sonic853/UdonCnLunar
+
 使用本开源项目的相关产品：
 
 翻黄历 https://www.fanhuangli.com/
@@ -48,7 +49,7 @@ import datetime
 import cnlunar
 
 a = cnlunar.Lunar(datetime.datetime(2022, 11, 14, 10, 30), godType='8char')  # 常规算法
-# a = cnlunar.Lunar(datetime.datetime(2022, 2, 3, 10, 30), godType='8char', year8Char='beginningOfSpring')  # 八字立春切换算法
+
 dic = {
     '日期': a.date,
     '农历数字': (a.lunarYear, a.lunarMonth, a.lunarDay, '闰' if a.isLunarLeapMonth else ''),
