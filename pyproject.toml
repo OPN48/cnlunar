@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cnlunar"  # 你的项目名称（和 PyPI 上的包名一致）
-version = "0.2.1"  # 项目版本号
+version = "0.2.2"  # 项目版本号
 license = { file = "LICENSE" }  # 推荐：关联项目根目录的 LICENSE 文件（GitHub 开源项目标配）
 authors = [
   { name = "opn48", email = "cuba3@163.com" }  # 作者信息（可选）

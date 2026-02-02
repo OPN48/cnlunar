@@ -6,7 +6,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Upload Python Package
+name: Upload cnlunar Python Package to PyPI
 
 on:
   release:
@@ -51,7 +51,7 @@ jobs:
     environment:
       name: pypi
       # OPTIONAL: uncomment and update to include your PyPI project URL in the deployment status:
-      # url: https://pypi.org/p/YOURPROJECT
+      url: https://pypi.org/project/cnlunar/
       #
       # ALTERNATIVE: if your GitHub Release name is the PyPI project version string
       # ALTERNATIVE: exactly, uncomment the following line instead:
