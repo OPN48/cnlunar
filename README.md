@@ -11,6 +11,7 @@
 5、民俗社会科学项目，不搞封建迷信，宜忌意义在于民间是将红白事合理分开，避免今日您宴请宾客，邻居办白事情况出现，引起邻里纠纷社会分裂。
 
 特别鸣谢 contributor
+
 @zither (https://github.com/zither ) issues/54
 
 @DarkmoonRabbit (https://github.com/DarkmoonRabbit)
@@ -22,6 +23,7 @@
 @Sonic853 (https://github.com/Sonic853) issues/41
 
 其他与本项目关联项目：
+
 @zither 的 js版本 https://github.com/zither/cnlunar-js
 
 @m11v 的 Dart/Flutter版本 https://github.com/m11v/chinese_lunar_calendar
