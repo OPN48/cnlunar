@@ -23,6 +23,8 @@ cnlunar
 
 特别鸣谢 contributor
 
+@zither (https://github.com/zither) issues/54
+
 @DarkmoonRabbit (https://github.com/DarkmoonRabbit)
 
 @JeremyYoungCai (https://github.com/JeremyYoungCai) issues/37
@@ -32,6 +34,7 @@ cnlunar
 @Sonic853 (https://github.com/Sonic853) issues/41
 
 其他与本项目关联项目：
+@zither 的 js版本 https://github.com/zither/cnlunar-js
 
 @m11v 的 Dart/Flutter版本 https://github.com/m11v/chinese_lunar_calendar
 
