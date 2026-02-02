@@ -14,6 +14,13 @@ from cnlunar.holidays import otherLunarHolidaysList, otherHolidaysList, legalsol
 from cnlunar.solar24 import getTheYearAllSolarTermsList
 from cnlunar.tools import sortCollation, rfRemove, rfAdd
 
+BAD_NAME = 'badName'
+
+GOOD_NAME = 'goodName'
+
+BAD_THING = 'badThing'
+GOOD_THING = 'goodThing'
+
 
 class Lunar:
     def __init__(self, date, godType='8char', year8Char='year'):
@@ -616,10 +623,10 @@ class Lunar:
         天恩:四季何时是天恩，甲子乙丑丙寅建。丁卯戊辰兼己卯，庚辰辛巳壬午言，癸未隔求己酉日，庚戌辛亥亦同联，壬子癸丑无差误，此是天恩吉日传
         '''
 
-        gbDic = {'goodName': [],
-                 'badName': [],
-                 'goodThing': list(officerThings[self.today12DayOfficer][0]),
-                 'badThing': list(officerThings[self.today12DayOfficer][1])
+        gbDic = {GOOD_NAME: [],
+                 BAD_NAME: [],
+                 GOOD_THING: list(officerThings[self.today12DayOfficer][0]),
+                 BAD_THING: list(officerThings[self.today12DayOfficer][1])
                  }
         # @xclsky1 issues 39 https://github.com/OPN48/cnlunar/issues/39
         # if '取鱼' in gbDic['badThing']:
@@ -655,8 +662,8 @@ class Lunar:
         # item参数规则，（name,当日判断结果,判断规则,宜事,忌事）
         for i in day8CharThing:
             if i in d:
-                gbDic['goodThing'] += list(day8CharThing[i][0])
-                gbDic['badThing'] += list(day8CharThing[i][1])
+                gbDic[GOOD_THING] += list(day8CharThing[i][0])
+                gbDic[BAD_THING] += list(day8CharThing[i][1])
                 # @xclsky1 issues 39 https://github.com/OPN48/cnlunar/issues/39
                 # if '取鱼' in gbDic['badThing']:
                 #     print('是2', self.today12DayOfficer)
@@ -678,23 +685,23 @@ class Lunar:
             #     print('忌', gbDic['badThing'])
                 # print(self.badGodName)
                 # print(self.goodGodName)
-            gbDic['goodThing'] = rfAdd(gbDic['goodThing'], ['取鱼'])
+            gbDic[GOOD_THING] = rfAdd(gbDic[GOOD_THING], ['取鱼'])
             # print(gbDic['goodThing'])
         # 霜降后立春前执日、危日、收日 宜 畋猎
         if (self.nextSolarNum in range(20, 24) or self.nextSolarNum in range(0, 3)) and o in ['执', '危', '收']:
-            gbDic['goodThing'] = rfAdd(gbDic['goodThing'], ['畋猎'])
+            gbDic[GOOD_THING] = rfAdd(gbDic[GOOD_THING], ['畋猎'])
         # 立冬后立春前危日 午日 申日 宜 伐木
         if (self.nextSolarNum in range(21, 24) or self.nextSolarNum in range(0, 3)) and (o in ['危'] or d in ['午', '申']):
-            gbDic['goodThing'] = rfAdd(gbDic['goodThing'], ['伐木'])
+            gbDic[GOOD_THING] = rfAdd(gbDic[GOOD_THING], ['伐木'])
         #   每月一日 六日 十五 十九日 二十一日 二十三日 忌 整手足甲
         if ldn in [1, 6, 15, 19, 21, 23]:
-            gbDic['badThing'] = rfAdd(gbDic['badThing'], ['整手足甲'])
+            gbDic[BAD_THING] = rfAdd(gbDic[BAD_THING], ['整手足甲'])
         # 每月十二日 十五日 忌 整容剃头
         if ldn in [12, 15]:
-            gbDic['badThing'] = rfAdd(gbDic['badThing'], ['整容', '剃头'])
+            gbDic[BAD_THING] = rfAdd(gbDic[BAD_THING], ['整容', '剃头'])
         # 每月十五日 朔弦望月 忌 求医疗病
         if ldn in [15] or self.phaseOfMoon != '':
-            gbDic['badThing'] = rfAdd(gbDic['badThing'], ['求医疗病'])
+            gbDic[BAD_THING] = rfAdd(gbDic[BAD_THING], ['求医疗病'])
 
         # 由于正月建寅，men参数使用排序是从子开始，所以对照书籍需要将循环八字列向右移两位，也就是映射正月的是在第三个字
         angel = [
@@ -991,7 +998,7 @@ class Lunar:
 
         # 配合angel、demon的数据结构的吉神凶神筛选
         def getTodayGoodBadThing(dic):
-            for i in [(angel, 'goodName', 'goodThing', 'badThing'), (demon, 'badName', 'goodThing', 'badThing')]:
+            for i in [(angel, GOOD_NAME, GOOD_THING, BAD_THING), (demon, BAD_NAME, GOOD_THING, BAD_THING)]:
                 godDb, godNameKey, goodThingKey, badThingKey = i[0], i[1], i[2], i[3]
                 for godItem in godDb:
                     # print(x, x[1] , x[2]) 输出当日判断结果x[1]，看x[1]是否落在判断范围x[2]里面
@@ -1005,34 +1012,34 @@ class Lunar:
             return dic
 
         gbDic = getTodayGoodBadThing(gbDic)
-        self.goodGodName = gbDic['goodName']
-        self.badGodName = gbDic['badName']
+        self.goodGodName = gbDic[GOOD_NAME]
+        self.badGodName = gbDic[BAD_NAME]
 
         # 第一方案：《钦定协纪辨方书》古书影印版，宜忌等第表
         # 凡铺注《万年历》、《通书》，先依用事次第察其所宜忌之日，于某日下注宜某事，某日下注忌某事，次按宜忌，较量其凶吉之轻重，以定去取。
         # 从忌亦从宜
         def badDrewGood(dic):
-            for removeThing in list(set(dic['goodThing']).intersection(set(dic['badThing']))):
-                dic['goodThing'].remove(removeThing)
-                dic['badThing'].remove(removeThing)
+            for removeThing in list(set(dic[GOOD_THING]).intersection(set(dic[BAD_THING]))):
+                dic[GOOD_THING].remove(removeThing)
+                dic[BAD_THING].remove(removeThing)
             return dic
 
         # 从忌不从宜
         def badOppressGood(dic):
-            for removeThing in list(set(dic['goodThing']).intersection(set(dic['badThing']))):
-                dic['goodThing'].remove(removeThing)
+            for removeThing in list(set(dic[GOOD_THING]).intersection(set(dic[BAD_THING]))):
+                dic[GOOD_THING].remove(removeThing)
             return dic
 
         # 从宜不从忌
         def goodOppressBad(dic):
-            for removeThing in list(set(dic['goodThing']).intersection(set(dic['badThing']))):
-                dic['badThing'].remove(removeThing)
+            for removeThing in list(set(dic[GOOD_THING]).intersection(set(dic[BAD_THING]))):
+                dic[BAD_THING].remove(removeThing)
             return dic
 
         # 诸事不宜
         def nothingGood(dic):
-            dic['goodThing'] = ['诸事不宜']
-            dic['badThing'] = ['诸事不宜']
+            dic[GOOD_THING] = ['诸事不宜']
+            dic[BAD_THING] = ['诸事不宜']
             return dic
 
         # 今日凶吉判断
@@ -1048,8 +1055,8 @@ class Lunar:
         else:
             gbDic = goodOppressBad(gbDic)
 
-        self.goodThing = gbDic['goodThing']
-        self.badThing = gbDic['badThing']
+        self.goodThing = gbDic[GOOD_THING]
+        self.badThing = gbDic[BAD_THING]
 
         # 遇德犹忌之事
         deIsBadThingDic = {}
