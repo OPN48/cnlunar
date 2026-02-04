@@ -338,8 +338,8 @@ class Lunar:
         self.lunarSeasonNum = ((self.monthEarthNum - 2) % 12) // 3
         self.lunarMonthType = MONTH_TYPE_STR[self.lunarSeasonType]
         self.lunarSeason = SEASON_TYPE_STR[self.lunarSeasonNum]
-        self.lunarSeason = self.lunarMonthType + self.lunarSeason
-        return self.lunarSeason
+        self.lunarSeasonName = self.lunarMonthType + self.lunarSeason
+        return self.lunarSeasonName
 
     # 星座
     def get_starZodiac(self):
@@ -725,8 +725,15 @@ class Lunar:
              ['祭祀', '祈福', '求嗣', '上册', '上表章', '颁诏', '覃恩', '施恩', '招贤', '举正直', '恤孤茕', '宣政事', '雪冤', '庆赐', '宴会', '出行',
               '安抚边境', '选将', '出师', '上官', '临政', '结婚姻', '纳采', '嫁娶', '搬移', '解除', '求医疗病', '裁制', '营建', '缮城郭', '修造', '竖柱上梁',
               '修仓库', '栽种', '牧养', '纳畜', '安葬'], ['畋猎', '取鱼']),
-            # 依照@IcyTide 建议更新天德算法
-            ('天德', '巳庚丁申壬辛亥甲癸寅丙乙'[men], d,
+            # 依照@IcyTide 建议更新天德算法，
+            # 正丁三壬四辛同，五亥六甲七癸逢；八寅九丙十居乙，子巳丑庚卯申中；戊巳绝无天德位，四仲四维不用墓。
+            # 坤宫（申未）、乾宫（亥戌）、艮宫（寅丑）、巽宫（巳辰）
+            # 巳	庚	丁	申	壬	辛	亥	甲	癸	寅	丙	乙
+            # the10HeavenlyStems = ('甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸')
+            # the12EarthlyBranches = ('子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥')
+            # 地地 天 天 地地 天 天 地地 天 天 地地 天 天
+            # 2026-01-26 01:30:00  季  乙巳 己丑 庚子 丁丑
+            ('天德', d[1] if self.lunarMonthType=='仲' else d[0], ['巳辰','庚','丁','申未','壬','辛','亥戌','甲','癸','寅丑','丙','乙'][men],
              ['祭祀', '祈福', '求嗣', '上册', '上表章', '颁诏', '覃恩', '施恩', '招贤', '举正直', '恤孤茕', '宣政事', '雪冤', '庆赐', '宴会', '出行',
               '安抚边境', '选将', '出师', '上官', '临政', '结婚姻', '纳采', '嫁娶', '搬移', '解除', '求医疗病', '裁制', '营建', '缮城郭', '修造', '竖柱上梁',
               '修仓库', '栽种', '牧养', '纳畜', '安葬'], ['畋猎', '取鱼']),  # 天德'巳庚丁申壬辛亥甲癸寅丙乙'天德合'申乙壬巳丁丙寅己戊亥辛庚'

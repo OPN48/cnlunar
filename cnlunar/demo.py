@@ -3,7 +3,7 @@ import datetime, cnlunar
 print('\n八字月柱与八字日柱算神煞版本')
 
 # 常规算法 demo 应输出 壬寅
-a = cnlunar.Lunar(datetime.datetime(2026, 1, 29, 1, 30), godType='8char')
+a = cnlunar.Lunar(datetime.datetime(2026, 3, 9, 12, 30), godType='8char')
 # 八字立春切换算法 1986, 11, 1, 7, 0   demo 应输出  丙寅
 # a = cnlunar.Lunar(datetime.datetime(1986, 11, 1, 7, 0), godType='8char')
 # a = cnlunar.Lunar(datetime.datetime(1986, 11, 1, 7, 0), godType='8char', year8Char='beginningOfSpring')
@@ -26,7 +26,7 @@ dic = {
     '今年节气表': a.thisYearSolarTermsDic,
     '月份类型':a.lunarMonthType,
     '季节': a.lunarSeason,
-    '季节类型': a.lunarSeason,
+    '季节类型': a.lunarSeasonName,
     '今日时辰': a.twohour8CharList,
     '时辰凶吉': a.get_twohourLuckyList(),
     '生肖冲煞': a.chineseZodiacClash,
@@ -59,13 +59,19 @@ for i in dic:
     print(i, midstr, dic[i])
 
 
-# --------------issues test--------------
+# # --------------issues test--------------
 # i=1
 # c=0
-# now = datetime.datetime(2022, 2, 4, 12, 30)
-# while i <= 1000:
-#
+# now = datetime.datetime(2026, 1, 1,12, 30)
+# while i <= 100:
+#     print(now)
 #     a = cnlunar.Lunar(now,godType='cnlunar')
+#     print(a.goodGodName)
+#     print(a.badGodName)
+#     print(a.todayLevelName)
+#     print(a.goodThing)
+#     print(a.badThing)
+#
 #     now += datetime.timedelta(days=1)
 #     i += 1
 #     # print(now)
