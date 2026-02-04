@@ -25,10 +25,10 @@ GOOD_THING = 'goodThing'
 
 
 class Lunar:
-    def __init__(self, date, godType='8char', year8Char='year'):
+    def __init__(self, date, godType='8char', year8Char='year',yeargod='duty'):
         self.godType = godType
         self.year8Char = year8Char
-
+        self.isYeargodDuty = True if yeargod == 'duty' else False
         self.date = date
         self.twohourNum = (self.date.hour + 1) // 2
         self._upper_year = ''
@@ -652,7 +652,6 @@ class Lunar:
         den = self.dayEarthNum
         dhen = self.dayHeavenlyEarthNum
         sn = self.lunarSeasonNum  # 季节
-        # st=self.seasonType
         yhn = self.yearHeavenNum
         yen = self.yearEarthNum
         ldn = self.lunarDay
@@ -1020,6 +1019,10 @@ class Lunar:
                 godDb, godNameKey, goodThingKey, badThingKey = i[0], i[1], i[2], i[3]
                 for godItem in godDb:
                     # print(x, x[1] , x[2]) 输出当日判断结果x[1]，看x[1]是否落在判断范围x[2]里面
+                    # godItem demo ('岁德', '甲庚丙壬戊甲庚丙壬戊'[yhn], d, ['修造'], []),
+                    if not self.isYeargodDuty:
+                        if '岁' in godItem[0]:
+                            continue
                     if godItem[1] in godItem[2]:
                         dic[godNameKey] += [godItem[0]]
                         dic[goodThingKey] += godItem[3]
@@ -1075,7 +1078,9 @@ class Lunar:
 
         self.goodThing = gbDic[GOOD_THING]
         self.badThing = gbDic[BAD_THING]
-
+        # print('宜忌等第清洗前')
+        # print(self.goodThing)
+        # print(self.badThing)
         # 遇德犹忌之事
         deIsBadThingDic = {}
         for i in angel[:6]:
@@ -1100,7 +1105,10 @@ class Lunar:
             # 修改 https://github.com/OPN48/cnlunar/issues/37
             isDeSheEnSixiang = False
             for i in self.goodGodName:
-                if i in ['岁德合', '月德合', '天德合', '天赦', '天愿', '月恩', '四相', '时德']:
+                _maxpowerGodList = ['月德合', '天德合', '天赦', '天愿', '月恩', '四相', '时德']
+                if self.isYeargodDuty:
+                    _maxpowerGodList= ['岁德合']+ _maxpowerGodList
+                if i in _maxpowerGodList:
                     isDeSheEnSixiang = True
                     break
             # 以上判断 凡德合、赦愿、月恩、四相、时德等日，isDeSheEnSixiang = True
