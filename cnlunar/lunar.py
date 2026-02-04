@@ -14,6 +14,10 @@ from cnlunar.holidays import otherLunarHolidaysList, otherHolidaysList, legalsol
 from cnlunar.solar24 import getTheYearAllSolarTermsList
 from cnlunar.tools import sortCollation, rfRemove, rfAdd
 
+SEASON_TYPE_STR = '春夏秋冬'
+
+MONTH_TYPE_STR = '仲季孟'
+
 BAD_NAME = 'badName'
 GOOD_NAME = 'goodName'
 BAD_THING = 'badThing'
@@ -330,9 +334,12 @@ class Lunar:
 
     # 季节
     def get_season(self):
-        self.seasonType = self.monthEarthNum % 3
-        self.seasonNum = ((self.monthEarthNum - 2) % 12) // 3
-        self.lunarSeason = '仲季孟'[self.seasonType] + '春夏秋冬'[self.seasonNum]
+        self.lunarSeasonType = self.monthEarthNum % 3
+        self.lunarSeasonNum = ((self.monthEarthNum - 2) % 12) // 3
+        self.lunarMonthType = MONTH_TYPE_STR[self.lunarSeasonType]
+        self.lunarSeason = SEASON_TYPE_STR[self.lunarSeasonNum]
+        self.lunarSeason = self.lunarMonthType + self.lunarSeason
+        return self.lunarSeason
 
     # 星座
     def get_starZodiac(self):
@@ -644,7 +651,7 @@ class Lunar:
         d = self.day8Char
         den = self.dayEarthNum
         dhen = self.dayHeavenlyEarthNum
-        sn = self.seasonNum  # 季节
+        sn = self.lunarSeasonNum  # 季节
         # st=self.seasonType
         yhn = self.yearHeavenNum
         yen = self.yearEarthNum
@@ -718,6 +725,7 @@ class Lunar:
              ['祭祀', '祈福', '求嗣', '上册', '上表章', '颁诏', '覃恩', '施恩', '招贤', '举正直', '恤孤茕', '宣政事', '雪冤', '庆赐', '宴会', '出行',
               '安抚边境', '选将', '出师', '上官', '临政', '结婚姻', '纳采', '嫁娶', '搬移', '解除', '求医疗病', '裁制', '营建', '缮城郭', '修造', '竖柱上梁',
               '修仓库', '栽种', '牧养', '纳畜', '安葬'], ['畋猎', '取鱼']),
+            # 依照@IcyTide 建议更新天德算法
             ('天德', '巳庚丁申壬辛亥甲癸寅丙乙'[men], d,
              ['祭祀', '祈福', '求嗣', '上册', '上表章', '颁诏', '覃恩', '施恩', '招贤', '举正直', '恤孤茕', '宣政事', '雪冤', '庆赐', '宴会', '出行',
               '安抚边境', '选将', '出师', '上官', '临政', '结婚姻', '纳采', '嫁娶', '搬移', '解除', '求医疗病', '裁制', '营建', '缮城郭', '修造', '竖柱上梁',

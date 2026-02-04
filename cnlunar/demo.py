@@ -24,8 +24,9 @@ dic = {
     '今日节气': a.todaySolarTerms,
     '下一节气': (a.nextSolarTerm, a.nextSolarTermDate, a.nextSolarTermYear),
     '今年节气表': a.thisYearSolarTermsDic,
+    '月份类型':a.lunarMonthType,
     '季节': a.lunarSeason,
-
+    '季节类型': a.lunarSeason,
     '今日时辰': a.twohour8CharList,
     '时辰凶吉': a.get_twohourLuckyList(),
     '生肖冲煞': a.chineseZodiacClash,
