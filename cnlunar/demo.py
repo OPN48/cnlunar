@@ -4,6 +4,7 @@ print('\n八字月柱与八字日柱算神煞版本')
 
 # 常规算法 demo 应输出 壬寅
 a = cnlunar.Lunar(datetime.datetime(2026, 3, 9, 12, 30), godType='8char')
+# a = cnlunar.Lunar(datetime.datetime(2026, 3, 9, 12, 30), godType='8char',yeargod='noduty')
 # 八字立春切换算法 1986, 11, 1, 7, 0   demo 应输出  丙寅
 # a = cnlunar.Lunar(datetime.datetime(1986, 11, 1, 7, 0), godType='8char')
 # a = cnlunar.Lunar(datetime.datetime(1986, 11, 1, 7, 0), godType='8char', year8Char='beginningOfSpring')
@@ -65,18 +66,13 @@ for i in dic:
 # now = datetime.datetime(2026, 1, 1,12, 30)
 # while i <= 100:
 #     print(now)
-#     a = cnlunar.Lunar(now,godType='cnlunar')
-#     print(a.goodGodName)
-#     print(a.badGodName)
-#     print(a.todayLevelName)
-#     print(a.goodThing)
-#     print(a.badThing)
-#
+#     # a = cnlunar.Lunar(datetime.datetime(2026, 3, 9, 12, 30), godType='8char', yeargod='noduty')
+#     n = cnlunar.Lunar(now,godType='8char', yeargod='noduty')
 #     now += datetime.timedelta(days=1)
 #     i += 1
 #     # print(now)
-#     n = cnlunar.Lunar(now, godType='8char')
-#     # print(n.angelDemon)
+#     # n = cnlunar.Lunar(now, godType='8char')
+#     print(n.angelDemon)
 #     if '取鱼' in n.goodThing:
 #         c += 1
 #         print('is goodthing', now,c)

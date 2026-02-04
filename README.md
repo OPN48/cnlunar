@@ -22,6 +22,8 @@
 
 @Sonic853 (https://github.com/Sonic853) issues/41
 
+@IcyTide (https://github.com/IcyTide) issues/53
+
 其他与本项目关联项目：
 
 @zither 的 js版本 https://github.com/zither/cnlunar-js
