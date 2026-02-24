@@ -12,7 +12,7 @@
 
 特别鸣谢 contributor
 
-@zither (https://github.com/zither ) issues/54
+@zither (https://github.com/zither) issues/54 55
 
 @DarkmoonRabbit (https://github.com/DarkmoonRabbit)
 
@@ -26,6 +26,8 @@
 
 其他与本项目关联项目：
 
+@zither 的 Flutter 离线版 https://github.com/zither/rishu
+
 @zither 的 js版本 https://github.com/zither/cnlunar-js
 
 @m11v 的 Dart/Flutter版本 https://github.com/m11v/chinese_lunar_calendar
@@ -37,6 +39,8 @@
 @Sonic853 的 C# VRChat 版本 https://github.com/Sonic853/UdonCnLunar
 
 使用本开源项目的相关产品：
+
+协纪·日书 https://rishu.pages.dev/
 
 翻黄历 https://www.fanhuangli.com/
 
