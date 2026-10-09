@@ -24,6 +24,8 @@
 
 @IcyTide (https://github.com/IcyTide) issues/53
 
+@Ryanlyly666 (https://github.com/Ryanlyly666) issues/60
+
 其他与本项目关联项目：
 
 @zither 的 Flutter 离线版 https://github.com/zither/rishu
@@ -383,3 +385,12 @@ leapMonth = (tmp >> LEAPMONTH_NUM_BIT) & 0xf
 
 5、星次
 星纪、玄枵、娵訾、降娄、大梁、实沈、鹑首、鹑火、鹑尾、寿星、大火、析木
+## Star History
+
+<a href="https://www.star-history.com/?repos=opn48%2Fcnlunar&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/image?repos=opn48/cnlunar&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/image?repos=opn48/cnlunar&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/image?repos=opn48/cnlunar&type=date&legend=top-left" />
+ </picture>
+</a>

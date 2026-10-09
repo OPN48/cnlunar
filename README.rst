@@ -33,6 +33,10 @@ cnlunar
 
 @Sonic853 (https://github.com/Sonic853) issues/41
 
+@IcyTide (https://github.com/IcyTide) issues/53
+
+@Ryanlyly666 (https://github.com/Ryanlyly666) issues/60
+
 其他与本项目关联项目：
 
 @zither 的 Flutter 离线版 https://github.com/zither/rishu
